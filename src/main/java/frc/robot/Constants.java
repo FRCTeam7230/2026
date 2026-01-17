@@ -22,6 +22,11 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final double movementDivider = 4; // from 2025 code
+  public static final double rotateDivider = 5;
+
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
@@ -29,9 +34,9 @@ public final class Constants {
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(26.5);
+    public static final double kTrackWidth = Units.inchesToMeters(24); // updated chassis dimensions
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(26.5);
+    public static final double kWheelBase = Units.inchesToMeters(30.5); // updated chassis dimensions
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -78,11 +83,11 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = 0.05;
+    public static final double kDriveDeadband = 0.1; // updated based on 2025 code
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxSpeedMetersPerSecond = 4.8; // updated based on 2025 code
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
