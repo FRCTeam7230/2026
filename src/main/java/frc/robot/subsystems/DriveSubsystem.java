@@ -23,8 +23,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.utils.PPHolonomicDriveControllerCustom;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
@@ -37,8 +37,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.utils.PPHolonomicDriveControllerCustom;
+import frc.robot.Constants.DriveConstants;;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
@@ -72,12 +71,9 @@ public class DriveSubsystem extends SubsystemBase {
   // Denominator is how long to get to max speed
   double rateTranslationLimit = Constants.DriveConstants.kMaxSpeedMetersPerSecond / 0.5;
   double rotRateLimit = Constants.DriveConstants.kMaxAngularSpeed / 0.5; 
-  double slowTranslationRateLimit = Constants.DriveConstants.kMaxSpeedMetersPerSecond / 2.5;
-  double slowRotRateLimit = Constants.DriveConstants.kMaxAngularSpeed / 5;
   SlewRateLimiter driveLimitX = new SlewRateLimiter(rateTranslationLimit);
   SlewRateLimiter driveLimitY = new SlewRateLimiter(rateTranslationLimit);  
   SlewRateLimiter driveLimitRot = new SlewRateLimiter(rotRateLimit);  
-  boolean isElevUp = false;
 
   boolean allianceInitialized = false;
 
@@ -94,16 +90,6 @@ public class DriveSubsystem extends SubsystemBase {
   public double getFieldAngle(){
     return -m_gyro.getAngle();
   }
-
-  // public void publishDouble(double data, String name){
-  //   DoublePublisher dataPublisher;
-  //   DoubleTopic dataTopic;
-
-  //   dataTopic = NetworkTableInstance.getDefault().getDoubleTopic("/" + name + "/Gyro");
-  //   dataPublisher = dataTopic.publish();
-
-  //   dataPublisher.set(data);
-  // }
 
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
@@ -173,32 +159,8 @@ public class DriveSubsystem extends SubsystemBase {
     if(!allianceInitialized) {
       var alliance = DriverStation.getAlliance();
       if (alliance.isPresent()) {
-        //Do alliance init here
-        // try {
-        //   RobotConfig config = RobotConfig.fromGUISettings();
-    
-        //   // Configure AutoBuilder
-        //   AutoBuilder.configure(
-        //     this::getPose, 
-        //     this::resetOdometry, 
-        //     this::getSpeeds, 
-        //     this::driveRobotRelative, 
-        //     autoDriveController,
-        //     config,
-        //     () -> {
-        //         // Boolean supplier that controls when the path will be mirrored for the red alliance
-        //         // This will flip the path being followed to the red side of the field.
-        //         // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-        //             return alliance.get() == DriverStation.Alliance.Red;
-        //     },
-        //     this
-        //   );
-        // } catch(Exception e){
-        //   DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", e.getStackTrace());
-        // }
         allianceInitialized = true;
       }
-
     }
 
     // Update the odometry in the periodic block
@@ -347,6 +309,10 @@ public class DriveSubsystem extends SubsystemBase {
         ySpeedDelivered = driveLimitY.calculate(ySpeedDelivered);
         rotDelivered = driveLimitRot.calculate(rotDelivered);
 
+    xSpeedDelivered = driveLimitX.calculate(xSpeedDelivered);
+    ySpeedDelivered = driveLimitY.calculate(ySpeedDelivered);
+    rotDelivered = driveLimitRot.calculate(rotDelivered);
+
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
@@ -437,14 +403,6 @@ public class DriveSubsystem extends SubsystemBase {
     m_gyro.setAngleAdjustment(angle);
   }
 
-  public void elevUpAccelerationLimiter() {
-    isElevUp = true;    
-  }
-
-  public void elevDownAccelerationLimiter() {
-    isElevUp = false;    
-  }
-
   /**
    * Returns the heading of the robot.
    *
@@ -484,7 +442,4 @@ public class DriveSubsystem extends SubsystemBase {
     SwerveModuleState[] targetStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(targetSpeeds);
     setModuleStates(targetStates);
   }
-
-
-
 }
