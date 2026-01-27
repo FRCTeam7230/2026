@@ -26,6 +26,8 @@ public final class Constants {
   public static final double movementDivider = 4; // from 2025 code
   public static final double rotateDivider = 5;
 
+
+
   public static class ControllerConstants{
     //Button configurations for the XBox controller
     public static final int kButton1 = 1; //A
@@ -175,5 +177,24 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
+  }
+
+  public static class IntakeConstants{
+
+    public static final int kJointCANID = 0;
+    public static final double kjointkS = 0;
+    public static final double kjointkG = 0;
+    public static final double kjointkV = 0;
+    public static final double kjointkA = 0;
+    public static final double kjointKp = 0;
+    public static final double kjointKi = 0;
+    public static final double kjointKd = 0;
+    public static final double koutputMin = 0;
+    public static final double koutputMax = 0;
+    public static final double kallowedError = 0;
+    public static final int kMaxCurrent = 0;
+    public static final double kinitialStoredPostion = 0;
+    public static final double kjointDegreeOffset = 0;
+
   }
 }
