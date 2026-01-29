@@ -188,6 +188,7 @@ public final class Constants {
     public static final int kMaxCurrent = 0;
     public static final double kinitialStoredPostion = 0;
     public static final double kjointDegreeOffset = 0;
+    public static final int kRollerCANID = 0;
 
   }
 }
