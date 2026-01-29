@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import javax.naming.spi.StateFactory;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -36,17 +38,17 @@ public final class Constants {
     public static final int kButton4 = 4; //Y
     public static final int kButton5 = 5; //LB, left button
     public static final int kButton6 = 6; //RB, right button
-    public static final int kButton7 = 7; //Screenshare button, probably dont use   //not used
-    public static final int kButton8 = 8; //Menu button, probably dont use, also the back button
+    public static final int kButton7 = 7; //Screenshare button, dont use and back button     not used
+    public static final int kButton8 = 8; //Menu button, probably dont use 
     public static final int kButton9 = 9; //Pressing down left joystick DO NOT USE
-    public static final int kButton10 = 10; //Pressing down right joystick DO NOT USE  //not used
+    public static final int kButton10 = 10; //Pressing down right joystick DO NOT USE
 
     /**
      * Setting the numbers of the povs to literally anything else will probably break everything 
      */
     public static final int pov0 = 0; //up
     public static final int pov45 = 45; //up right
-    public static final int pov90 = 90; //right          probably make it elevator intake
+    public static final int pov90 = 90; //right
     public static final int pov135 = 135; //down right
     public static final int pov180 = 180; //down
     public static final int pov225 = 225; //down left
@@ -62,34 +64,25 @@ public final class Constants {
     public static final int rightStick_YAXIS = 5;
 
     // Xbox controller mappings
-    public static final int BRAKE_BUTTON = kButton3;
-    public static final int INTAKE_BUTTON = kButton9;
-
-    public static final int SCORE_AUTO = pov180; //score right now
-    public static final int MANUAL_ELEVATOR_DOWN = pov270;
-    
-    public static final int ZERO_HEADING_BUTTON = kButton7; 
-
-    public static final int L1_SCORE = kButton6;
-    
-    public static final int ELEVATOR_INCREMENT_DOWN = kButton1;
-    public static final int ELEVATOR_MAXHEIGHT = pov0;
-    public static final int L4_INTAKE = kButton4; //connect
-    public static final int L1_INTAKE = kButton5; //connect
-
-    //graveyard
-    public static final int MANUAL_L1_DOWN = 67;   //dead
-    public static final int MANUAL_L1_UP = 67;     //dead
-    public static final int L1_STOW = 67;          //dead
-    public static final int SLOW_MODE_LEFT = 67;   //dead
-    public static final int SLOW_MODE_RIGHT = 67;  //dead
-    public static final int SCORE_LEFT = leftTrigger;       //dead
-    public static final int SCORE_RIGHT = rightTrigger; //changed to exist
-
-
+    /** A button */
+    public static final int INTAKE_DOWN = kButton1;
+    /** B button */
     public static final int ROBOT_RELATIVE = kButton2;
-    public static final int HOVER_L1 = pov90;
-    //button 7 is not used
+    /** X button */
+    public static final int BRAKE_BUTTON = kButton3;
+    /** Y button */
+    public static final int CLIMB = kButton4;
+    /** Left button */
+    public static final int ALIGN_HUB = kButton5;
+    /** Right button */
+    public static final int SHOOT_HUB = kButton6;
+    /** Menu button */
+    public static final int ZERO_HEADING_BUTTON = kButton8;
+
+    /** Left trigger, axis 2 */
+    public static final int ALIGN_TRENCH = leftTrigger;
+    /** Right trigger, axis 3 */
+    public static final int SPIN_INTAKE = rightTrigger;
     
     // XBox movement mappings
     public static final int MOVE_XAXIS = leftStick_XAXIS;
@@ -125,15 +118,15 @@ public final class Constants {
 
 
     // SPARK MAX CAN IDs
-    public static final int kFrontLeftDrivingCanId = 8;
-    public static final int kRearLeftDrivingCanId = 13;
-    public static final int kFrontRightDrivingCanId = 14;
-    public static final int kRearRightDrivingCanId = 6;
+    public static final int kFrontLeftDrivingCanId = 1;
+    public static final int kRearLeftDrivingCanId = 3;
+    public static final int kFrontRightDrivingCanId = 7;
+    public static final int kRearRightDrivingCanId = 5;
 
-    public static final int kFrontLeftTurningCanId = 7;
-    public static final int kRearLeftTurningCanId = 9;
-    public static final int kFrontRightTurningCanId = 10;
-    public static final int kRearRightTurningCanId = 5;
+    public static final int kFrontLeftTurningCanId = 2;
+    public static final int kRearLeftTurningCanId = 4;
+    public static final int kFrontRightTurningCanId = 8;
+    public static final int kRearRightTurningCanId = 6;
 
     public static final boolean kGyroReversed = false;
   }

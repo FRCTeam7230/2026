@@ -102,25 +102,19 @@ public class RobotContainer {
 
     ////// DRIVER CONTROLLER /////
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.BRAKE_BUTTON)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
+      .whileTrue(new RunCommand(
+          () -> m_robotDrive.setX(),
+          m_robotDrive));
 
     ButtonMappings.button(m_driverController,Constants.ControllerConstants.ZERO_HEADING_BUTTON)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.zeroHeading()));
+      .whileTrue(new RunCommand(
+          () -> m_robotDrive.zeroHeading()));
 
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.ROBOT_RELATIVE)
-    .onTrue(Commands.sequence(
-            new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
-            new InstantCommand(() -> mode_publisher.set(fieldRelative))
-        ));
-
-    //TODO: This needs to wait until alliance specified!!
-    //SmartDashboard.putData("COMP - Start Center to Left (Processor) Coral Station", new PathPlannerAuto("COMP - Start Center to Left (Processor) Coral Station"));
-    //SmartDashboard.putData("COMP - Start Center to Right (Our Barge) Coral Station", new PathPlannerAuto("COMP - Start Center to Right (Our Barge) Coral Station"));
-    //SmartDashboard.putData("COMP - Start Right (Our Barge) Side", new PathPlannerAuto("COMP - Start Left (Processor) Side",true));
-    //SmartDashboard.putData("COMP - Start Left (Processor) Side", new PathPlannerAuto("COMP - Start Left (Processor) Side"));
+      .onTrue(Commands.sequence(
+              new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
+              new InstantCommand(() -> mode_publisher.set(fieldRelative))
+          ));
   }
 
   /**
