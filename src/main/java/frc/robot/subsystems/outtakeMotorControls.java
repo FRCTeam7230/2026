@@ -6,13 +6,13 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -56,7 +56,7 @@ public class outtakeMotorControls extends SubsystemBase {
     .pid(OuttakeConstants.kElevatorKp, OuttakeConstants.kElevatorKi, OuttakeConstants.kElevatorKd)
     .outputRange(-0.8,0.8, ClosedLoopSlot.kSlot0);
     m_outtakemotor3config.closedLoop.maxMotion
-    .allowedClosedLoopError(Units.inchesToMeters(0.1));
+    .allowedProfileError(Units.inchesToMeters(0.1));
     m_outtakemotor3config.idleMode(IdleMode.kCoast);
     m_outtakemotor3config.smartCurrentLimit(Constants.OuttakeConstants.motorlimitcurrent);
     m_outtakemotor3config.closedLoopRampRate(Constants.OuttakeConstants.krampratesec);
@@ -71,9 +71,9 @@ public class outtakeMotorControls extends SubsystemBase {
 
 
   public void reachSpeed(double Velocity) {
-    m_outtakecontroller1.setReference(Velocity, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
-    m_outtakecontroller2.setReference(Velocity, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
-    m_outtakecontroller3.setReference(Velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    m_outtakecontroller1.setSetpoint(Velocity, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
+    m_outtakecontroller2.setSetpoint(Velocity, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
+    m_outtakecontroller3.setSetpoint(Velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     
     
   }

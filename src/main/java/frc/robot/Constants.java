@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import javax.naming.spi.StateFactory;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -28,6 +26,27 @@ public final class Constants {
   public static final double movementDivider = 4; // from 2025 code
   public static final double rotateDivider = 5;
 
+  public static final class FeederConstants {
+    public static final int rollerCANID = 3;
+    public static final int kickerCANID = 4;
+  }
+
+  public static class OuttakeConstants {
+    public static final double kGearRatio = 7.5;
+    public static final double koutputpulleycircum = 5.5;
+    public static final double EncoderTickPerRev = 1;
+    public static final double CANID1 = 1;
+    public static final double CanID2 = 2;
+    public static final int motorlimitcurrent = 80;
+    public static final double krampratesec = 0;
+    public static final double PositionFactor =  koutputpulleycircum / kGearRatio;
+    public static final double kElevatorKp = 0;
+    public static final double kElevatorKi = 0;
+    public static final double kElevatorKd = 0;
+    public static final double kElevatorKg = 0.35;
+    public static final double kElevMaxHeight = 1.575;
+    
+  }
   public static class ControllerConstants{
     //Button configurations for the XBox controller
     public static final int kButton1 = 1; //A
