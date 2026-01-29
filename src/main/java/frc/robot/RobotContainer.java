@@ -5,27 +5,25 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.*;
+//import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.utils.ButtonMappings;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import java.util.List;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
+import edu.wpi.first.net.PortForwarder;
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -33,30 +31,61 @@ import java.util.List;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
-  // The driver's controller
+  // The robot's subsystems
+  DriveSubsystem m_robotDrive;
+  private Boolean fieldRelative = true;
+
+  // XBox controller.
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  BooleanPublisher mode_publisher = NetworkTableInstance.getDefault().getBooleanTopic("Is Field Relative").publish();
+
+  private final SendableChooser<Command> autoChooser;
 
   /**
+   * 
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
+  private boolean isCompetition = true;//What replaces this?
+
   public RobotContainer() {
+    
+    //Set up Subsystems
+    if (RobotBase.isReal()) {
+      m_robotDrive = new DriveSubsystem();
+    }
+    for(int port = 5800; port<=5809; port++)
+    {
+      PortForwarder.add(port, "limelight.local",port);
+    }
+
+
+    // Zero/Reset sensors
+    m_robotDrive.zeroHeading();
+    m_robotDrive.addAngleGyro(180);
+    
     // Configure the button bindings
     configureButtonBindings();
 
+    // TODO: This needs to wait until alliance specified! (Trigger?)
+    autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
+        (stream) -> isCompetition
+            ? stream.filter(auto -> auto.getName().startsWith("COMP"))
+            : stream
+        );
+
+    //autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+    SmartDashboard.putData("Auto Mode", autoChooser);
+
     // Configure default commands
     m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true),
-            m_robotDrive));
+                -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_YAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_YAXIS)), OIConstants.kDriveDeadband), //Y
+                -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_XAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_XAXIS)), OIConstants.kDriveDeadband), //X
+                -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS)), OIConstants.kDriveDeadband), //Z
+                fieldRelative),
+        m_robotDrive));
   }
 
   /**
@@ -69,15 +98,23 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kR1.value)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
 
-    new JoystickButton(m_driverController, XboxController.Button.kStart.value)
-        .onTrue(new InstantCommand(
-            () -> m_robotDrive.zeroHeading(),
-            m_robotDrive));
+
+    ////// DRIVER CONTROLLER /////
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.BRAKE_BUTTON)
+      .whileTrue(new RunCommand(
+          () -> m_robotDrive.setX(),
+          m_robotDrive));
+
+    ButtonMappings.button(m_driverController,Constants.ControllerConstants.ZERO_HEADING_BUTTON)
+      .whileTrue(new RunCommand(
+          () -> m_robotDrive.zeroHeading()));
+
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.ROBOT_RELATIVE)
+      .onTrue(Commands.sequence(
+              new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
+              new InstantCommand(() -> mode_publisher.set(fieldRelative))
+          ));
   }
 
   /**
@@ -86,7 +123,11 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    return autoChooser.getSelected();
+    // Autos auto = new Autos(m_robotDriveSim);
+    // return auto.getAutonomousCommand();
     // Create config for trajectory
+    /*
     TrajectoryConfig config = new TrajectoryConfig(
         AutoConstants.kMaxSpeedMetersPerSecond,
         AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -117,12 +158,13 @@ public class RobotContainer {
         new PIDController(AutoConstants.kPYController, 0, 0),
         thetaController,
         m_robotDrive::setModuleStates,
-        m_robotDrive);
+        m_robotDrive); 
 
     // Reset odometry to the starting pose of the trajectory.
     m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
     // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    //return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    */
   }
 }

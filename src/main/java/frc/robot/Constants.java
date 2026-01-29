@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import javax.naming.spi.StateFactory;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -22,6 +24,70 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final double movementDivider = 4; // from 2025 code
+  public static final double rotateDivider = 5;
+
+  public static class ControllerConstants{
+    //Button configurations for the XBox controller
+    public static final int kButton1 = 1; //A
+    public static final int kButton2 = 2; //B
+    public static final int kButton3 = 3; //X
+    public static final int kButton4 = 4; //Y
+    public static final int kButton5 = 5; //LB, left button
+    public static final int kButton6 = 6; //RB, right button
+    public static final int kButton7 = 7; //Screenshare button, dont use and back button     not used
+    public static final int kButton8 = 8; //Menu button, probably dont use 
+    public static final int kButton9 = 9; //Pressing down left joystick DO NOT USE
+    public static final int kButton10 = 10; //Pressing down right joystick DO NOT USE
+
+    /**
+     * Setting the numbers of the povs to literally anything else will probably break everything 
+     */
+    public static final int pov0 = 0; //up
+    public static final int pov45 = 45; //up right
+    public static final int pov90 = 90; //right
+    public static final int pov135 = 135; //down right
+    public static final int pov180 = 180; //down
+    public static final int pov225 = 225; //down left
+    public static final int pov270 = 270; //left
+    public static final int pov315 = 315; //up left
+
+    public static final int leftTrigger = -2; //LT, left trigger 
+    public static final int rightTrigger = -3; //RT, right trigger
+
+    public static final int leftStick_XAXIS = 0;
+    public static final int leftStick_YAXIS = 1;
+    public static final int rightStick_XAXIS = 4;
+    public static final int rightStick_YAXIS = 5;
+
+    // Xbox controller mappings
+    /** A button */
+    public static final int INTAKE_DOWN = kButton1;
+    /** B button */
+    public static final int ROBOT_RELATIVE = kButton2;
+    /** X button */
+    public static final int BRAKE_BUTTON = kButton3;
+    /** Y button */
+    public static final int CLIMB = kButton4;
+    /** Left button */
+    public static final int ALIGN_HUB = kButton5;
+    /** Right button */
+    public static final int SHOOT_HUB = kButton6;
+    /** Menu button */
+    public static final int ZERO_HEADING_BUTTON = kButton8;
+
+    /** Left trigger, axis 2 */
+    public static final int ALIGN_TRENCH = leftTrigger;
+    /** Right trigger, axis 3 */
+    public static final int SPIN_INTAKE = rightTrigger;
+    
+    // XBox movement mappings
+    public static final int MOVE_XAXIS = leftStick_XAXIS;
+    public static final int MOVE_YAXIS = leftStick_YAXIS;
+    public static final int MOVE_ZAXIS = rightStick_XAXIS;
+  }
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
@@ -29,9 +95,9 @@ public final class Constants {
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(26.5);
+    public static final double kTrackWidth = Units.inchesToMeters(20.8); // updated chassis dimensions
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(26.5);
+    public static final double kWheelBase = Units.inchesToMeters(27.25); // updated chassis dimensions
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -40,21 +106,25 @@ public final class Constants {
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
     // Angular offsets of the modules relative to the chassis in radians
-    public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
+    // Original value: public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
+    public static final double kFrontLeftChassisAngularOffset = (Math.PI/2) + Math.PI;
+
     public static final double kFrontRightChassisAngularOffset = 0;
     public static final double kBackLeftChassisAngularOffset = Math.PI;
     public static final double kBackRightChassisAngularOffset = Math.PI / 2;
 
-    // SPARK MAX CAN IDs
-    public static final int kFrontLeftDrivingCanId = 11;
-    public static final int kRearLeftDrivingCanId = 13;
-    public static final int kFrontRightDrivingCanId = 15;
-    public static final int kRearRightDrivingCanId = 17;
 
-    public static final int kFrontLeftTurningCanId = 10;
-    public static final int kRearLeftTurningCanId = 12;
-    public static final int kFrontRightTurningCanId = 14;
-    public static final int kRearRightTurningCanId = 16;
+
+    // SPARK MAX CAN IDs
+    public static final int kFrontLeftDrivingCanId = 1;
+    public static final int kRearLeftDrivingCanId = 3;
+    public static final int kFrontRightDrivingCanId = 7;
+    public static final int kRearRightDrivingCanId = 5;
+
+    public static final int kFrontLeftTurningCanId = 2;
+    public static final int kRearLeftTurningCanId = 4;
+    public static final int kFrontRightTurningCanId = 8;
+    public static final int kRearRightTurningCanId = 6;
 
     public static final boolean kGyroReversed = false;
   }
@@ -67,7 +137,7 @@ public final class Constants {
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.0762;
+    public static final double kWheelDiameterMeters = 0.079;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15
     // teeth on the bevel pinion
@@ -78,11 +148,11 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = 0.05;
+    public static final double kDriveDeadband = 0.1; // updated based on 2025 code
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxSpeedMetersPerSecond = 4.8; // updated based on 2025 code
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
