@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.*;
 //import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.utils.ButtonMappings;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -34,7 +35,9 @@ public class RobotContainer {
 
   // The robot's subsystems
   DriveSubsystem m_robotDrive;
+  IntakeSubsystem m_intake;
   private Boolean fieldRelative = true;
+  public boolean intakeIsUp = true;
 
   // XBox controller.
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -86,6 +89,10 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS)), OIConstants.kDriveDeadband), //Z
                 fieldRelative),
         m_robotDrive));
+    
+    Command extendIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kextendedPostion);
+
+    Command retractIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kretractedPostion);
   }
 
   /**
@@ -115,6 +122,17 @@ public class RobotContainer {
               new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
               new InstantCommand(() -> mode_publisher.set(fieldRelative))
           ));
+
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
+      .whileTrue(new InstantCommand( ()->{
+        if (intakeIsUp) {
+          m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);
+        }
+        else {
+          m_intake.reachGoal(Constants.IntakeConstants.kretractedPostion);
+        }
+        intakeIsUp = !intakeIsUp;
+      }));
   }
 
   /**

@@ -65,7 +65,7 @@ public final class Constants {
 
     // Xbox controller mappings
     /** A button */
-    public static final int INTAKE_DOWN = kButton1;
+    public static final int TOGGLE_INTAKE = kButton1;
     /** B button */
     public static final int ROBOT_RELATIVE = kButton2;
     /** X button */
@@ -175,6 +175,7 @@ public final class Constants {
   public static class IntakeConstants{
 
     public static final int kJointCANID = 0;
+    public static final int kRollerCANID = 0;
     public static final double kjointkS = 0;
     public static final double kjointkG = 0;
     public static final double kjointkV = 0;
@@ -186,9 +187,8 @@ public final class Constants {
     public static final double koutputMax = 0;
     public static final double kallowedError = 0;
     public static final int kMaxCurrent = 0;
-    public static final double kinitialStoredPostion = 0;
+    public static final double kretractedPostion = 0;
+    public static final double kextendedPostion = 0;
     public static final double kjointDegreeOffset = 0;
-    public static final int kRollerCANID = 0;
-
   }
 }
