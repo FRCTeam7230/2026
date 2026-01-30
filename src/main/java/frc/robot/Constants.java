@@ -29,6 +29,8 @@ public final class Constants {
   public static final class FeederConstants {
     public static final int rollerCANID = 3;
     public static final int kickerCANID = 4;
+    public static final int kfeedermotorlimitcurrent = 80;
+    public static final double kfeederrampratesec = 0;
   }
 
   public static class OuttakeConstants {
@@ -45,7 +47,7 @@ public final class Constants {
     public static final double kElevatorKd = 0;
     public static final double kElevatorKg = 0.35;
     public static final double kElevMaxHeight = 1.575;
-    
+    public static final double ShooterTolerance = 0.2;
   }
   public static class ControllerConstants{
     //Button configurations for the XBox controller

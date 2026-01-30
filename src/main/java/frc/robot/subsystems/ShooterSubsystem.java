@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.OuttakeConstants;
 
-public class outtakeMotorControls extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ShooterSubsystemcurrently. */
   private final SparkMax outtakemotor1 = new SparkMax(0, MotorType.kBrushless);
   private final SparkMax outtakemotor2 = new SparkMax(1, MotorType.kBrushless);
@@ -36,7 +36,7 @@ public class outtakeMotorControls extends SubsystemBase {
   private final SparkClosedLoopController m_outtakecontroller2 = outtakemotor2.getClosedLoopController();
   private final SparkClosedLoopController m_outtakecontroller3 = outtakemotor3.getClosedLoopController();
 
-  public outtakeMotorControls() {
+  public ShooterSubsystem() {
     m_outtakemotor1config.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .pid(OuttakeConstants.kElevatorKp, OuttakeConstants.kElevatorKi, OuttakeConstants.kElevatorKd)

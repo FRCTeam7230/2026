@@ -18,31 +18,40 @@ import frc.robot.Constants;
 public class FeederSubsystem extends SubsystemBase {
   /** Creates a new FeederSubsystem. */
   private final SparkMax rollermotor = new SparkMax(Constants.FeederConstants.rollerCANID, MotorType.kBrushless);
-  private final SparkMax kickermotor = new SparkMax(Constants.FeederConstants.kickerCANID, MotorType.kBrushless);
+  private final SparkMax kickermotor1 = new SparkMax(Constants.FeederConstants.kickerCANID, MotorType.kBrushless);
+  private final SparkMax kickermotor2 = new SparkMax(Constants.FeederConstants.kickerCANID, MotorType.kBrushless);
   private final SparkMaxConfig m_rollermotorconfig = new SparkMaxConfig();
-  private final SparkMaxConfig m_kickermotorconfig = new SparkMaxConfig();
+  private final SparkMaxConfig m_kickermotor1config = new SparkMaxConfig();
+  private final SparkMaxConfig m_kickermotor2config = new SparkMaxConfig();
 
   public FeederSubsystem() {
     m_rollermotorconfig.idleMode(IdleMode.kBrake);
-    m_rollermotorconfig.smartCurrentLimit(Constants.OuttakeConstants.motorlimitcurrent);
-    m_rollermotorconfig.closedLoopRampRate(Constants.OuttakeConstants.krampratesec);
-    m_kickermotorconfig.idleMode(IdleMode.kBrake);
-    m_kickermotorconfig.smartCurrentLimit(Constants.OuttakeConstants.motorlimitcurrent);
-    m_kickermotorconfig.closedLoopRampRate(Constants.OuttakeConstants.krampratesec);
+    m_rollermotorconfig.smartCurrentLimit(Constants.FeederConstants.kfeedermotorlimitcurrent);
+    m_rollermotorconfig.closedLoopRampRate(Constants.FeederConstants.kfeederrampratesec);
+    m_kickermotor1config.idleMode(IdleMode.kBrake);
+    m_kickermotor1config.smartCurrentLimit(Constants.FeederConstants.kfeedermotorlimitcurrent);
+    m_kickermotor1config.closedLoopRampRate(Constants.FeederConstants.kfeederrampratesec);
+    m_kickermotor2config.idleMode(IdleMode.kBrake);
+    m_kickermotor2config.smartCurrentLimit(Constants.FeederConstants.kfeedermotorlimitcurrent);
+    m_kickermotor2config.closedLoopRampRate(Constants.FeederConstants.kfeederrampratesec);
     m_rollermotorconfig.closedLoop.maxMotion
     .allowedProfileError(Units.inchesToMeters(0.1));
-    m_kickermotorconfig.closedLoop.maxMotion
+    m_kickermotor1config.closedLoop.maxMotion
+    .allowedProfileError(Units.inchesToMeters(0.1));
+    m_kickermotor2config.closedLoop.maxMotion
     .allowedProfileError(Units.inchesToMeters(0.1));
     rollermotor.configure(m_rollermotorconfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-    kickermotor.configure(m_kickermotorconfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    kickermotor1.configure(m_kickermotor1config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    kickermotor2.configure(m_kickermotor2config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
   }
 
   public void setRollerSpeed(double rollerspeed) {
     rollermotor.set(rollerspeed);
   }
-  public void setKickerSpeed(double kickerspeed) {
-    kickermotor.set(kickerspeed);
+  public void setKickerSpeed(double kickerspeed1, double kickerspeed2) {
+    kickermotor1.set(kickerspeed1);
+    kickermotor2.set(kickerspeed2);
   }
   @Override
   public void periodic() {
