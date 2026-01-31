@@ -46,7 +46,7 @@ public class RobotContainer {
    * 
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  private boolean isCompetition = true;//What replaces this?
+  private boolean isCompetition = false;//What replaces this?
 
   public RobotContainer() {
     
