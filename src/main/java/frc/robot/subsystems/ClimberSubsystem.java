@@ -1,0 +1,190 @@
+package frc.robot.subsystems;
+
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.sim.SparkMaxSim;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
+import frc.robot.Constants.ClimberConstants;
+
+public class ClimberSubsystem extends SubsystemBase 
+{
+  private final SparkMax                  m_motor1        = new SparkMax(ClimberConstants.kElevMotor1, MotorType.kBrushless);
+  private final SparkClosedLoopController m_controller    = m_motor1.getClosedLoopController();
+  private final RelativeEncoder           m_encoder       = m_motor1.getEncoder();
+  private final SparkMaxConfig            m_config_motor1 = new SparkMaxConfig();
+  private double m_desiredHeight = 0.0;
+
+  private final ElevatorFeedforward m_feedforward =
+      new ElevatorFeedforward(
+          ClimberConstants.kElevatorkS,
+          ClimberConstants.kElevatorkG,
+          ClimberConstants.kElevatorkV,
+          ClimberConstants.kElevatorkA);
+
+  private final DoublePublisher  encoder1_publisher    = NetworkTableInstance.getDefault().getDoubleTopic("Climber/encoder1value").publish();
+  private final DoublePublisher  velocity_publisher    = NetworkTableInstance.getDefault().getDoubleTopic("Climber/velocity").publish();
+  private final DoublePublisher  output1_publisher     = NetworkTableInstance.getDefault().getDoubleTopic("Climber/outputMotor1").publish();
+  private final DoublePublisher  heightError_publisher = NetworkTableInstance.getDefault().getDoubleTopic("Climber/heightError").publish();
+  private final DoublePublisher  current1_publisher    = NetworkTableInstance.getDefault().getDoubleTopic("Climber/currentMotor1").publish();
+  private final BooleanPublisher climReset_publisher   = NetworkTableInstance.getDefault().getBooleanTopic("Climber/resetElev").publish();
+
+  // Constructor
+
+  public ClimberSubsystem()
+  {
+    m_config_motor1.encoder
+        .positionConversionFactor(ClimberConstants.kRotationToMeters)
+        .velocityConversionFactor(ClimberConstants.kRotationToMeters / 60.0);
+    m_config_motor1.closedLoop
+        .pid(ClimberConstants.kElevatorKp, ClimberConstants.kElevatorKi, ClimberConstants.kElevatorKd, ClosedLoopSlot.kSlot0)
+        .outputRange(-1, 1, ClosedLoopSlot.kSlot0);
+    m_config_motor1.idleMode(SparkBaseConfig.IdleMode.kBrake);
+    m_config_motor1.smartCurrentLimit(ClimberConstants.kMaxCurrent);
+    m_config_motor1.closedLoopRampRate(ClimberConstants.kElevatorRampRate);
+
+    // Apply config
+    m_motor1.configure(m_config_motor1, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
+    // desired height
+    m_desiredHeight = 0.0;
+  }
+
+  public void motorStop()
+  {
+    m_motor1.set(0);
+  }
+
+  public void resetEncoder()
+  {
+    m_encoder.setPosition(0);
+  }
+
+  /**
+   * Run control loop to reach and maintain goal.
+   *
+   * @param goal the position to maintain (meters)
+   */
+  public void reachGoal(double goal)
+  {
+    m_desiredHeight = MathUtil.clamp(goal,
+        ClimberConstants.kMinRealElevatorHeightMeters,
+        ClimberConstants.kMaxRealElevatorHeightMeters);
+      m_controller.setReference(m_desiredHeight,
+                              ControlType.kPosition,
+                              ClosedLoopSlot.kSlot0,
+                              m_feedforward.calculate(m_encoder.getVelocity()));
+  }
+
+  /**
+   * Get the height in meters.
+   *
+   * @return Height in meters
+   */
+  public double getHeight()
+  {
+    return m_encoder.getPosition();
+  }
+
+  /**
+   * A trigger for when the height is at an acceptable tolerance.
+   *
+   * @param height    Height in Meters
+   * @param tolerance Tolerance in meters.
+   * @return {@link Trigger}
+   */
+  public Trigger atHeight(double height, double tolerance)
+  {
+    return new Trigger(() -> MathUtil.isNear(height, getHeight(), tolerance));
+  }
+
+  public boolean isFullyExtended(double tolerance)
+  {
+    return MathUtil.isNear(ClimberConstants.kPreScoringHeightMeters, getHeight(), tolerance);
+  }
+
+  /**
+   * Set the goal of the climber
+   *
+   * @param goal Goal in meters
+   * @return {@link edu.wpi.first.wpilibj2.command.Command}
+   */
+  public Command setGoal(double goal)
+  {
+    return run(() -> reachGoal(goal));
+  }
+
+  public void stop()
+  {
+    m_motor1.set(0.0);
+  }
+
+  public void ManualClimberUp()
+  {
+    m_motor1.set(0.2);
+  }
+
+  public void HoverClimber()
+  {
+    m_motor1.setVoltage(ClimberConstants.kElevatorkG);
+  }
+
+  public void ManualClimberDown()
+  {
+    m_motor1.set(-0.15);
+  }
+
+  //Update telemetry
+  public void updateTelemetry()
+  {
+    SmartDashboard.putNumber("Climber Position", getHeight());
+  }
+
+  @Override
+  public void periodic()
+  {
+    // Publish telemetry
+    encoder1_publisher.set(m_encoder.getPosition());
+    output1_publisher.set(m_motor1.getAppliedOutput());
+    heightError_publisher.set(m_desiredHeight - getHeight());
+    velocity_publisher.set(m_encoder.getVelocity());
+    current1_publisher.set(m_motor1.getOutputCurrent());
+    boolean reset = false;
+    if (Math.abs(m_encoder.getVelocity()) < 0.01 && m_motor1.getOutputCurrent() > ClimberConstants.kResetCurrent) {
+      if (m_motor1.getAppliedOutput() > 0) {
+        m_encoder.setPosition(ClimberConstants.kMaxRealElevatorHeightMeters);
+      }
+      else {
+        m_encoder.setPosition(ClimberConstants.kMinRealElevatorHeightMeters);
+      }
+      m_motor1.set(0);
+      reset = true;
+    }
+
+    SmartDashboard.putNumber("Climber Position (Meters)", m_encoder.getPosition());
+    climReset_publisher.set(reset);
+  }
+}
