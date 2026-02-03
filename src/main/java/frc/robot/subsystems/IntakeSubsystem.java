@@ -14,7 +14,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -87,7 +86,7 @@ public class IntakeSubsystem extends SubsystemBase
       m_roller.set(0);
     }
 
-    public void reachGoal(double goal) {
+    public void jointreachGoal(double goal) {
       desiredAngle = goal;
       m_controller.setSetpoint(
         goal,
@@ -98,7 +97,7 @@ public class IntakeSubsystem extends SubsystemBase
     }
 
     public Command setGoal(double goal){
-        return run(()-> reachGoal(goal));//converting runnable to command. 
+        return run(()-> jointreachGoal(goal));//converting runnable to command. 
     }
 
   

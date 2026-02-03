@@ -56,10 +56,13 @@ public final class Constants {
   public static final class AlignClimberConstants {
     public static final double kxkp = 0.67;
     public static final double kzkp = 0.67;
+    public static final double kyawkp = 0.01;
     public static final double kxSetpoint = 0.67;
     public static final double kzSetpoint = 0.67;
+    public static final double kyawSetpoint = 0;
     public static final double kxTolerance = 0.1;
     public static final double kzTolerance = 0.1;
+    public static final double kyawTolerance = 0.1;
   }
 
 
@@ -224,5 +227,6 @@ public final class Constants {
     public static final double kretractedPostion = 0;
     public static final double kextendedPostion = 0;
     public static final double kjointDegreeOffset = 0;
+    public static final double krollerSpeed = 0.5;
   }
 }
