@@ -10,13 +10,13 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AutoShooterCommand extends Command {
-  /** Creates a new AutoShooterCommand. */
   private ShooterSubsystem ShooterSubsystem;
   private double speed;
+  /** Creates a new AutoShooterCommand. */
   public AutoShooterCommand(ShooterSubsystem Shooting, double speed) {
     ShooterSubsystem = Shooting;
-    addRequirements(ShooterSubsystem);
     this.speed = speed;
+    addRequirements(ShooterSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -27,6 +27,7 @@ public class AutoShooterCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //Sets shooter motors to desired speed
     ShooterSubsystem.reachSpeed(speed);
   }
 
@@ -37,7 +38,8 @@ public class AutoShooterCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (speed-ShooterSubsystem.getMotorVelocity()[0]<Constants.OuttakeConstants.ShooterTolerance && speed-ShooterSubsystem.getMotorVelocity()[1]<Constants.OuttakeConstants.ShooterTolerance && speed-ShooterSubsystem.getMotorVelocity()[2]<Constants.OuttakeConstants.ShooterTolerance){
+    //Ends command when all shooter motors are at desired speed within tolerance
+    if (Math.abs(speed-ShooterSubsystem.getMotorVelocity()[0])<Constants.OuttakeConstants.ShooterTolerance && Math.abs(speed-ShooterSubsystem.getMotorVelocity()[1])<Constants.OuttakeConstants.ShooterTolerance && Math.abs(speed-ShooterSubsystem.getMotorVelocity()[2])<Constants.OuttakeConstants.ShooterTolerance){
       return true;
     }
     else {

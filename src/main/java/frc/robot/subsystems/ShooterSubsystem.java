@@ -39,21 +39,21 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     m_outtakemotor1config.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-    .pid(OuttakeConstants.kElevatorKp, OuttakeConstants.kElevatorKi, OuttakeConstants.kElevatorKd)
+    .pid(OuttakeConstants.kOuttakeKp, OuttakeConstants.kOuttakeKi, OuttakeConstants.kOuttakeKd)
     .outputRange(-0.8,0.8, ClosedLoopSlot.kSlot0);
     m_outtakemotor1config.idleMode(IdleMode.kCoast);
     m_outtakemotor1config.smartCurrentLimit(Constants.OuttakeConstants.motorlimitcurrent);
     m_outtakemotor1config.closedLoopRampRate(Constants.OuttakeConstants.krampratesec);
     m_outtakemotor2config.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-    .pid(OuttakeConstants.kElevatorKp, OuttakeConstants.kElevatorKi, OuttakeConstants.kElevatorKd)
+    .pid(OuttakeConstants.kOuttakeKp, OuttakeConstants.kOuttakeKi, OuttakeConstants.kOuttakeKd)
     .outputRange(-0.8,0.8, ClosedLoopSlot.kSlot0);
     m_outtakemotor2config.idleMode(IdleMode.kCoast);
     m_outtakemotor2config.smartCurrentLimit(Constants.OuttakeConstants.motorlimitcurrent);
     m_outtakemotor2config.closedLoopRampRate(Constants.OuttakeConstants.krampratesec);
     m_outtakemotor3config.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-    .pid(OuttakeConstants.kElevatorKp, OuttakeConstants.kElevatorKi, OuttakeConstants.kElevatorKd)
+    .pid(OuttakeConstants.kOuttakeKp, OuttakeConstants.kOuttakeKi, OuttakeConstants.kOuttakeKd)
     .outputRange(-0.8,0.8, ClosedLoopSlot.kSlot0);
     m_outtakemotor3config.closedLoop.maxMotion
     .allowedProfileError(Units.inchesToMeters(0.1));

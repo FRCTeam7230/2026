@@ -31,6 +31,9 @@ public final class Constants {
     public static final int kickerCANID = 4;
     public static final int kfeedermotorlimitcurrent = 80;
     public static final double kfeederrampratesec = 0;
+    public static final double rollerSpeed = 0.5;
+    public static final double kickerSpeed1 = 0.5;
+    public static final double kickerSpeed2 = -0.5;
   }
 
   public static class OuttakeConstants {
@@ -42,12 +45,21 @@ public final class Constants {
     public static final int motorlimitcurrent = 80;
     public static final double krampratesec = 0;
     public static final double PositionFactor =  koutputpulleycircum / kGearRatio;
-    public static final double kElevatorKp = 0;
-    public static final double kElevatorKi = 0;
-    public static final double kElevatorKd = 0;
-    public static final double kElevatorKg = 0.35;
+    public static final double kOuttakeKp = 0;
+    public static final double kOuttakeKi = 0;
+    public static final double kOuttakeKd = 0;
+    public static final double kOOuttakeKg = 0.35;
     public static final double kElevMaxHeight = 1.575;
     public static final double ShooterTolerance = 0.2;
+    public static final double shootSpeed = 3000; 
+  }
+  public static final class AlignClimberConstants {
+    public static final double kxkp = 0.67;
+    public static final double kzkp = 0.67;
+    public static final double kxSetpoint = 0.67;
+    public static final double kzSetpoint = 0.67;
+    public static final double kxTolerance = 0.1;
+    public static final double kzTolerance = 0.1;
   }
   public static class ControllerConstants{
     //Button configurations for the XBox controller
@@ -102,6 +114,7 @@ public final class Constants {
     public static final int ALIGN_TRENCH = leftTrigger;
     /** Right trigger, axis 3 */
     public static final int SPIN_INTAKE = rightTrigger;
+    
     
     // XBox movement mappings
     public static final int MOVE_XAXIS = leftStick_XAXIS;

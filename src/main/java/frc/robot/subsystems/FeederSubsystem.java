@@ -16,14 +16,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class FeederSubsystem extends SubsystemBase {
-  /** Creates a new FeederSubsystem. */
   private final SparkMax rollermotor = new SparkMax(Constants.FeederConstants.rollerCANID, MotorType.kBrushless);
   private final SparkMax kickermotor1 = new SparkMax(Constants.FeederConstants.kickerCANID, MotorType.kBrushless);
   private final SparkMax kickermotor2 = new SparkMax(Constants.FeederConstants.kickerCANID, MotorType.kBrushless);
   private final SparkMaxConfig m_rollermotorconfig = new SparkMaxConfig();
   private final SparkMaxConfig m_kickermotor1config = new SparkMaxConfig();
   private final SparkMaxConfig m_kickermotor2config = new SparkMaxConfig();
-
+  /** Creates a new FeederSubsystem. */
   public FeederSubsystem() {
     m_rollermotorconfig.idleMode(IdleMode.kBrake);
     m_rollermotorconfig.smartCurrentLimit(Constants.FeederConstants.kfeedermotorlimitcurrent);
@@ -45,13 +44,13 @@ public class FeederSubsystem extends SubsystemBase {
     kickermotor2.configure(m_kickermotor2config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
   }
-
+  // Sets roller motor speed(positive is intake, negative is outtake)
   public void setRollerSpeed(double rollerspeed) {
     rollermotor.set(rollerspeed);
   }
-  public void setKickerSpeed(double kickerspeed1, double kickerspeed2) {
-    kickermotor1.set(kickerspeed1);
-    kickermotor2.set(kickerspeed2);
+  public void setKickerSpeed(double kickerspeed) {
+    kickermotor1.set(kickerspeed);
+    kickermotor2.set(kickerspeed);
   }
   @Override
   public void periodic() {

@@ -4,26 +4,28 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.Constants.*;
-//import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.utils.ButtonMappings;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.NetworkTableInstance;
-
-import edu.wpi.first.net.PortForwarder;
+import frc.robot.Constants.OIConstants;
+import frc.robot.commands.AutoShooterCommand;
+//import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.utils.ButtonMappings;
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -35,6 +37,8 @@ public class RobotContainer {
   // The robot's subsystems
   DriveSubsystem m_robotDrive;
   private Boolean fieldRelative = true;
+  private ShooterSubsystem m_ShooterSubsystem;
+  private FeederSubsystem m_FeederSubsystem;
 
   // XBox controller.
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -49,6 +53,9 @@ public class RobotContainer {
   private boolean isCompetition = true;//What replaces this?
 
   public RobotContainer() {
+    
+    m_ShooterSubsystem = new ShooterSubsystem();
+    m_FeederSubsystem = new FeederSubsystem();
     
     //Set up Subsystems
     if (RobotBase.isReal()) {
@@ -114,6 +121,19 @@ public class RobotContainer {
       .onTrue(Commands.sequence(
               new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
               new InstantCommand(() -> mode_publisher.set(fieldRelative))
+          ));
+    
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.SHOOT_HUB)
+      .whileTrue(Commands.sequence(
+              new AutoShooterCommand(m_ShooterSubsystem, Constants.OuttakeConstants.shootSpeed),
+              new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed2)),
+              new InstantCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
+          ).finallyDo(
+            () -> {
+              m_ShooterSubsystem.stopMotor();
+              m_FeederSubsystem.setKickerSpeed(0);
+              m_FeederSubsystem.setRollerSpeed(0);
+            }
           ));
   }
 
