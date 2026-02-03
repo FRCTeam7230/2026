@@ -61,6 +61,8 @@ public final class Constants {
     public static final double kxTolerance = 0.1;
     public static final double kzTolerance = 0.1;
   }
+
+
   public static class ControllerConstants{
     //Button configurations for the XBox controller
     public static final int kButton1 = 1; //A
@@ -96,7 +98,7 @@ public final class Constants {
 
     // Xbox controller mappings
     /** A button */
-    public static final int INTAKE_DOWN = kButton1;
+    public static final int TOGGLE_INTAKE = kButton1;
     /** B button */
     public static final int ROBOT_RELATIVE = kButton2;
     /** X button */
@@ -202,5 +204,25 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
+  }
+
+  public static class IntakeConstants{
+
+    public static final int kJointCANID = 0;
+    public static final int kRollerCANID = 0;
+    public static final double kjointkS = 0;
+    public static final double kjointkG = 0;
+    public static final double kjointkV = 0;
+    public static final double kjointkA = 0;
+    public static final double kjointKp = 0;
+    public static final double kjointKi = 0;
+    public static final double kjointKd = 0;
+    public static final double koutputMin = 0;
+    public static final double koutputMax = 0;
+    public static final double kallowedError = 0;
+    public static final int kMaxCurrent = 0;
+    public static final double kretractedPostion = 0;
+    public static final double kextendedPostion = 0;
+    public static final double kjointDegreeOffset = 0;
   }
 }
