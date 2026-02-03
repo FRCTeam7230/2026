@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -151,9 +152,15 @@ public class DriveSubsystem extends SubsystemBase {
     PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
     SmartDashboard.putData("Field", field);
   }
-
+ double experimentSpeed = 0;
+ public Command driveExperiment() {
+    return
+            new RunCommand(
+                () -> {drive(experimentSpeed, 0.0, 0.0, false);}).withTimeout(2.0);
+  }
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Speed going over the bump", experimentSpeed);
     if(!allianceInitialized) {
       var alliance = DriverStation.getAlliance();
       if (alliance.isPresent()) {
@@ -445,4 +452,5 @@ public class DriveSubsystem extends SubsystemBase {
     SwerveModuleState[] targetStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(targetSpeeds);
     setModuleStates(targetStates);
   }
+  
 }

@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -47,7 +49,8 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   private boolean isCompetition = false;//What replaces this?
-
+  private double experimentSpeed = 0;
+   
   public RobotContainer() {
     
     //Set up Subsystems
@@ -59,7 +62,8 @@ public class RobotContainer {
       PortForwarder.add(port, "limelight.local",port);
     }
 
-
+    NamedCommands.registerCommand("Going over the bump", m_robotDrive.driveExperiment());
+    SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Zero/Reset sensors
     m_robotDrive.zeroHeading();
     m_robotDrive.addAngleGyro(180);
@@ -76,7 +80,7 @@ public class RobotContainer {
 
     //autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
-
+SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Configure default commands
     m_robotDrive.setDefaultCommand(
         new RunCommand(
