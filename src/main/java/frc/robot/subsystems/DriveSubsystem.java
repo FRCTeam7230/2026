@@ -151,6 +151,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Set up custom logging to add the current path to a field 2d widget
     PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
     SmartDashboard.putData("Field", field);
+    SmartDashboard.putNumber("Experiment Speed", experimentSpeed);
   }
  double experimentSpeed = 0;
  public Command driveExperiment() {
@@ -160,7 +161,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Speed going over the bump", experimentSpeed);
+    
     if(!allianceInitialized) {
       var alliance = DriverStation.getAlliance();
       if (alliance.isPresent()) {
