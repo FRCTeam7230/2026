@@ -211,7 +211,7 @@ public class DriveSubsystem extends SubsystemBase {
     SlewRateLimiter limiter = new SlewRateLimiter(WHEEL_RADIUS_RAMP_RATE);
     WheelRadiusCharacterizationState state = new WheelRadiusCharacterizationState();
 
-    return Commands.parallel(
+    Command c = Commands.parallel(
       Commands.sequence(
         Commands.runOnce(
           () -> {
@@ -241,28 +241,33 @@ public class DriveSubsystem extends SubsystemBase {
             state.gyroDelta += Math.abs(rotation.minus(state.lastAngle).getRadians());
             state.lastAngle = rotation;
 
-            System.out.println("Gyro Delta: " + Units.radiansToDegrees(state.gyroDelta));
-            System.out.println("Rotation: " + rotation.getDegrees());
+            SmartDashboard.putNumber("Gyro Delta", Units.radiansToDegrees(state.gyroDelta));
+            SmartDashboard.putNumber("Rotation:", rotation.getDegrees());
+
+            double[] position = getPositions();
+            double wheelDelta = 0.0;
+
+            for (int i = 0; i < 4; i++){
+              wheelDelta += Math.abs(position[i] - state.positions[i]) / 4.0;
+            }
+
+            double wheelRadius = (state.gyroDelta * driveBaseRadius) / wheelDelta;
+
+            SmartDashboard.putNumber("WHEEL DELTA:", wheelDelta);
+            SmartDashboard.putString("GYRO DELTA:", state.gyroDelta + " radians, " + Units.radiansToDegrees(state.gyroDelta));
+            SmartDashboard.putString("WHEEL RADIUS: ", wheelRadius + " meters, ");
+            SmartDashboard.putString("WHEEL RADIUS(in): ", Units.metersToInches(wheelRadius) + " inches");
           })
 
           .finallyDo(
             () -> {
-              double[] position = getPositions();
-              double wheelDelta = 0.0;
-
-              for (int i = 0; i < 4; i++){
-                wheelDelta += Math.abs(position[i] - state.positions[i]) / 4.0;
-              }
-
-              double wheelRadius = (state.gyroDelta * driveBaseRadius) / wheelDelta;
-
-              System.out.println("WHEEL DELTA: " + wheelDelta + " radians");
-              System.out.println("GYRO DELTA: " + state.gyroDelta + " radians, " + Units.radiansToDegrees(state.gyroDelta));
-              System.out.println("WHEEL RADIUS: " + wheelRadius + " meters, " + Units.metersToInches(wheelRadius) + " inches");
+              
             }
           )
       )
     );
+    c.addRequirements(this);
+    return c;
   }
 
   private static class WheelRadiusCharacterizationState {
