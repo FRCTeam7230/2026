@@ -32,7 +32,7 @@ import frc.robot.Constants.ClimberConstants;
 
 public class ClimberSubsystem extends SubsystemBase 
 {
-  private final SparkMax                  m_motor1        = new SparkMax(ClimberConstants.kElevMotor1, MotorType.kBrushless);
+  private final SparkMax                  m_motor1        = new SparkMax(ClimberConstants.kClimMotor1, MotorType.kBrushless);
   private final SparkClosedLoopController m_controller    = m_motor1.getClosedLoopController();
   private final RelativeEncoder           m_encoder       = m_motor1.getEncoder();
   private final SparkMaxConfig            m_config_motor1 = new SparkMaxConfig();
@@ -40,10 +40,10 @@ public class ClimberSubsystem extends SubsystemBase
 
   private final ElevatorFeedforward m_feedforward =
       new ElevatorFeedforward(
-          ClimberConstants.kElevatorkS,
-          ClimberConstants.kElevatorkG,
-          ClimberConstants.kElevatorkV,
-          ClimberConstants.kElevatorkA);
+          ClimberConstants.kClimberkS,
+          ClimberConstants.kClimberkG,
+          ClimberConstants.kClimberkV,
+          ClimberConstants.kClimberkA);
 
   private final DoublePublisher  encoder1_publisher    = NetworkTableInstance.getDefault().getDoubleTopic("Climber/encoder1value").publish();
   private final DoublePublisher  velocity_publisher    = NetworkTableInstance.getDefault().getDoubleTopic("Climber/velocity").publish();
@@ -60,11 +60,11 @@ public class ClimberSubsystem extends SubsystemBase
         .positionConversionFactor(ClimberConstants.kRotationToMeters)
         .velocityConversionFactor(ClimberConstants.kRotationToMeters / 60.0);
     m_config_motor1.closedLoop
-        .pid(ClimberConstants.kElevatorKp, ClimberConstants.kElevatorKi, ClimberConstants.kElevatorKd, ClosedLoopSlot.kSlot0)
+        .pid(ClimberConstants.kCLimberKp, ClimberConstants.kCLimberKi, ClimberConstants.kClimberKd, ClosedLoopSlot.kSlot0)
         .outputRange(-1, 1, ClosedLoopSlot.kSlot0);
     m_config_motor1.idleMode(SparkBaseConfig.IdleMode.kBrake);
     m_config_motor1.smartCurrentLimit(ClimberConstants.kMaxCurrent);
-    m_config_motor1.closedLoopRampRate(ClimberConstants.kElevatorRampRate);
+    m_config_motor1.closedLoopRampRate(ClimberConstants.kClimberRampRate);
 
     // Apply config
     m_motor1.configure(m_config_motor1, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
@@ -91,8 +91,8 @@ public class ClimberSubsystem extends SubsystemBase
   public void reachGoal(double goal)
   {
     m_desiredHeight = MathUtil.clamp(goal,
-        ClimberConstants.kMinRealElevatorHeightMeters,
-        ClimberConstants.kMaxRealElevatorHeightMeters);
+        ClimberConstants.kMinRealClimberHeightMeters,
+        ClimberConstants.kMaxRealClimberHeightMeters);
       m_controller.setReference(m_desiredHeight,
                               ControlType.kPosition,
                               ClosedLoopSlot.kSlot0,
@@ -149,7 +149,7 @@ public class ClimberSubsystem extends SubsystemBase
 
   public void HoverClimber()
   {
-    m_motor1.setVoltage(ClimberConstants.kElevatorkG);
+    m_motor1.setVoltage(ClimberConstants.kClimberkG);
   }
 
   public void ManualClimberDown()
@@ -175,10 +175,10 @@ public class ClimberSubsystem extends SubsystemBase
     boolean reset = false;
     if (Math.abs(m_encoder.getVelocity()) < 0.01 && m_motor1.getOutputCurrent() > ClimberConstants.kResetCurrent) {
       if (m_motor1.getAppliedOutput() > 0) {
-        m_encoder.setPosition(ClimberConstants.kMaxRealElevatorHeightMeters);
+        m_encoder.setPosition(ClimberConstants.kMaxRealClimberHeightMeters);
       }
       else {
-        m_encoder.setPosition(ClimberConstants.kMinRealElevatorHeightMeters);
+        m_encoder.setPosition(ClimberConstants.kMinRealClimberHeightMeters);
       }
       m_motor1.set(0);
       reset = true;
