@@ -32,8 +32,7 @@ public final class Constants {
     public static final int kfeedermotorlimitcurrent = 80;
     public static final double kfeederrampratesec = 0;
     public static final double rollerSpeed = 0.5;
-    public static final double kickerSpeed1 = 0.5;
-    public static final double kickerSpeed2 = -0.5;
+    public static final double kickerSpeed = -0.5;
   }
 
   public static class OuttakeConstants {
@@ -232,6 +231,5 @@ public final class Constants {
     public static final double kextendedPostion = 0;
     public static final double kjointDegreeOffset = 0;
     public static final double krollerSpeed = 0.5;
-    public static double kintakeSpeed;
   }
 }
