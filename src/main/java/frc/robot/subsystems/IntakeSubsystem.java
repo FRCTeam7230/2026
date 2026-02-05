@@ -34,16 +34,16 @@ public class IntakeSubsystem extends SubsystemBase
   
   private double desiredAngle;
   
-  DoublePublisher jointEncoder_publisher = NetworkTableInstance.getDefault().getDoubleTopic("Algae/jointEncoderValue").publish();
-  DoublePublisher targetPosition_publisher = NetworkTableInstance.getDefault().getDoubleTopic("Algae/jointTarget").publish();
+  DoublePublisher jointEncoder_publisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/jointEncoderValue").publish();
+  DoublePublisher targetPosition_publisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/jointTarget").publish();
   
 
   ArmFeedforward m_feedforward =
       new ArmFeedforward(
-        Constants.IntakeConstants.kjointkS,
+        0,
         Constants.IntakeConstants.kjointkG,
-        Constants.IntakeConstants.kjointkV,
-        Constants.IntakeConstants.kjointkA);
+        0,
+        0);
 
 
    public IntakeSubsystem(){
@@ -76,9 +76,11 @@ public class IntakeSubsystem extends SubsystemBase
         desiredAngle = 0;
     }
 
+    /* //dont need anymore
     public double getEncoderDegrees() {
-      return m_jointEncoder.getPosition() + Constants.IntakeConstants.kjointDegreeOffset;
+      return m_jointEncoder.getPosition();
     }
+      */
     
     public void spinRoller(double percentage) {
       m_roller.set(percentage);
@@ -87,13 +89,21 @@ public class IntakeSubsystem extends SubsystemBase
       m_roller.set(0);
     }
 
+    //for testing
+    public void spinJoint(double percentage) {
+      m_joint.set(percentage);
+    }
+    public void hoverJoint() {
+      m_controller.setSetpoint(m_feedforward.calculate(Math.toRadians(m_jointEncoder.getPosition()), Math.toRadians(m_jointEncoder.getVelocity())), ControlType.kVoltage, ClosedLoopSlot.kSlot0);
+    }
+
     public void reachGoal(double goal) {
       desiredAngle = goal;
       m_controller.setSetpoint(
         goal,
         ControlType.kPosition,
         ClosedLoopSlot.kSlot0,
-        m_feedforward.calculate(Math.toRadians(getEncoderDegrees()), Math.toRadians(m_jointEncoder.getVelocity()))
+        m_feedforward.calculate(Math.toRadians(m_jointEncoder.getPosition()), Math.toRadians(m_jointEncoder.getVelocity()))
         );
     }
 
@@ -103,7 +113,7 @@ public class IntakeSubsystem extends SubsystemBase
 
   
     public void periodic(){
-      jointEncoder_publisher.set(getEncoderDegrees());
+      jointEncoder_publisher.set(m_jointEncoder.getPosition());
       targetPosition_publisher.set(desiredAngle);
 
     }

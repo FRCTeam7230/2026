@@ -174,21 +174,18 @@ public final class Constants {
 
   public static class IntakeConstants{
 
-    public static final int kJointCANID = 0;
-    public static final int kRollerCANID = 0;
-    public static final double kjointkS = 0;
-    public static final double kjointkG = 0;
-    public static final double kjointkV = 0;
-    public static final double kjointkA = 0;
-    public static final double kjointKp = 0;
+    public static final int kJointCANID = 0; //need to update
+    public static final int kRollerCANID = 0; //need to update
+    public static final double kjointkG = 0; //need to update
+    public static final double kjointKp = 0; //need to update
     public static final double kjointKi = 0;
     public static final double kjointKd = 0;
-    public static final double koutputMin = 0;
-    public static final double koutputMax = 0;
-    public static final double kallowedError = 0;
-    public static final int kMaxCurrent = 0;
-    public static final double kretractedPostion = 0;
-    public static final double kextendedPostion = 0;
-    public static final double kjointDegreeOffset = 0;
+    public static final double koutputMin = -0.3;
+    public static final double koutputMax = 0.3;
+    public static final double kallowedError = 1; //deg
+    public static final int kMaxCurrent = 20; //amps
+    public static final double kretractedPostion = 0; //need to update
+    public static final double kextendedPostion = 0; //need to update
+
   }
 }
