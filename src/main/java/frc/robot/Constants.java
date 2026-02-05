@@ -66,6 +66,10 @@ public final class Constants {
   }
 
 
+  public static class LimelightConstants {
+    public static final double maxVisionDistanceMeters = 4.0; // maximum distance to accept vision measurements
+  }
+
   public static class ControllerConstants{
     //Button configurations for the XBox controller
     public static final int kButton1 = 1; //A
@@ -228,5 +232,6 @@ public final class Constants {
     public static final double kextendedPostion = 0;
     public static final double kjointDegreeOffset = 0;
     public static final double krollerSpeed = 0.5;
+    public static double kintakeSpeed;
   }
 }

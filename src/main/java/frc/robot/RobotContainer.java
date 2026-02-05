@@ -152,6 +152,34 @@ public class RobotContainer {
           ));
 
 
+
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.SPIN_INTAKE)
+      .whileTrue(Commands.sequence(
+              new InstantCommand(() -> m_IntakeSubsystem.spinRoller(Constants.IntakeConstants.kintakeSpeed)),
+              new InstantCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed)),
+              new InstantCommand(() -> m_IntakeSubsystem.jointreachGoal(Constants.IntakeConstants.kextendedPostion))
+          ).finallyDo(
+            () -> {
+              m_IntakeSubsystem.stop();
+              m_FeederSubsystem.setRollerSpeed(0);
+            }
+          ));
+
+
+
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.SPIN_INTAKE)
+      .whileTrue(Commands.sequence(
+              new InstantCommand(() -> m_IntakeSubsystem.spinRoller(Constants.IntakeConstants.kintakeSpeed)),
+              new InstantCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed)),
+              new InstantCommand(() -> m_IntakeSubsystem.jointreachGoal(Constants.IntakeConstants.kextendedPostion))
+          ).finallyDo(
+            () -> {
+              m_IntakeSubsystem.stop();
+              m_FeederSubsystem.setRollerSpeed(0);
+            }
+          ));
+
+
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
       .whileTrue(new InstantCommand( ()->{
         if (intakeIsUp) {
