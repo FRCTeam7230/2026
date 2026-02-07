@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -157,10 +158,17 @@ public class DriveSubsystem extends SubsystemBase {
     // Set up custom logging to add the current path to a field 2d widget
     PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
     SmartDashboard.putData("Field", field);
+    SmartDashboard.putNumber("Experiment Speed", experimentSpeed);
   }
-
+ double experimentSpeed = 0;
+ public Command driveExperiment() {
+    return
+            new RunCommand(
+                () -> {drive(experimentSpeed, 0.0, 0.0, false);}).withTimeout(2.0);
+  }
   @Override
   public void periodic() {
+    
     if(!allianceInitialized) {
       var alliance = DriverStation.getAlliance();
       if (alliance.isPresent()) {
@@ -288,7 +296,7 @@ public void updateDistanceOdometry() {
     SlewRateLimiter limiter = new SlewRateLimiter(WHEEL_RADIUS_RAMP_RATE);
     WheelRadiusCharacterizationState state = new WheelRadiusCharacterizationState();
 
-    return Commands.parallel(
+    Command c = Commands.parallel(
       Commands.sequence(
         Commands.runOnce(
           () -> {
@@ -318,28 +326,33 @@ public void updateDistanceOdometry() {
             state.gyroDelta += Math.abs(rotation.minus(state.lastAngle).getRadians());
             state.lastAngle = rotation;
 
-            System.out.println("Gyro Delta: " + Units.radiansToDegrees(state.gyroDelta));
-            System.out.println("Rotation: " + rotation.getDegrees());
+            SmartDashboard.putNumber("Gyro Delta", Units.radiansToDegrees(state.gyroDelta));
+            SmartDashboard.putNumber("Rotation:", rotation.getDegrees());
+
+            double[] position = getPositions();
+            double wheelDelta = 0.0;
+
+            for (int i = 0; i < 4; i++){
+              wheelDelta += Math.abs(position[i] - state.positions[i]) / 4.0;
+            }
+
+            double wheelRadius = (state.gyroDelta * driveBaseRadius) / wheelDelta;
+
+            SmartDashboard.putNumber("WHEEL DELTA:", wheelDelta);
+            SmartDashboard.putString("GYRO DELTA:", state.gyroDelta + " radians, " + Units.radiansToDegrees(state.gyroDelta));
+            SmartDashboard.putString("WHEEL RADIUS: ", wheelRadius + " meters, ");
+            SmartDashboard.putString("WHEEL RADIUS(in): ", Units.metersToInches(wheelRadius) + " inches");
           })
 
           .finallyDo(
             () -> {
-              double[] position = getPositions();
-              double wheelDelta = 0.0;
-
-              for (int i = 0; i < 4; i++){
-                wheelDelta += Math.abs(position[i] - state.positions[i]) / 4.0;
-              }
-
-              double wheelRadius = (state.gyroDelta * driveBaseRadius) / wheelDelta;
-
-              System.out.println("WHEEL DELTA: " + wheelDelta + " radians");
-              System.out.println("GYRO DELTA: " + state.gyroDelta + " radians, " + Units.radiansToDegrees(state.gyroDelta));
-              System.out.println("WHEEL RADIUS: " + wheelRadius + " meters, " + Units.metersToInches(wheelRadius) + " inches");
+              
             }
           )
       )
     );
+    c.addRequirements(this);
+    return c;
   }
 
   private static class WheelRadiusCharacterizationState {
@@ -572,4 +585,5 @@ public void updateDistanceOdometry() {
     SwerveModuleState[] targetStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(targetSpeeds);
     setModuleStates(targetStates);
   }
+  
 }
