@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import javax.naming.spi.StateFactory;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -65,7 +63,8 @@ public final class Constants {
 
     // Xbox controller mappings
     /** A button */
-    public static final int TEST_INTAKE_JOINT = kButton1;
+    public static final int TEST_INTAKE_JOINT_UP = pov0;
+    public static final int TEST_INTAKE_JOINT_DOWN = pov180;
     /** B button */
     public static final int ROBOT_RELATIVE = kButton2;
     /** X button */
@@ -84,10 +83,10 @@ public final class Constants {
     /** Right trigger, axis 3 */
     public static final int SPIN_INTAKE = rightTrigger;
     
-    public static final int TEST_INTAKE_ROLLERS = pov0;
     public static final int POV_RIGHT = pov90;
+    public static final int TEST_INTAKE_ROLLERS = POV_RIGHT;
     public static final int POV_DOWN = pov180;
-    public static final int TEST_INTAKE_HOVER = pov270;
+    public static final int TEST_INTAKE_HOVER = kButton1;
     // XBox movement mappings
     public static final int MOVE_XAXIS = leftStick_XAXIS;
     public static final int MOVE_YAXIS = leftStick_YAXIS;

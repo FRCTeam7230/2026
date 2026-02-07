@@ -136,10 +136,16 @@ public class RobotContainer {
       }));
 
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_ROLLERS)
-      .whileTrue(new InstantCommand( ()-> m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed)));
+      .whileTrue(new StartEndCommand( ()-> m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed)
+        , ()-> m_intake.spinRoller(0), m_intake));
 
-    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT)
-      .whileTrue(new InstantCommand( ()-> m_intake.spinJoint(Constants.IntakeConstants.kintakeJointSpeed)));
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_UP)
+      .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(Constants.IntakeConstants.kintakeJointSpeed)
+        , ()-> m_intake.spinJoint(0), m_intake));
+
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_DOWN)
+      .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(-Constants.IntakeConstants.kintakeJointSpeed)
+        , ()-> m_intake.spinJoint(0), m_intake));
 
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_HOVER)
       .whileTrue(new StartEndCommand(
