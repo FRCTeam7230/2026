@@ -14,11 +14,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.*;
-//import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.utils.ButtonMappings;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,22 +24,23 @@ import frc.robot.commands.AutoShooterCommand;
 //import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.utils.ButtonMappings;
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
  * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
  */
+import frc.robot.utils.ButtonMappings;
 public class RobotContainer {
 
   // The robot's subsystems
   DriveSubsystem m_robotDrive;
-  IntakeSubsystem m_intake;
   private Boolean fieldRelative = true;
   private ShooterSubsystem m_ShooterSubsystem;
   private FeederSubsystem m_FeederSubsystem;
+  private IntakeSubsystem m_IntakeSubsystem;
   public boolean intakeIsUp = true;
 
   // XBox controller.
@@ -100,10 +96,6 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS)), OIConstants.kDriveDeadband), //Z
                 fieldRelative),
         m_robotDrive));
-    
-    Command extendIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kextendedPostion);
-
-    Command retractIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kretractedPostion);
   }
 
   /**
@@ -137,7 +129,7 @@ public class RobotContainer {
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.SHOOT_HUB)
       .whileTrue(Commands.sequence(
               new AutoShooterCommand(m_ShooterSubsystem, Constants.OuttakeConstants.shootSpeed),
-              new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed2)),
+              new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
               new InstantCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
           ).finallyDo(
             () -> {
@@ -146,18 +138,34 @@ public class RobotContainer {
               m_FeederSubsystem.setRollerSpeed(0);
             }
           ));
+          
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.SPIN_INTAKE)
+      .whileTrue(Commands.sequence(
+              new InstantCommand(() -> m_IntakeSubsystem.spinRoller(Constants.IntakeConstants.krollerSpeed)),
+              new InstantCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed)),
+              new InstantCommand(() -> m_IntakeSubsystem.jointreachGoal(Constants.IntakeConstants.kextendedPostion))
+          ).finallyDo(
+            () -> {
+              m_IntakeSubsystem.stop();
+              m_FeederSubsystem.setRollerSpeed(0);
+            }
+          ));
+
+
+
 
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
       .whileTrue(new InstantCommand( ()->{
         if (intakeIsUp) {
-          m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);
+          m_IntakeSubsystem.jointreachGoal(Constants.IntakeConstants.kextendedPostion);
         }
         else {
-          m_intake.reachGoal(Constants.IntakeConstants.kretractedPostion);
+          m_IntakeSubsystem.jointreachGoal(Constants.IntakeConstants.kretractedPostion);
         }
         intakeIsUp = !intakeIsUp;
       }));
   }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

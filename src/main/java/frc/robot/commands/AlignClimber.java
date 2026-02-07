@@ -14,6 +14,7 @@ import frc.robot.subsystems.LimelightHelpers;
 public class AlignClimber extends Command {
   PIDController xPIDController = new PIDController(Constants.AlignClimberConstants.kxkp, 0, 0);
   PIDController zPIDController = new PIDController(Constants.AlignClimberConstants.kzkp, 0, 0);
+  PIDController yawPIDController = new PIDController(Constants.AlignClimberConstants.kyawkp, 0, 0);
   DriveSubsystem driveSubsystem;
   /** Creates a new AlignClimber. */
   public AlignClimber(DriveSubsystem drive) {
@@ -28,8 +29,10 @@ public class AlignClimber extends Command {
     //Sets locations where robot should be to align with climber
     xPIDController.setSetpoint(Constants.AlignClimberConstants.kxSetpoint);
     zPIDController.setSetpoint(Constants.AlignClimberConstants.kzSetpoint);
+    yawPIDController.setSetpoint(Constants.AlignClimberConstants.kyawSetpoint);
     xPIDController.setTolerance(Constants.AlignClimberConstants.kxTolerance);
     zPIDController.setTolerance(Constants.AlignClimberConstants.kzTolerance);
+    yawPIDController.setTolerance(Constants.AlignClimberConstants.kyawTolerance);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,9 +42,11 @@ public class AlignClimber extends Command {
         double[] ErrorfromApTag = LimelightHelpers.getCameraPose_TargetSpace("idk");
     double tx = ErrorfromApTag[0];
     double tz = ErrorfromApTag[2];
+    double tyaw = ErrorfromApTag[4];
     double txcalculation = xPIDController.calculate(tx);
     double tzcalculation = zPIDController.calculate(tz);
-    driveSubsystem.driveTagRelative(tzcalculation,txcalculation, -0,-0);
+    double tyawcalculation = yawPIDController.calculate(tyaw);
+    driveSubsystem.driveTagRelative(tzcalculation,txcalculation, -0,tyawcalculation);
   }
 
   // Called once the command ends or is interrupted.
@@ -52,7 +57,7 @@ public class AlignClimber extends Command {
   @Override
   public boolean isFinished() {
     //Ends command when at setpoints
-    if (xPIDController.atSetpoint() && zPIDController.atSetpoint()){
+    if (xPIDController.atSetpoint() && zPIDController.atSetpoint() && yawPIDController.atSetpoint()){
       return true;
     }
     else {

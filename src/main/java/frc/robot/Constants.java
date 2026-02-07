@@ -32,8 +32,7 @@ public final class Constants {
     public static final int kfeedermotorlimitcurrent = 80;
     public static final double kfeederrampratesec = 0;
     public static final double rollerSpeed = 0.5;
-    public static final double kickerSpeed1 = 0.5;
-    public static final double kickerSpeed2 = -0.5;
+    public static final double kickerSpeed = -0.5;
   }
 
   public static class OuttakeConstants {
@@ -56,12 +55,19 @@ public final class Constants {
   public static final class AlignClimberConstants {
     public static final double kxkp = 0.67;
     public static final double kzkp = 0.67;
+    public static final double kyawkp = 0.01;
     public static final double kxSetpoint = 0.67;
     public static final double kzSetpoint = 0.67;
+    public static final double kyawSetpoint = 0;
     public static final double kxTolerance = 0.1;
     public static final double kzTolerance = 0.1;
+    public static final double kyawTolerance = 0.1;
   }
 
+
+  public static class LimelightConstants {
+    public static final double maxVisionDistanceMeters = 4.0; // maximum distance to accept vision measurements
+  }
 
   public static class ControllerConstants{
     //Button configurations for the XBox controller
@@ -224,5 +230,6 @@ public final class Constants {
     public static final double kretractedPostion = 0;
     public static final double kextendedPostion = 0;
     public static final double kjointDegreeOffset = 0;
+    public static final double krollerSpeed = 0.5;
   }
 }

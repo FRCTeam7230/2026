@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -113,6 +114,8 @@ public class DriveSubsystem extends SubsystemBase {
     double rotI = 0.0;
     double rotD = 0.0;
 
+    
+
     autoDriveController = new PPHolonomicDriveControllerCustom(
       new PIDConstants(5.0, 0.0, 0.0),
       new PIDConstants(rotP, rotI, rotD)
@@ -167,7 +170,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   // Update the odometry in the periodic block
-public void updateOdometry() {
+public void updateAllianceOdometry() {
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
         if (ally.get() == Alliance.Red) {
@@ -210,7 +213,48 @@ public void updateOdometry() {
             mt2.pose,
             mt2.timestampSeconds);
       }
-  
+
+    }
+
+public void updateDistanceOdometry() {
+      currentPose = m_odometry.update(
+        Rotation2d.fromDegrees(getFieldAngle()),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        });
+    boolean doRejectUpdate = false;
+
+      LimelightHelpers.SetRobotOrientation("limelight", m_odometry.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+      LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+      ArrayList<Integer> validIDList = new ArrayList<Integer>();
+      for (LimelightHelpers.RawFiducial distanceFiducial:mt2.rawFiducials) {
+        if (distanceFiducial.distToRobot < Constants.LimelightConstants.maxVisionDistanceMeters) {
+          validIDList.add(distanceFiducial.id);
+        }
+      }
+      int[] validIds = validIDList.stream().mapToInt(i->i).toArray();
+      LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIds);
+      mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+
+      if(Math.abs(m_gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+      {
+        doRejectUpdate = true;
+      }
+      if(mt2.tagCount == 0)
+      {
+        doRejectUpdate = true;
+      }
+      if(!doRejectUpdate)
+      {
+        m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+        m_odometry.addVisionMeasurement(
+            mt2.pose,
+            mt2.timestampSeconds);
+      }
+
 
     double[] gyroData = {(double) m_gyro.getYaw(), 
       m_gyro.getAngle(), (double) m_gyro.getRoll(), 
