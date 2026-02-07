@@ -48,9 +48,11 @@ public class RobotContainer {
   // The robot's subsystems
   DriveSubsystem m_robotDrive;
   private Boolean fieldRelative = true;
+  /*
   private ShooterSubsystem m_ShooterSubsystem;
   private FeederSubsystem m_FeederSubsystem;
   private IntakeSubsystem m_IntakeSubsystem;
+  */
   public boolean intakeIsUp = true;
 
   // XBox controller.
@@ -67,10 +69,10 @@ public class RobotContainer {
   private double experimentSpeed = 0;
    
   public RobotContainer() {
-    
+    /*
     m_ShooterSubsystem = new ShooterSubsystem();
     m_FeederSubsystem = new FeederSubsystem();
-    
+    */
     //Set up Subsystems
     if (RobotBase.isReal()) {
       m_robotDrive = new DriveSubsystem();
@@ -137,7 +139,8 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
               new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
               new InstantCommand(() -> mode_publisher.set(fieldRelative))
           ));
-    
+    //NEW SUBSYSTEM CONTROLS
+    /*
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.SHOOT_HUB)
       .whileTrue(Commands.sequence(
               new AutoShooterCommand(m_ShooterSubsystem, Constants.OuttakeConstants.shootSpeed),
@@ -201,6 +204,9 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
         }
         intakeIsUp = !intakeIsUp;
       }));
+      */
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_HUB)
+    .whileTrue(new AlignToHub(m_robotDrive));
   }
 
 

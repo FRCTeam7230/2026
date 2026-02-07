@@ -21,7 +21,6 @@ public class AlignToHub extends Command {
   PIDController yController = new PIDController(1, 0, 0);
   PIDController rotController = new PIDController(0.03, 0, 0);
 
-  Command drivecommand = null;
   public AlignToHub(DriveSubsystem drive) {
     m_drive = drive;
     xController.setSetpoint(0);
@@ -38,6 +37,8 @@ public class AlignToHub extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    m_drive.updateAllianceOdometry();
+    /*
     Pose2d currentPose = m_drive.getPose();
     double[] errors = CalculateHubPID(currentPose);
     double xSpeed = xController.calculate(errors[0]);
@@ -45,7 +46,7 @@ public class AlignToHub extends Command {
     double rotSpeed = Math.max(Math.min(rotController.calculate(errors[2]),1.5), -1.5);
     SmartDashboard.putNumber("Rotation delivered", rotSpeed);
     m_drive.drive(-xSpeed, -ySpeed, -rotSpeed,true);
-
+    */
   }
 
   // Called once the command ends or is interrupted.
@@ -53,7 +54,6 @@ public class AlignToHub extends Command {
   public void end(boolean interrupted) 
   {
     m_drive.setX();
-    drivecommand.end(interrupted);
   }
 
   // Returns true when the command should end.
