@@ -1,33 +1,24 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.PersistMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.FeedbackSensor;
-import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
 import frc.robot.Constants.ClimberConstants;
 
 public class ClimberSubsystem extends SubsystemBase 
@@ -75,7 +66,7 @@ public class ClimberSubsystem extends SubsystemBase
 
   public void motorStop()
   {
-    m_motor1.set(0);
+    stop();
   }
 
   public void resetEncoder()
@@ -93,10 +84,10 @@ public class ClimberSubsystem extends SubsystemBase
     m_desiredHeight = MathUtil.clamp(goal,
         ClimberConstants.kMinRealClimberHeightMeters,
         ClimberConstants.kMaxRealClimberHeightMeters);
-      m_controller.setReference(m_desiredHeight,
-                              ControlType.kPosition,
-                              ClosedLoopSlot.kSlot0,
-                              m_feedforward.calculate(m_encoder.getVelocity()));
+    m_controller.setSetpoint(m_desiredHeight,
+        ControlType.kPosition,
+        ClosedLoopSlot.kSlot0,
+        m_feedforward.calculate(m_encoder.getVelocity()));
   }
 
   /**
@@ -107,6 +98,33 @@ public class ClimberSubsystem extends SubsystemBase
   public double getHeight()
   {
     return m_encoder.getPosition();
+  }
+
+  // Soft limit buffer
+  private static final double kLimitBufferMeters = 0.01;
+
+  private boolean atLowerLimit() {
+    return getHeight() <= (ClimberConstants.kMinRealClimberHeightMeters + kLimitBufferMeters);
+  }
+
+  private boolean atUpperLimit() {
+    return getHeight() >= (ClimberConstants.kMaxRealClimberHeightMeters - kLimitBufferMeters);
+  }
+
+  /**
+  * Apply manual motor output but stop if we would drive past soft limits.
+  * @param percent [-1, 1]
+  */
+  private void setManualOutputSafe(double percent) {
+    if (percent > 0 && atUpperLimit()) {
+      m_motor1.set(0);
+      return;
+    }
+    if (percent < 0 && atLowerLimit()) {
+      m_motor1.set(0);
+      return;
+    }
+    m_motor1.set(percent);
   }
 
   /**
@@ -144,17 +162,21 @@ public class ClimberSubsystem extends SubsystemBase
 
   public void ManualClimberUp()
   {
-    m_motor1.set(0.2);
+    setManualOutputSafe(0.2);
   }
 
   public void HoverClimber()
   {
+    if (atUpperLimit()) {
+      m_motor1.set(0);
+      return;
+    }
     m_motor1.setVoltage(ClimberConstants.kClimberkG);
   }
 
   public void ManualClimberDown()
   {
-    m_motor1.set(-0.15);
+    setManualOutputSafe(-0.15);
   }
 
   //Update telemetry
@@ -186,5 +208,10 @@ public class ClimberSubsystem extends SubsystemBase
 
     SmartDashboard.putNumber("Climber Position (Meters)", m_encoder.getPosition());
     climReset_publisher.set(reset);
+
+    if ((atUpperLimit() && m_motor1.getAppliedOutput() > 0) ||
+    (atLowerLimit() && m_motor1.getAppliedOutput() < 0)) {
+      m_motor1.set(0);
+    }
   }
 }

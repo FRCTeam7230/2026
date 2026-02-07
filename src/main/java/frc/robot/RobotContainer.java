@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.*;
-//import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.ButtonMappings;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,11 +18,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
-
 import edu.wpi.first.net.PortForwarder;
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -33,6 +31,7 @@ import edu.wpi.first.net.PortForwarder;
 public class RobotContainer {
 
   // The robot's subsystems
+  ClimberSubsystem m_Climber;
   DriveSubsystem m_robotDrive;
   private Boolean fieldRelative = true;
 
@@ -41,6 +40,10 @@ public class RobotContainer {
   BooleanPublisher mode_publisher = NetworkTableInstance.getDefault().getBooleanTopic("Is Field Relative").publish();
 
   private final SendableChooser<Command> autoChooser;
+
+  //Climber set
+  private boolean m_climberToggleUp = true;
+  private Command m_climberToggleCommand = null;
 
   /**
    * 
@@ -53,6 +56,7 @@ public class RobotContainer {
     //Set up Subsystems
     if (RobotBase.isReal()) {
       m_robotDrive = new DriveSubsystem();
+      m_Climber = new ClimberSubsystem();
     }
     for(int port = 5800; port<=5809; port++)
     {
@@ -63,6 +67,7 @@ public class RobotContainer {
     // Zero/Reset sensors
     m_robotDrive.zeroHeading();
     m_robotDrive.addAngleGyro(180);
+    m_Climber.resetEncoder();
     
     // Configure the button bindings
     configureButtonBindings();
@@ -115,6 +120,47 @@ public class RobotContainer {
               new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
               new InstantCommand(() -> mode_publisher.set(fieldRelative))
           ));
+
+    //Climber Controls
+    //Climb UP
+    ButtonMappings.button(m_driverController, 5)
+      .whileTrue(Commands.startEnd(
+          () -> m_Climber.ManualClimberUp(),
+          () -> m_Climber.stop(),
+          m_Climber));
+
+    //Climb Dowm
+    ButtonMappings.button(m_driverController, 6)
+      .whileTrue(Commands.startEnd(
+          () -> m_Climber.ManualClimberDown(),
+          () -> m_Climber.stop(),
+          m_Climber));
+
+    //Climb Up and Down
+    ButtonMappings.button(m_driverController, 4)
+      .onTrue(new InstantCommand(() -> {
+        // cancel previous toggle command if running
+        if (m_climberToggleCommand != null) {
+          m_climberToggleCommand.cancel();
+        }
+
+        // build next toggle command
+        if (m_climberToggleUp) {
+          m_climberToggleCommand = Commands.runEnd(
+              () -> m_Climber.ManualClimberUp(),
+              () -> m_Climber.stop(),
+              m_Climber);
+        } else {
+          m_climberToggleCommand = Commands.runEnd(
+              () -> m_Climber.ManualClimberDown(),
+              () -> m_Climber.stop(),
+              m_Climber);
+        }
+
+        // schedule it and flip direction for next press
+        m_climberToggleCommand.schedule();
+        m_climberToggleUp = !m_climberToggleUp;
+      }, m_Climber));
   }
 
   /**
