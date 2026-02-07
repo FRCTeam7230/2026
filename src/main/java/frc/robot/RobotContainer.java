@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -133,6 +134,18 @@ public class RobotContainer {
         }
         intakeIsUp = !intakeIsUp;
       }));
+
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_ROLLERS)
+      .whileTrue(new InstantCommand( ()-> m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed)));
+
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT)
+      .whileTrue(new InstantCommand( ()-> m_intake.spinJoint(Constants.IntakeConstants.kintakeJointSpeed)));
+
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_HOVER)
+      .whileTrue(new StartEndCommand(
+        ()-> m_intake.hoverJoint(),
+        ()-> m_intake.spinJoint(0), m_intake
+      ));
   }
 
   /**

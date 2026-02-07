@@ -65,7 +65,7 @@ public final class Constants {
 
     // Xbox controller mappings
     /** A button */
-    public static final int TOGGLE_INTAKE = kButton1;
+    public static final int TEST_INTAKE_JOINT = kButton1;
     /** B button */
     public static final int ROBOT_RELATIVE = kButton2;
     /** X button */
@@ -80,10 +80,14 @@ public final class Constants {
     public static final int ZERO_HEADING_BUTTON = kButton8;
 
     /** Left trigger, axis 2 */
-    public static final int ALIGN_TRENCH = leftTrigger;
+    public static final int TOGGLE_INTAKE = leftTrigger;
     /** Right trigger, axis 3 */
     public static final int SPIN_INTAKE = rightTrigger;
     
+    public static final int TEST_INTAKE_ROLLERS = pov0;
+    public static final int POV_RIGHT = pov90;
+    public static final int POV_DOWN = pov180;
+    public static final int TEST_INTAKE_HOVER = pov270;
     // XBox movement mappings
     public static final int MOVE_XAXIS = leftStick_XAXIS;
     public static final int MOVE_YAXIS = leftStick_YAXIS;
@@ -186,6 +190,8 @@ public final class Constants {
     public static final int kMaxCurrent = 20; //amps
     public static final double kretractedPostion = 0; //need to update
     public static final double kextendedPostion = 0; //need to update
+    public static final double kintakeRollerSpeed = 0.5; //need to update
+    public static final double kintakeJointSpeed = 0.5; //need to update
 
   }
 }
