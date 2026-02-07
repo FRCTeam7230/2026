@@ -74,6 +74,12 @@ public class ShooterSubsystem extends SubsystemBase {
     m_outtakecontroller1.setSetpoint(Velocity, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
     m_outtakecontroller2.setSetpoint(Velocity, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
     m_outtakecontroller3.setSetpoint(Velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+  }
+
+  public void reachTestSpeed(double testVelocity) {
+    outtakemotor1.set(testVelocity);
+    outtakemotor2.set(testVelocity);
+    outtakemotor3.set(testVelocity);
     
     
   }

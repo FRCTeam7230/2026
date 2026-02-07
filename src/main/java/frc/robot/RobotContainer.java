@@ -151,6 +151,10 @@ public class RobotContainer {
             }
           ));
 
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.POV_UP)
+      .whileTrue(new InstantCommand(
+      ()-> m_ShooterSubsystem.reachTestSpeed(Constants.OuttakeConstants.testShootSpeed), m_ShooterSubsystem
+    ));
 
 
 
