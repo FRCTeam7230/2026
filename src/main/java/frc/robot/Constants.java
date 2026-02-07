@@ -51,7 +51,7 @@ public final class Constants {
     public static final double kElevMaxHeight = 1.575;
     public static final double ShooterTolerance = 0.2;
     public static final double shootSpeed = 3000; 
-    public static final double testShootSpeed = 3000;
+    public static final double testShootSpeed = 0.5;
   }
   public static final class AlignClimberConstants {
     public static final double kxkp = 0.67;
@@ -124,9 +124,13 @@ public final class Constants {
     /** Right trigger, axis 3 */
     public static final int SPIN_INTAKE = rightTrigger;
 
-    public static final int POV_UP = pov0;
+    public static final int FEEDER_ROLLERS_ON = pov0;
 
-    public static final int POV_DOWN = pov180;
+    public static final int FEEDER_KICKER = pov90;
+
+    public static final int FEEDER_ROLLERS_OFF = pov180;
+
+    public static final int SHOOT_WHILE_ALIGN = pov270;
     
     
     // XBox movement mappings

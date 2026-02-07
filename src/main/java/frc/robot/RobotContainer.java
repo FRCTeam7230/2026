@@ -12,6 +12,7 @@ import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -152,12 +153,27 @@ public class RobotContainer {
             }
           ));
 
-    ButtonMappings.button(m_driverController, Constants.ControllerConstants.POV_UP)
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.FEEDER_ROLLERS_ON)
+      .onTrue(new InstantCommand(
+      ()-> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed), m_FeederSubsystem
+      ));
+
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.FEEDER_ROLLERS_OFF)
+      .onTrue(new InstantCommand(
+      ()-> m_FeederSubsystem.setRollerSpeed(0), m_FeederSubsystem
+      ));
+
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.FEEDER_KICKER)
+      .onTrue(new InstantCommand(
+      ()-> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed), m_FeederSubsystem
+      ));
+
+    ButtonMappings.button(m_driverController,0)
       .whileTrue(new InstantCommand(
       ()-> m_ShooterSubsystem.reachTestSpeed(Constants.OuttakeConstants.testShootSpeed), m_ShooterSubsystem
     ));
 
-    ButtonMappings.button(m_driverController, Constants.ControllerConstants.POV_DOWN)
+    ButtonMappings.button(m_driverController, 0)
       .whileTrue(Commands.sequence(
         new InstantCommand(() -> m_ShooterSubsystem.reachSpeed(Constants.OuttakeConstants.shootSpeed)),
         new AlignToHub(m_robotDrive)
