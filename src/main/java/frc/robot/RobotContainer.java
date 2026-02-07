@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.AlignToHub;
 import frc.robot.commands.AutoShooterCommand;
 //import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
@@ -155,6 +156,12 @@ public class RobotContainer {
       .whileTrue(new InstantCommand(
       ()-> m_ShooterSubsystem.reachTestSpeed(Constants.OuttakeConstants.testShootSpeed), m_ShooterSubsystem
     ));
+
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.POV_DOWN)
+      .whileTrue(Commands.sequence(
+        new InstantCommand(() -> m_ShooterSubsystem.reachSpeed(Constants.OuttakeConstants.shootSpeed)),
+        new AlignToHub(m_robotDrive)
+      ));
 
 
 

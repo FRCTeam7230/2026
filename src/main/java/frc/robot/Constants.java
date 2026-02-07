@@ -125,6 +125,8 @@ public final class Constants {
     public static final int SPIN_INTAKE = rightTrigger;
 
     public static final int POV_UP = pov0;
+
+    public static final int POV_DOWN = pov180;
     
     
     // XBox movement mappings
