@@ -23,6 +23,7 @@ public class AlignToHub extends Command {
 
   public AlignToHub(DriveSubsystem drive) {
     m_drive = drive;
+    addRequirements(drive);
     xController.setSetpoint(0);
     yController.setSetpoint(0);
     rotController.setSetpoint(0);
@@ -38,15 +39,19 @@ public class AlignToHub extends Command {
   @Override
   public void execute() {
     m_drive.updateAllianceOdometry();
-    /*
+    
+    
     Pose2d currentPose = m_drive.getPose();
     double[] errors = CalculateHubPID(currentPose);
+    SmartDashboard.putNumberArray("AlignErrors",errors);
+    
     double xSpeed = xController.calculate(errors[0]);
     double ySpeed = yController.calculate(errors[1]);
-    double rotSpeed = Math.max(Math.min(rotController.calculate(errors[2]),1.5), -1.5);
+    double rotSpeed= Math.max(Math.min(rotController.calculate(errors[2]),1.5), -1.5);
     SmartDashboard.putNumber("Rotation delivered", rotSpeed);
     m_drive.drive(-xSpeed, -ySpeed, -rotSpeed,true);
-    */
+    
+
   }
 
   // Called once the command ends or is interrupted.
@@ -72,7 +77,7 @@ public class AlignToHub extends Command {
         double hubXBlue = 4.63;
         double hubXRed = 11.92;
         double hubX;
-        if (DriverStation.getAlliance() == Optional.of(DriverStation.Alliance.Blue)) {
+        if (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Blue))) {
             hubX = hubXBlue;
         }
         else {
