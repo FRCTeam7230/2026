@@ -242,4 +242,14 @@ public final class Constants {
     public static final double kjointDegreeOffset = 0;
     public static final double krollerSpeed = 0.5;
   }
+
+  public static class AlignToHubConstants {
+    public static final double kradius = 2.98;
+    public static final double khubY = 4.03; // meters
+    public static final double khubXBlue = 4.63;
+    public static final double khubXRed = 11.92;
+    public static final double kerrorXTolerance = 0.1;
+    public static final double kerrorYTolerance = 0.1;
+    public static final double kerrorAngleTolerance = 1;
+  }
 }
