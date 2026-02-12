@@ -494,6 +494,14 @@ public class DriveSubsystem extends SubsystemBase {
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
     m_gyro.reset();
+    m_odometry.resetPosition(m_gyro.getRotation2d(),
+    new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+    },
+    new Pose2d(m_odometry.getEstimatedPosition().getTranslation(), m_gyro.getRotation2d()));
   }
 
   public void addAngleGyro(double angle) {

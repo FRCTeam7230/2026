@@ -17,9 +17,9 @@ import frc.robot.subsystems.DriveSubsystem;
 public class AlignToHub extends Command {
   /** Creates a new AlignToHub. */
   DriveSubsystem m_drive;
-  PIDController xController = new PIDController(1, 0, 0);
-  PIDController yController = new PIDController(1, 0, 0);
-  PIDController rotController = new PIDController(0.03, 0, 0);
+  PIDController xController = new PIDController(0.5, 0, 0);
+  PIDController yController = new PIDController(0.5, 0, 0);
+  PIDController rotController = new PIDController(0.015, 0, 0);
 
   public AlignToHub(DriveSubsystem drive) {
     m_drive = drive;
@@ -27,6 +27,9 @@ public class AlignToHub extends Command {
     xController.setSetpoint(0);
     yController.setSetpoint(0);
     rotController.setSetpoint(0);
+    xController.setTolerance(0.1);
+    yController.setTolerance(0.1);
+    rotController.setTolerance(5);
     rotController.enableContinuousInput(-180, 180);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -64,7 +67,15 @@ public class AlignToHub extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if(xController.atSetpoint()&&yController.atSetpoint()&&rotController.atSetpoint())
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+
   }
     public double[] CalculateHubPID(Pose2d pose) {
         double robotX = pose.getX();
