@@ -117,7 +117,7 @@ public class AlignToHub extends Command {
     }
     else {errors[1] = errorY;}
     if (errorAngle < Constants.AlignToHubConstants.kerrorAngleTolerance) {
-      errors[2] = errorAngle;
+      errors[2] = 0;
     }
     else {errors[2] = errorAngle;}
        SmartDashboard.putNumber("AlignToHub/TargetAngle",targetAngle);
