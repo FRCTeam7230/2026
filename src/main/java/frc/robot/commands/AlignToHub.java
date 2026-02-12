@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -81,12 +82,14 @@ public class AlignToHub extends Command {
         double robotX = pose.getX();
 		    double robotY = pose.getY();
 
-
         double[] errors = new double[3];
-        double radius = 2.75;
-        double hubY = 4.03; // meters
-        double hubXBlue = 4.63;
-        double hubXRed = 11.92;
+        for (int i = 0; i < errors.length; i++) {
+          errors[i] = 0;
+        }
+        double radius = Constants.AlignToHubConstants.kradius;
+        double hubY = Constants.AlignToHubConstants.khubY; // meters
+        double hubXBlue = Constants.AlignToHubConstants.khubXBlue;
+        double hubXRed = Constants.AlignToHubConstants.khubXRed;
         double hubX;
         if (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Blue))) {
             hubX = hubXBlue;
@@ -95,24 +98,27 @@ public class AlignToHub extends Command {
             hubX = hubXRed;
         }
 
-
         double distanceX = hubX - robotX;
         double distanceY = hubY - robotY;
         double distance = Math.sqrt( Math.pow( distanceX, 2) + Math.pow( distanceY, 2) );
-
-
-       
-
 
         double errorX = distanceX * ( (distance - radius) / distance );
         double errorY = distanceY * ( (distance - radius) / distance );
         double targetAngle = Math.signum(distanceY) * Math.acos(distanceX / distance)*180/Math.PI;
         double errorAngle = targetAngle - pose.getRotation().getDegrees();
 
-
-		errors[0] = errorX;
-		errors[1] = errorY;
-		errors[2] = errorAngle;
+    if (errorX < Constants.AlignToHubConstants.kerrorXTolerance) {
+      errors[0] = 0;
+    }
+    else {errors[0] = errorX;}
+    if (errorY < Constants.AlignToHubConstants.kerrorYTolerance) {
+      errors[1] = 0;
+    }
+    else {errors[1] = errorY;}
+    if (errorAngle < Constants.AlignToHubConstants.kerrorAngleTolerance) {
+      errors[2] = errorAngle;
+    }
+    else {errors[2] = errorAngle;}
        SmartDashboard.putNumber("AlignToHub/TargetAngle",targetAngle);
 
         SmartDashboard.putNumber("AlignToHub/ErrorX", errors[0]);
