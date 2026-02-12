@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -28,9 +29,9 @@ public class AlignToHub extends Command {
     xController.setSetpoint(0);
     yController.setSetpoint(0);
     rotController.setSetpoint(0);
-    xController.setTolerance(0.1);
-    yController.setTolerance(0.1);
-    rotController.setTolerance(5);
+    xController.setTolerance(Constants.AlignToHubConstants.kerrorXTolerance);
+    yController.setTolerance(Constants.AlignToHubConstants.kerrorYTolerance);
+    rotController.setTolerance(Constants.AlignToHubConstants.kerrorAngleTolerance);
     rotController.enableContinuousInput(-180, 180);
     // Use addRequirements() here to declare subsystem dependencies.
   }
