@@ -64,6 +64,17 @@ public final class Constants {
     public static final double kzTolerance = 0.1;
     public static final double kyawTolerance = 0.1;
   }
+  public static final class AutoAlignToHubConstants {
+    public static final double kTargetX = 0.67;
+    public static final double kTargetZ = 0.67;
+    public static final double kTargetRotation = 0;
+    public static final double kxkp = 0.5;
+    public static final double kykp = 0.5;
+    public static final double krkp = 0.015;
+    public static final double kxTolerance = 0.1;
+    public static final double kyTolerance = 0.1;
+    public static final double krTolerance = 1;
+  }
 
 
   public static class LimelightConstants {
