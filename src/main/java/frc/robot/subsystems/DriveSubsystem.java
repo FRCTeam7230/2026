@@ -548,4 +548,8 @@ public class DriveSubsystem extends SubsystemBase {
     setModuleStates(targetStates);
   }
 
+  public double getRobotVelocityY() {
+    return (double) m_gyro.getVelocityY();
+  }
+
 }

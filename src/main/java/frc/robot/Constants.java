@@ -244,14 +244,13 @@ public final class Constants {
   }
 
   public static class AlignToHubConstants {
-    public static final double shooterOffset = .46; //meters
-    public static final double initialEjectionVelocityBeforeOffset = 7; //m/s
-    public static final double ejectionAngle = 68; //deg
+    public static final double kshooterOffset = .46; //meters
+    public static final double kinitialEjectionVelocityBeforeOffset = 7; //m/s
+    public static final double kejectionAngle = 68; //deg
+    public static final double kspeedMult = 0.5;
 
-    public static final double speedMult = 0.6;
-
-    //angle offset constants
-    public static final double x0 = shooterOffset;
+    //angle offset calc constants
+    public static final double x0 = kshooterOffset;
     public static final double vx0 = 0;
     public static final double ax = 0;
     public static final double z0 = 0;

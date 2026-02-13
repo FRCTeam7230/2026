@@ -120,15 +120,15 @@ public class AlignToHub extends Command {
       errors[2] = 0;
     }
     else {errors[2] = errorAngle;}
-       SmartDashboard.putNumber("AlignToHub/TargetAngle",targetAngle);
+    
+      SmartDashboard.putNumber("AlignToHub/TargetAngle",targetAngle);
+      SmartDashboard.putNumber("AlignToHub/ErrorX", errors[0]);
+      SmartDashboard.putNumber("AlignToHub/ErrorY", errors[1]);
+      SmartDashboard.putNumber("AlignToHub/ErrorAngle", errors[2]);
 
-        SmartDashboard.putNumber("AlignToHub/ErrorX", errors[0]);
-        SmartDashboard.putNumber("AlignToHub/ErrorY", errors[1]);
-        SmartDashboard.putNumber("AlignToHub/ErrorAngle", errors[2]);
-
-       SmartDashboard.putNumber("AlignToHub/RobotX", robotX);
-        SmartDashboard.putNumber("AlignToHub/RobotY", robotY);
-        SmartDashboard.putNumber("AlignToHub/RobotAngle", pose.getRotation().getDegrees());
-        return errors;
+      SmartDashboard.putNumber("AlignToHub/RobotX", robotX);
+      SmartDashboard.putNumber("AlignToHub/RobotY", robotY);
+      SmartDashboard.putNumber("AlignToHub/RobotAngle", pose.getRotation().getDegrees());
+      return errors;
     }
 }
