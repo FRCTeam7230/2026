@@ -40,7 +40,7 @@ public class AutoAlignToHub extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drive.updateAllianceOdometry();
+    m_drive.ApplyMegatagFilter();
     
     
     Pose2d currentPose = m_drive.getPose();
@@ -60,6 +60,7 @@ public class AutoAlignToHub extends Command {
   public void end(boolean interrupted) 
   {
     m_drive.setX();
+    m_drive.CancelMegatagFilter();
   }
 
   // Returns true when the command should end.

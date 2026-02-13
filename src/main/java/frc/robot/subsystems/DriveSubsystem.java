@@ -188,6 +188,7 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+    updateMegatag();
   }
   public void ApplyMegatagFilter()
   {
