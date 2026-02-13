@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -73,24 +74,25 @@ public class DriveSubsystem extends SubsystemBase {
   PIDController rotController;
   // Denominator is how long to get to max speed
   double rateTranslationLimit = Constants.DriveConstants.kMaxSpeedMetersPerSecond / 0.5;
-  double rotRateLimit = Constants.DriveConstants.kMaxAngularSpeed / 0.5; 
+  double rotRateLimit = Constants.DriveConstants.kMaxAngularSpeed / 0.5;
   SlewRateLimiter driveLimitX = new SlewRateLimiter(rateTranslationLimit);
-  SlewRateLimiter driveLimitY = new SlewRateLimiter(rateTranslationLimit);  
-  SlewRateLimiter driveLimitRot = new SlewRateLimiter(rotRateLimit);  
+  SlewRateLimiter driveLimitY = new SlewRateLimiter(rateTranslationLimit);
+  SlewRateLimiter driveLimitRot = new SlewRateLimiter(rotRateLimit);
 
   boolean allianceInitialized = false;
 
-  
-
   // The gyro sensor
   private final AHRS m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI, AHRS.NavXUpdateRate.k50Hz);
-  DoubleArrayPublisher gyro_publisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Yaw, Angle, Roll, Pitch").publish();
-  DoubleArrayPublisher error_publisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("ERRORS: X, Y, Rotation").publish();
+  DoubleArrayPublisher gyro_publisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Yaw, Angle, Roll, Pitch")
+      .publish();
+  DoubleArrayPublisher error_publisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("ERRORS: X, Y, Rotation")
+      .publish();
   BooleanPublisher gyro_calibrated = NetworkTableInstance.getDefault().getBooleanTopic("IsCalibearted").publish();
 
-  StructPublisher<Pose2d> odomPublisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct).publish();  
-  
-  public double getFieldAngle(){
+  StructPublisher<Pose2d> odomPublisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct)
+      .publish();
+
+  public double getFieldAngle() {
     return -m_gyro.getAngle();
   }
 
@@ -114,12 +116,9 @@ public class DriveSubsystem extends SubsystemBase {
     double rotI = 0.0;
     double rotD = 0.0;
 
-    
-
     autoDriveController = new PPHolonomicDriveControllerCustom(
-      new PIDConstants(5.0, 0.0, 0.0),
-      new PIDConstants(rotP, rotI, rotD)
-    );
+        new PIDConstants(5.0, 0.0, 0.0),
+        new PIDConstants(rotP, rotI, rotD));
 
     xController = autoDriveController.getXController();
     yController = autoDriveController.getYController();
@@ -131,84 +130,98 @@ public class DriveSubsystem extends SubsystemBase {
 
       // Configure AutoBuilder
       AutoBuilder.configure(
-        this::getPose, 
-        this::resetOdometry, 
-        this::getSpeeds, 
-        this::driveRobotRelative, 
-        autoDriveController,
-        config,
-        () -> {
-            // Boolean supplier that controls when the path will be mirrored for the red alliance
+          this::getPose,
+          this::resetOdometry,
+          this::getSpeeds,
+          this::driveRobotRelative,
+          autoDriveController,
+          config,
+          () -> {
+            // Boolean supplier that controls when the path will be mirrored for the red
+            // alliance
             // This will flip the path being followed to the red side of the field.
             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
+              return alliance.get() == DriverStation.Alliance.Red;
             }
             return false;
-        },
-        this
-      );
-    } catch(Exception e){
+          },
+          this);
+    } catch (Exception e) {
       DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", e.getStackTrace());
     }
 
     // Set up custom logging to add the current path to a field 2d widget
     PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
     SmartDashboard.putData("Field", field);
+    SmartDashboard.putNumber("Experiment Speed", experimentSpeed);
+  }
+
+  double experimentSpeed = 0;
+
+  public Command driveExperiment() {
+    return new RunCommand(
+        () -> {
+          drive(experimentSpeed, 0.0, 0.0, false);
+        }).withTimeout(2.0);
   }
 
   @Override
   public void periodic() {
-    if(!allianceInitialized) {
+
+    if (!allianceInitialized) {
       var alliance = DriverStation.getAlliance();
       if (alliance.isPresent()) {
         allianceInitialized = true;
       }
     }
+    odomPublisher.set(getPose());
+    currentPose = m_odometry.update(
+        Rotation2d.fromDegrees(getFieldAngle()),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        });
   }
 
   // Update the odometry in the periodic block
-public void updateAllianceOdometry() {
+  public void updateAllianceOdometry() {
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
-        if (ally.get() == Alliance.Red) {
-          int[] validIDs = {2,5,8,9,10,11};
-          LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
-        }
-        if (ally.get() == Alliance.Blue) {
-          int[] validIDs = {18,21,24,25,26,27};
-          LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
-        }
-    }
-    else {
-      int[] validIDs = {2,5,8,9,10,11,18,21,24,25,26,27};
+      if (ally.get() == Alliance.Red) {
+        int[] validIDs = { 2, 5, 8, 9, 10, 11 };
+        LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
+      }
+      if (ally.get() == Alliance.Blue) {
+        int[] validIDs = { 18, 21, 24, 25, 26, 27 };
+        LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
+      }
+    } else {
+      int[] validIDs = { 2, 5, 8, 9, 10, 11, 18, 21, 24, 25, 26, 27 };
       LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
     }
-      currentPose = m_odometry.update(
-        Rotation2d.fromDegrees(getFieldAngle()),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        });
+
     boolean doRejectUpdate = false;
 
-      LimelightHelpers.SetRobotOrientation("limelight", m_odometry.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-      LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-      if(Math.abs(m_gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+    LimelightHelpers.SetRobotOrientation("limelight", m_odometry.getEstimatedPosition().getRotation().getDegrees(), 0,
+        0, 0, 0, 0);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+    if (mt2 != null) {
+      SmartDashboard.putNumber("Tags found: ", mt2.rawFiducials.length);
+      if (Math.abs(m_gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore
+                                            // vision updates
       {
         doRejectUpdate = true;
       }
-      if(mt2.tagCount == 0)
-      {
+      if (mt2.tagCount == 0) {
         doRejectUpdate = true;
       }
-      if(!doRejectUpdate)
-      {
-        m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+      if (!doRejectUpdate) {
+        m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
         m_odometry.addVisionMeasurement(
             mt2.pose,
             mt2.timestampSeconds);
@@ -216,8 +229,10 @@ public void updateAllianceOdometry() {
 
     }
 
-public void updateDistanceOdometry() {
-      currentPose = m_odometry.update(
+  }
+
+  public void updateDistanceOdometry() {
+    currentPose = m_odometry.update(
         Rotation2d.fromDegrees(getFieldAngle()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
@@ -227,119 +242,119 @@ public void updateDistanceOdometry() {
         });
     boolean doRejectUpdate = false;
 
-      LimelightHelpers.SetRobotOrientation("limelight", m_odometry.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-      LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-      ArrayList<Integer> validIDList = new ArrayList<Integer>();
-      for (LimelightHelpers.RawFiducial distanceFiducial:mt2.rawFiducials) {
-        if (distanceFiducial.distToRobot < Constants.LimelightConstants.maxVisionDistanceMeters) {
-          validIDList.add(distanceFiducial.id);
-        }
+    LimelightHelpers.SetRobotOrientation("limelight", m_odometry.getEstimatedPosition().getRotation().getDegrees(), 0,
+        0, 0, 0, 0);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+    ArrayList<Integer> validIDList = new ArrayList<Integer>();
+    for (LimelightHelpers.RawFiducial distanceFiducial : mt2.rawFiducials) {
+      if (distanceFiducial.distToRobot < Constants.LimelightConstants.maxVisionDistanceMeters) {
+        validIDList.add(distanceFiducial.id);
       }
-      int[] validIds = validIDList.stream().mapToInt(i->i).toArray();
-      LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIds);
-      mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+    }
+    int[] validIds = validIDList.stream().mapToInt(i -> i).toArray();
+    LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIds);
+    mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
 
-      if(Math.abs(m_gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
-      {
-        doRejectUpdate = true;
-      }
-      if(mt2.tagCount == 0)
-      {
-        doRejectUpdate = true;
-      }
-      if(!doRejectUpdate)
-      {
-        m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-        m_odometry.addVisionMeasurement(
-            mt2.pose,
-            mt2.timestampSeconds);
-      }
+    if (Math.abs(m_gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore
+                                          // vision updates
+    {
+      doRejectUpdate = true;
+    }
+    if (mt2.tagCount == 0) {
+      doRejectUpdate = true;
+    }
+    if (!doRejectUpdate) {
+      m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+      m_odometry.addVisionMeasurement(
+          mt2.pose,
+          mt2.timestampSeconds);
+    }
 
-
-    double[] gyroData = {(double) m_gyro.getYaw(), 
-      m_gyro.getAngle(), (double) m_gyro.getRoll(), 
-      (double) m_gyro.getPitch()};
+    double[] gyroData = { (double) m_gyro.getYaw(),
+        m_gyro.getAngle(), (double) m_gyro.getRoll(),
+        (double) m_gyro.getPitch() };
 
     gyro_publisher.set(gyroData);
     gyro_calibrated.set(m_gyro.isCalibrating());
     odomPublisher.set(currentPose);
 
-    double[] errors = {xController.getError(), yController.getError(), rotController.getError()};
+    double[] errors = { xController.getError(), yController.getError(), rotController.getError() };
 
     error_publisher.set(errors);
   }
 
-  private double[] getPositions(){
-    double[] positions = {m_frontLeft.getPosition().distanceMeters,
-                          m_frontRight.getPosition().distanceMeters,
-                          m_rearLeft.getPosition().distanceMeters,
-                          m_rearRight.getPosition().distanceMeters};
+  private double[] getPositions() {
+    double[] positions = { m_frontLeft.getPosition().distanceMeters,
+        m_frontRight.getPosition().distanceMeters,
+        m_rearLeft.getPosition().distanceMeters,
+        m_rearRight.getPosition().distanceMeters };
 
     return positions;
   }
-  
 
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.01;
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.1;
 
   double driveBaseRadius = Math.hypot(DriveConstants.kTrackWidth / 2.0, DriveConstants.kWheelBase / 2.0);
 
-  public Command wheelRadiusCharacterization(){
+  public Command wheelRadiusCharacterization() {
     SlewRateLimiter limiter = new SlewRateLimiter(WHEEL_RADIUS_RAMP_RATE);
     WheelRadiusCharacterizationState state = new WheelRadiusCharacterizationState();
 
-    return Commands.parallel(
-      Commands.sequence(
-        Commands.runOnce(
-          () -> {
-            limiter.reset(0.0);
-          }),
-        
-        Commands.run(
-          () -> {
-            double speed = limiter.calculate(WHEEL_RADIUS_MAX_VELOCITY);
-            drive(0.0, 0.0, speed, false);
-          }
-        )),
-      
-      Commands.sequence(
-        Commands.waitSeconds(1.0),
+    Command c = Commands.parallel(
+        Commands.sequence(
+            Commands.runOnce(
+                () -> {
+                  limiter.reset(0.0);
+                }),
 
-        Commands.runOnce(
-          () -> {
-            state.positions = getPositions();
-            state.lastAngle = m_gyro.getRotation2d();
-            state.gyroDelta = 0.0;
-          }),
+            Commands.run(
+                () -> {
+                  double speed = limiter.calculate(WHEEL_RADIUS_MAX_VELOCITY);
+                  drive(0.0, 0.0, speed, false);
+                })),
 
-        Commands.run(
-          () -> {
-            var rotation = m_gyro.getRotation2d();
-            state.gyroDelta += Math.abs(rotation.minus(state.lastAngle).getRadians());
-            state.lastAngle = rotation;
+        Commands.sequence(
+            Commands.waitSeconds(1.0),
 
-            System.out.println("Gyro Delta: " + Units.radiansToDegrees(state.gyroDelta));
-            System.out.println("Rotation: " + rotation.getDegrees());
-          })
+            Commands.runOnce(
+                () -> {
+                  state.positions = getPositions();
+                  state.lastAngle = m_gyro.getRotation2d();
+                  state.gyroDelta = 0.0;
+                }),
 
-          .finallyDo(
-            () -> {
-              double[] position = getPositions();
-              double wheelDelta = 0.0;
+            Commands.run(
+                () -> {
+                  var rotation = m_gyro.getRotation2d();
+                  state.gyroDelta += Math.abs(rotation.minus(state.lastAngle).getRadians());
+                  state.lastAngle = rotation;
 
-              for (int i = 0; i < 4; i++){
-                wheelDelta += Math.abs(position[i] - state.positions[i]) / 4.0;
-              }
+                  SmartDashboard.putNumber("Gyro Delta", Units.radiansToDegrees(state.gyroDelta));
+                  SmartDashboard.putNumber("Rotation:", rotation.getDegrees());
 
-              double wheelRadius = (state.gyroDelta * driveBaseRadius) / wheelDelta;
+                  double[] position = getPositions();
+                  double wheelDelta = 0.0;
 
-              System.out.println("WHEEL DELTA: " + wheelDelta + " radians");
-              System.out.println("GYRO DELTA: " + state.gyroDelta + " radians, " + Units.radiansToDegrees(state.gyroDelta));
-              System.out.println("WHEEL RADIUS: " + wheelRadius + " meters, " + Units.metersToInches(wheelRadius) + " inches");
-            }
-          )
-      )
-    );
+                  for (int i = 0; i < 4; i++) {
+                    wheelDelta += Math.abs(position[i] - state.positions[i]) / 4.0;
+                  }
+
+                  double wheelRadius = (state.gyroDelta * driveBaseRadius) / wheelDelta;
+
+                  SmartDashboard.putNumber("WHEEL DELTA:", wheelDelta);
+                  SmartDashboard.putString("GYRO DELTA:",
+                      state.gyroDelta + " radians, " + Units.radiansToDegrees(state.gyroDelta));
+                  SmartDashboard.putString("WHEEL RADIUS: ", wheelRadius + " meters, ");
+                  SmartDashboard.putString("WHEEL RADIUS(in): ", Units.metersToInches(wheelRadius) + " inches");
+                })
+
+                .finallyDo(
+                    () -> {
+
+                    })));
+    c.addRequirements(this);
+    return c;
   }
 
   private static class WheelRadiusCharacterizationState {
@@ -374,53 +389,6 @@ public void updateDistanceOdometry() {
         pose);
   }
 
-  public void AddMegatagVision()
-  {
-    Optional<Alliance> ally = DriverStation.getAlliance();
-    if (ally.isPresent()) {
-        if (ally.get() == Alliance.Red) {
-          int[] validIDs = {2,5,8,9,10,11};
-          LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
-        }
-        if (ally.get() == Alliance.Blue) {
-          int[] validIDs = {18,21,24,25,26,27};
-          LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
-        }
-    }
-    else {
-      int[] validIDs = {2,5,8,9,10,11,18,21,24,25,26,27};
-      LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
-    }
-      currentPose = m_odometry.update(
-        Rotation2d.fromDegrees(getFieldAngle()),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        });
-    boolean doRejectUpdate = false;
-
-      LimelightHelpers.SetRobotOrientation("limelight", m_odometry.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-      LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-      if(Math.abs(m_gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
-      {
-        doRejectUpdate = true;
-      }
-      if(mt2.tagCount == 0)
-      {
-        doRejectUpdate = true;
-      }
-      if(!doRejectUpdate)
-      {
-        m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-        m_odometry.addVisionMeasurement(
-            mt2.pose,
-            mt2.timestampSeconds);
-      }
-  
-  }
-
   /**
    * Method to drive the robot using joystick info.
    *
@@ -435,9 +403,9 @@ public void updateDistanceOdometry() {
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
-        xSpeedDelivered = driveLimitX.calculate(xSpeedDelivered);
-        ySpeedDelivered = driveLimitY.calculate(ySpeedDelivered);
-        rotDelivered = driveLimitRot.calculate(rotDelivered);
+    xSpeedDelivered = driveLimitX.calculate(xSpeedDelivered);
+    ySpeedDelivered = driveLimitY.calculate(ySpeedDelivered);
+    rotDelivered = driveLimitRot.calculate(rotDelivered);
 
     xSpeedDelivered = driveLimitX.calculate(xSpeedDelivered);
     ySpeedDelivered = driveLimitY.calculate(ySpeedDelivered);
@@ -458,15 +426,14 @@ public void updateDistanceOdometry() {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
-  public void driveTagRelative(double xSpeed, double ySpeed, double rot,double robotYaw)
-  {
+  public void driveTagRelative(double xSpeed, double ySpeed, double rot, double robotYaw) {
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond / Constants.movementDivider;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond / Constants.movementDivider;
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed / Constants.rotateDivider;
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                Rotation2d.fromDegrees(robotYaw))); //TODO: verify correct robot yaw tag relative conversion  
+            Rotation2d.fromDegrees(robotYaw))); // TODO: verify correct robot yaw tag relative conversion
 
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -477,12 +444,12 @@ public void updateDistanceOdometry() {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
-  public void spinAngle(double angle){
+  public void spinAngle(double angle) {
     double rotationFeedback = rotController.calculate(Math.toRadians(getFieldAngle()), Math.toRadians(angle));
     double rotationFF = 0;
 
     ChassisSpeeds c = ChassisSpeeds.fromFieldRelativeSpeeds(
-      0.0, 0.0, rotationFeedback + rotationFF, currentPose.getRotation());
+        0.0, 0.0, rotationFeedback + rotationFF, currentPose.getRotation());
 
     SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(c);
 
@@ -527,6 +494,14 @@ public void updateDistanceOdometry() {
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
     m_gyro.reset();
+    m_odometry.resetPosition(m_gyro.getRotation2d(),
+    new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+    },
+    new Pose2d(m_odometry.getEstimatedPosition().getTranslation(), m_gyro.getRotation2d()));
   }
 
   public void addAngleGyro(double angle) {
@@ -572,4 +547,5 @@ public void updateDistanceOdometry() {
     SwerveModuleState[] targetStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(targetSpeeds);
     setModuleStates(targetStates);
   }
+
 }

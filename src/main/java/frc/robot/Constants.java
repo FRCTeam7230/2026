@@ -51,7 +51,7 @@ public final class Constants {
     public static final double kElevMaxHeight = 1.575;
     public static final double ShooterTolerance = 0.2;
     public static final double shootSpeed = 3000; 
-    public static final double testShootSpeed = 3000;
+    public static final double testShootSpeed = 0.5;
   }
   public static final class AlignClimberConstants {
     public static final double kxkp = 0.67;
@@ -124,7 +124,13 @@ public final class Constants {
     /** Right trigger, axis 3 */
     public static final int SPIN_INTAKE = rightTrigger;
 
-    public static final int POV_UP = pov0;
+    public static final int FEEDER_ROLLERS_ON = pov0;
+
+    public static final int FEEDER_KICKER = pov90;
+
+    public static final int FEEDER_ROLLERS_OFF = pov180;
+
+    public static final int SHOOT_WHILE_ALIGN = pov270;
     
     
     // XBox movement mappings
@@ -142,7 +148,7 @@ public final class Constants {
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(20.8); // updated chassis dimensions
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(27.25); // updated chassis dimensions
+    public static final double kWheelBase = Units.inchesToMeters(26.25); // updated chassis dimensions
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -182,7 +188,8 @@ public final class Constants {
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.0656;
+    public static final double kWheelDiameterMeters = 0.069;
+
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15
     // teeth on the bevel pinion
@@ -237,10 +244,6 @@ public final class Constants {
   }
 
   public static class AlignToHubConstants {
-    public static final double radius = 2.75;
-    public static final double hubY = 4.03; // meters
-    public static final double hubXBlue = 4.63;
-    public static final double hubXRed = 11.92;
     public static final double shooterOffset = .46; //meters
     public static final double initialEjectionVelocityBeforeOffset = 7; //m/s
     public static final double ejectionAngle = 68; //deg
@@ -253,5 +256,12 @@ public final class Constants {
     public static final double ax = 0;
     public static final double z0 = 0;
     public static final double az = 0; //ignoring any horizontal accelerations for now
+    public static final double kradius = 2.98;
+    public static final double khubY = 4.03; // meters
+    public static final double khubXBlue = 4.63;
+    public static final double khubXRed = 11.92;
+    public static final double kerrorXTolerance = 0.1;
+    public static final double kerrorYTolerance = 0.1;
+    public static final double kerrorAngleTolerance = 1;
   }
 }
