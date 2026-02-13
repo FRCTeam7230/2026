@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -118,7 +117,7 @@ public class AlignToHub extends Command {
     }
     else {errors[1] = errorY;}
     if (errorAngle < Constants.AlignToHubConstants.kerrorAngleTolerance) {
-      errors[2] = errorAngle;
+      errors[2] = 0;
     }
     else {errors[2] = errorAngle;}
        SmartDashboard.putNumber("AlignToHub/TargetAngle",targetAngle);
