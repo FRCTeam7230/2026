@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -91,6 +92,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   StructPublisher<Pose2d> odomPublisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct)
       .publish();
+  Integer[] IDFilter = null;
 
   public double getFieldAngle() {
     return -m_gyro.getAngle();
@@ -187,51 +189,27 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
   }
-
-  // Update the odometry in the periodic block
-  public void updateAllianceOdometry() {
+  public void ApplyMegatagFilter()
+  {
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
       if (ally.get() == Alliance.Red) {
-        int[] validIDs = { 2, 5, 8, 9, 10, 11 };
-        LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
+        IDFilter = new Integer[]{ 2, 5, 8, 9, 10, 11 };
       }
       if (ally.get() == Alliance.Blue) {
-        int[] validIDs = { 18, 21, 24, 25, 26, 27 };
-        LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
+        IDFilter = new Integer[]{ 18, 21, 24, 25, 26, 27 };
       }
     } else {
-      int[] validIDs = { 2, 5, 8, 9, 10, 11, 18, 21, 24, 25, 26, 27 };
-      LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
+      IDFilter = new Integer[]{ 2, 5, 8, 9, 10, 11, 18, 21, 24, 25, 26, 27 };
     }
-
-    boolean doRejectUpdate = false;
-
-    LimelightHelpers.SetRobotOrientation("limelight", m_odometry.getEstimatedPosition().getRotation().getDegrees(), 0,
-        0, 0, 0, 0);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-    if (mt2 != null) {
-      SmartDashboard.putNumber("Tags found: ", mt2.rawFiducials.length);
-      if (Math.abs(m_gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore
-                                            // vision updates
-      {
-        doRejectUpdate = true;
-      }
-      if (mt2.tagCount == 0) {
-        doRejectUpdate = true;
-      }
-      if (!doRejectUpdate) {
-        m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-        m_odometry.addVisionMeasurement(
-            mt2.pose,
-            mt2.timestampSeconds);
-      }
-
-    }
-
   }
+  public void CancelMegatagFilter()
+  {
+    IDFilter = null;
+  }
+  // Update the odometry in the periodic block
 
-  public void updateDistanceOdometry() {
+  public void updateMegatag() {
     currentPose = m_odometry.update(
         Rotation2d.fromDegrees(getFieldAngle()),
         new SwerveModulePosition[] {
@@ -248,6 +226,7 @@ public class DriveSubsystem extends SubsystemBase {
     ArrayList<Integer> validIDList = new ArrayList<Integer>();
     for (LimelightHelpers.RawFiducial distanceFiducial : mt2.rawFiducials) {
       if (distanceFiducial.distToRobot < Constants.LimelightConstants.maxVisionDistanceMeters) {
+        if(IDFilter == null || Arrays.asList(IDFilter).contains(distanceFiducial.id))
         validIDList.add(distanceFiducial.id);
       }
     }

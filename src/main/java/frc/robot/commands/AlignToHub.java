@@ -25,6 +25,7 @@ public class AlignToHub extends Command {
 
   public AlignToHub(DriveSubsystem drive) {
     m_drive = drive;
+    m_drive.ApplyMegatagFilter();
     addRequirements(drive);
     xController.setSetpoint(0);
     yController.setSetpoint(0);
@@ -43,7 +44,6 @@ public class AlignToHub extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drive.updateAllianceOdometry();
     
     
     Pose2d currentPose = m_drive.getPose();
@@ -64,6 +64,7 @@ public class AlignToHub extends Command {
   public void end(boolean interrupted) 
   {
     m_drive.setX();
+    m_drive.CancelMegatagFilter();
   }
 
   // Returns true when the command should end.
