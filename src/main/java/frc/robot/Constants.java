@@ -235,4 +235,23 @@ public final class Constants {
     public static final double kjointDegreeOffset = 0;
     public static final double krollerSpeed = 0.5;
   }
+
+  public static class AlignToHubConstants {
+    public static final double radius = 2.75;
+    public static final double hubY = 4.03; // meters
+    public static final double hubXBlue = 4.63;
+    public static final double hubXRed = 11.92;
+    public static final double shooterOffset = .46; //meters
+    public static final double initialEjectionVelocityBeforeOffset = 7; //m/s
+    public static final double ejectionAngle = 68; //deg
+
+    public static final double speedMult = 0.6;
+
+    //angle offset constants
+    public static final double x0 = shooterOffset;
+    public static final double vx0 = 0;
+    public static final double ax = 0;
+    public static final double z0 = 0;
+    public static final double az = 0; //ignoring any horizontal accelerations for now
+  }
 }
