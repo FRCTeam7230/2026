@@ -50,7 +50,7 @@ public class IntakeSubsystem extends SubsystemBase
         
         m_config_joint.absoluteEncoder
         //.inverted(true) // idk what this does - musa //Intake TODO: You want positive motor values to correspond to positive increaing encoder values, if that's not true, you can set inverted to true
-        .positionConversionFactor(360) //Intake TODO: Are we sure about these conversion factors? What did L1 use?
+        .positionConversionFactor(360) //Intake TODO: Are we sure about these conversion factors? What did L1 use? - L1 used the same
         .velocityConversionFactor(360);
 
         m_config_joint.closedLoop
@@ -62,7 +62,7 @@ public class IntakeSubsystem extends SubsystemBase
         .maxMotion
         .maxAcceleration(0) //we dont know what this does but it works //Not needed, can leave with set to zero
         .cruiseVelocity(0) //we dont know what this does but it works //Not needed, can leave with set to zero
-        .allowedProfileError(Constants.IntakeConstants.kallowedError); //Not needed, can leave with set to zero
+        .allowedProfileError(0); //Not needed, can leave with set to zero
 
         m_config_joint.idleMode(IdleMode.kBrake);
         m_config_joint.smartCurrentLimit(Constants.IntakeConstants.kMaxCurrent); //Intake TODO: MaxCurrent can go up for the Neo 1.1, maybe 40 or 60?

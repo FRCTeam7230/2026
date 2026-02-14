@@ -185,8 +185,7 @@ public final class Constants {
     public static final double kjointKd = 0;
     public static final double koutputMin = -0.3; //Intake TODO: See what value makes sense (do the math to see how fast it goes at full speed), start small and go bigger
     public static final double koutputMax = 0.3;
-    public static final double kallowedError = 1; //deg
-    public static final int kMaxCurrent = 20; //amps //Intake TODO: probably higher than 20 Amps given using Neo 1.1s
+    public static final int kMaxCurrent = 40; //amps //Intake TODO: probably higher than 20 Amps given using Neo 1.1s
     public static final double kretractedPostion = 0; //need to update
     public static final double kextendedPostion = 0; //need to update
     public static final double kintakeRollerSpeed = 0.5; //need to update
