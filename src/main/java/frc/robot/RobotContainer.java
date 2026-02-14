@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.*;
-import frc.robot.Constants;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.ButtonMappings;
@@ -47,12 +46,12 @@ public class RobotContainer {
   //Climber TODO: Rename these, since they're not "toggles" but rather setting a specific height
   // This isn't a descriptive name, the point of this is to set the climber to max height and then to min height, right? 
   // Use something that explains that
-  private Command m_climberMaxHightCommand = Commands.runEnd(
+  private Command m_climberMaxHeightCommand = Commands.runEnd(
             () -> m_Climber.reachGoal(ClimberConstants.kMaxRealClimberHeightMeters),
             () -> m_Climber.stop(),
             m_Climber);
-  private Command m_climberMinHightCommand = Commands.runEnd(
-            () -> m_Climber.reachGoal(ClimberConstants.kMaxRealClimberHeightMeters), //Climber TODO: This sets the same position as the previous command (both are set to max)
+  private Command m_climberMinHeightCommand = Commands.runEnd(
+            () -> m_Climber.reachGoal(ClimberConstants.kMinRealClimberHeightMeters), //Climber TODO: This sets the same position as the previous command (both are set to max)
             () -> m_Climber.stop(),
             m_Climber);
   private Command m_DriveRun = Commands.runEnd(
