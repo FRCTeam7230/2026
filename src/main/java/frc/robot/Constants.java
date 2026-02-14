@@ -183,10 +183,10 @@ public final class Constants {
 
   public static final class ClimberConstants {
     public static final int kClimMotor1 = 9;
-    public static final double kGearRatio = 15; // Divided by 2 stages CLIMBER TODO: Only 1 stage, so no need to divide by 2
-    public static final double kGearCircumference = Units.inchesToMeters(5.5); //inches - lemme double check with CLIMBER TODO: Winch radius is a little under 1 inche, what is circumference? 
+    public static final double kGearRatio = 15; // Divided by 2 stages 
+    public static final double kGearCircumference = Units.inchesToMeters(5.5); //inches - lemme double check with  
     public static final double kResetCurrent = 40; //max current tbd Climber TODO: Will we be reseting climber?
-    public static final int kMaxCurrent = 45; //Climber TODO for testing: Ensure we're not close to this
+    public static final int kMaxCurrent = 45; //Climber TODO for testing: Ensure we're not close to this - Change to 80 to start
     public static final double kRotationToMeters = kGearCircumference / kGearRatio;// Revolutions to Output units conversion factor
     public static final double kCLimberKp = 0; //Climber TODO: Start with these gains at zero! Will need to tune later 
     public static final double kCLimberKi = 0;
@@ -202,7 +202,7 @@ public final class Constants {
     // Encoder is reset to measure 0 at the bottom, so minimum height is 0.
     public static final double kMinRealClimberHeightMeters = 0.0;    // m
     public static final double kMaxRealClimberHeightMeters = 1.575; // m //Climber TODO: Will need to tune this
-    public static final double kPostScoringHeightNoAlgeaMeters = 1.558 - 0.3;
-    public static final double kPostScoringHeightMeters = 1.558 - 0.43;
+    public static final double kPostScoringHeightNoAlgeaMeters = 1.558 - 0.3; //Climber TODO: Delete as it's unused
+    public static final double kPostScoringHeightMeters = 1.558 - 0.43; //Climber TODO: Delete as it's unused
   }
 }

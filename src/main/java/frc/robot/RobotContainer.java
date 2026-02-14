@@ -44,12 +44,14 @@ public class RobotContainer {
 
   //Climber set
   //Climber TODO: Rename these, since they're not "toggles" but rather setting a specific height
+  // This isn't a descriptive name, the point of this is to set the climber to max height and then to min height, right? 
+  // Use something that explains that
   private Command m_climberHightCommand1 = Commands.runEnd(
             () -> m_Climber.reachGoal(ClimberConstants.kMaxRealClimberHeightMeters),
             () -> m_Climber.stop(),
             m_Climber);
   private Command m_climberHightCommand2 = Commands.runEnd(
-            () -> m_Climber.reachGoal(ClimberConstants.kMaxRealClimberHeightMeters),
+            () -> m_Climber.reachGoal(ClimberConstants.kMaxRealClimberHeightMeters), //Climber TODO: This sets the same position as the previous command (both are set to max)
             () -> m_Climber.stop(),
             m_Climber);
   private Command m_DriveRun = Commands.runEnd(
@@ -135,14 +137,15 @@ public class RobotContainer {
 
     //Climber Controls
     //Climb UP
-    //Climber TODO: Comment these in, as we'll want these at the start of testing
+    //Climber TODO: Can we use a constant for the button numbers? Check which ones will be used in the real controller
     ButtonMappings.button(m_driverController, 5)
       .whileTrue(Commands.startEnd(
           () -> m_Climber.ManualClimberUp(),
           () -> m_Climber.stop(),
           m_Climber));
 
-    //Climb Dowm
+    //Climb Down
+    //Climber TODO: Can we use a constant for the button numbers? Check which ones will be used in the real controller
     ButtonMappings.button(m_driverController, 6)
       .whileTrue(Commands.startEnd(
           () -> m_Climber.ManualClimberDown(),

@@ -128,7 +128,7 @@ public class ClimberSubsystem extends SubsystemBase
     m_motor1.set(percent);
   }
 
-  //Climber TODO: Will probably also want a setManualOutput that doesn't adhere to soft limits
+  //Climber TODO: Add comment to explain this (similar to other methods)
   public void setManualOutput(double percent) {
     m_motor1.set(percent);
   }
@@ -206,7 +206,7 @@ public class ClimberSubsystem extends SubsystemBase
     current1_publisher.set(m_motor1.getOutputCurrent());
 
     //Climber TODO: I'm not sure yet if we'll want to reset the climber position
-    // Either way, reseting logic should be commented out to start
+    //Climber TODO: Either way, reseting logic should be commented out to start
     boolean reset = false;
     if (Math.abs(m_encoder.getVelocity()) < 0.01 && m_motor1.getOutputCurrent() > ClimberConstants.kResetCurrent) {
       if (m_motor1.getAppliedOutput() > 0) {
@@ -222,6 +222,7 @@ public class ClimberSubsystem extends SubsystemBase
     SmartDashboard.putNumber("Climber Position (Meters)", m_encoder.getPosition());
     climReset_publisher.set(reset);
 
+    // CLimber TODO: Comment this out to start with
     if ((atUpperLimit() && m_motor1.getAppliedOutput() > 0) ||
     (atLowerLimit() && m_motor1.getAppliedOutput() < 0)) {
       m_motor1.set(0);
