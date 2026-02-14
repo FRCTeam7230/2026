@@ -129,7 +129,9 @@ public class ClimberSubsystem extends SubsystemBase
   }
 
   //Climber TODO: Will probably also want a setManualOutput that doesn't adhere to soft limits
-
+  public void setManualOutput(double percent) {
+    m_motor1.set(percent);
+  }
   /**
    * A trigger for when the height is at an acceptable tolerance.
    *
@@ -144,7 +146,7 @@ public class ClimberSubsystem extends SubsystemBase
 
   public boolean isFullyExtended(double tolerance)
   {
-    return MathUtil.isNear(ClimberConstants.kPreScoringHeightMeters, getHeight(), tolerance);
+    return MathUtil.isNear(ClimberConstants.kMaxRealClimberHeightMeters, getHeight(), tolerance);
   }
 
   /**

@@ -44,17 +44,17 @@ public class RobotContainer {
 
   //Climber set
   //Climber TODO: Rename these, since they're not "toggles" but rather setting a specific height
-  private Command m_climberToggleCommand1 = Commands.runEnd(
+  private Command m_climberHightCommand1 = Commands.runEnd(
             () -> m_Climber.reachGoal(ClimberConstants.kMaxRealClimberHeightMeters),
             () -> m_Climber.stop(),
             m_Climber);
-  private Command m_climberToggleCommand2 = Commands.runEnd(
+  private Command m_climberHightCommand2 = Commands.runEnd(
             () -> m_Climber.reachGoal(ClimberConstants.kMaxRealClimberHeightMeters),
             () -> m_Climber.stop(),
             m_Climber);
   private Command m_DriveRun = Commands.runEnd(
             () -> m_robotDrive.drive(1, 0, 0, isCompetition),
-            () -> m_robotDrive.getSpeeds(),
+            () -> m_robotDrive.setX(),
             m_robotDrive);
 
   /**
@@ -136,7 +136,6 @@ public class RobotContainer {
     //Climber Controls
     //Climb UP
     //Climber TODO: Comment these in, as we'll want these at the start of testing
-    /*
     ButtonMappings.button(m_driverController, 5)
       .whileTrue(Commands.startEnd(
           () -> m_Climber.ManualClimberUp(),
@@ -149,18 +148,20 @@ public class RobotContainer {
           () -> m_Climber.ManualClimberDown(),
           () -> m_Climber.stop(),
           m_Climber));
-    */
 
     //Climb Up and Down
     //Climber TODO: Comment this out until we're ready to test it
+    /*
     ButtonMappings.button(m_driverController, 4)
       .onTrue(new InstantCommand(() -> {
-        m_climberToggleCommand1.schedule();
+        m_climberHightCommand1.schedule();
         m_DriveRun.schedule();
-        m_climberToggleCommand2.schedule();
+        m_climberHightCommand2.schedule();
       }, m_Climber));
-    m_climberToggleCommand1.andThen(m_DriveRun).andThen(m_climberToggleCommand2);
+    m_climberHightCommand1.andThen(m_DriveRun).andThen(m_climberHightCommand2);
+    */
   }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
