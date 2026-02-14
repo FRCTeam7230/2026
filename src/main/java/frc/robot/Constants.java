@@ -37,12 +37,12 @@ public final class Constants {
 
   public static class OuttakeConstants {
     public static final double EncoderTickPerRev = 1;
-    public static final int ShootMotor1ID = 1;
+    public static final int ShootMotor1ID = 1; //Shooter TODO: These IDs are not correct (1,2,3 are drivetrain). Do we have a plan for these IDs? 
     public static final int ShootMotor2ID = 2; 
     public static final int ShootMotor3ID = 3; 
     public static final int motorlimitcurrent = 80;
     public static final double krampratesec = 0;
-    public static final double kOuttakeKp = 0.0003; 
+    public static final double kOuttakeKp = 0.0003; //Shooter TODO: We ended up at 0.004 at the end of testing last, but still subject to change
     public static final double kOuttakeKi = 0; 
     public static final double kOuttakeKd = 0;
     public static final double kOuttakeKf = 0.000151;

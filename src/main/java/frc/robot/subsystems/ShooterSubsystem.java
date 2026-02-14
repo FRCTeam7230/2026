@@ -24,15 +24,15 @@ import frc.robot.Constants.OuttakeConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ShooterSubsystemcurrently. */
-  private final SparkMax outtakemotor1 = new SparkMax(Constants.OuttakeConstants.ShootMotor1ID, MotorType.kBrushless); 
-  private final SparkMax outtakemotor2 = new SparkMax(Constants.OuttakeConstants.ShootMotor2ID, MotorType.kBrushless); 
-  private final SparkMax outtakemotor3 = new SparkMax(Constants.OuttakeConstants.ShootMotor3ID, MotorType.kBrushless); 
+  private final SparkMax outtakemotor1 = new SparkMax(Constants.OuttakeConstants.ShootMotor1ID, MotorType.kBrushless); //Shooter TODO: These will be SPark Flexes, not Spark Maxes
+  private final SparkMax outtakemotor2 = new SparkMax(Constants.OuttakeConstants.ShootMotor2ID, MotorType.kBrushless); //Shooter TODO: These will be SPark Flexes, not Spark Maxes
+  private final SparkMax outtakemotor3 = new SparkMax(Constants.OuttakeConstants.ShootMotor3ID, MotorType.kBrushless); //Shooter TODO: These will be SPark Flexes, not Spark Maxes
   private final RelativeEncoder m_outtakemotorencoder1 = outtakemotor1.getEncoder(); 
   private final RelativeEncoder m_outtakemotorencoder2 = outtakemotor2.getEncoder(); 
   private final RelativeEncoder m_outtakemotorencoder3 = outtakemotor3.getEncoder();  
-  private final SparkMaxConfig m_outtakemotor1config = new SparkMaxConfig();
-  private final SparkMaxConfig m_outtakemotor2config = new SparkMaxConfig();
-  private final SparkMaxConfig m_outtakemotor3config = new SparkMaxConfig();
+  private final SparkMaxConfig m_outtakemotor1config = new SparkMaxConfig(); //Shooter TODO: These will be SPark Flexes, not Spark Maxes
+  private final SparkMaxConfig m_outtakemotor2config = new SparkMaxConfig(); //Shooter TODO: These will be SPark Flexes, not Spark Maxes
+  private final SparkMaxConfig m_outtakemotor3config = new SparkMaxConfig(); //Shooter TODO: These will be SPark Flexes, not Spark Maxes
   private final SparkClosedLoopController m_outtakecontroller1 = outtakemotor1.getClosedLoopController();
   private final SparkClosedLoopController m_outtakecontroller2 = outtakemotor2.getClosedLoopController();
   private final SparkClosedLoopController m_outtakecontroller3 = outtakemotor3.getClosedLoopController();
