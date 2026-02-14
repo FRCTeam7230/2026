@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -16,32 +16,37 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.OuttakeConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ShooterSubsystemcurrently. */
-  private final SparkMax outtakemotor1 = new SparkMax(0, MotorType.kBrushless); //Shooter TODO: Use Constants for CAN IDs
-  private final SparkMax outtakemotor2 = new SparkMax(1, MotorType.kBrushless); //Shooter TODO: Use Constants for CAN IDs
-  private final SparkMax outtakemotor3 = new SparkMax(2, MotorType.kBrushless); //Shooter TODO: Use Constants for CAN IDs
-  private final AbsoluteEncoder m_outtakemotorencoder1 = outtakemotor1.getAbsoluteEncoder(); //Shooter TODO: No absolute encoder on the shooter
-  private final AbsoluteEncoder m_outtakemotorencoder2 = outtakemotor2.getAbsoluteEncoder(); //Shooter TODO: No absolute encoder on the shooter
-  private final AbsoluteEncoder m_outtakemotorencoder3 = outtakemotor3.getAbsoluteEncoder(); //Shooter TODO: No absolute encoder on the shooter
+  private final SparkMax outtakemotor1 = new SparkMax(Constants.OuttakeConstants.ShootMotor1ID, MotorType.kBrushless); 
+  private final SparkMax outtakemotor2 = new SparkMax(Constants.OuttakeConstants.ShootMotor2ID, MotorType.kBrushless); 
+  private final SparkMax outtakemotor3 = new SparkMax(Constants.OuttakeConstants.ShootMotor3ID, MotorType.kBrushless); 
+  private final RelativeEncoder m_outtakemotorencoder1 = outtakemotor1.getEncoder(); 
+  private final RelativeEncoder m_outtakemotorencoder2 = outtakemotor2.getEncoder(); 
+  private final RelativeEncoder m_outtakemotorencoder3 = outtakemotor3.getEncoder();  
   private final SparkMaxConfig m_outtakemotor1config = new SparkMaxConfig();
   private final SparkMaxConfig m_outtakemotor2config = new SparkMaxConfig();
   private final SparkMaxConfig m_outtakemotor3config = new SparkMaxConfig();
   private final SparkClosedLoopController m_outtakecontroller1 = outtakemotor1.getClosedLoopController();
   private final SparkClosedLoopController m_outtakecontroller2 = outtakemotor2.getClosedLoopController();
   private final SparkClosedLoopController m_outtakecontroller3 = outtakemotor3.getClosedLoopController();
+  
+  DoubleArrayPublisher velocityPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Velocities").publish();
+  DoubleArrayPublisher setpointPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Setpoints").publish();
+  DoubleArrayPublisher errorPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Errors").publish();
 
   public ShooterSubsystem() {
     //Motor 1
     m_outtakemotor1config.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-    .pid(OuttakeConstants.kOuttakeKp, OuttakeConstants.kOuttakeKi, OuttakeConstants.kOuttakeKd) //Shooter TODO: Need to set kF as well
-    .outputRange(-0.8,0.8, ClosedLoopSlot.kSlot0); //Shooter TODO: Why clamp the output range?
+    .pid(OuttakeConstants.kOuttakeKp, OuttakeConstants.kOuttakeKi, OuttakeConstants.kOuttakeKd)
+    .feedForward.kV(OuttakeConstants.kOuttakeKf); 
     m_outtakemotor1config.idleMode(IdleMode.kCoast);
     m_outtakemotor1config.smartCurrentLimit(Constants.OuttakeConstants.motorlimitcurrent);
     m_outtakemotor1config.closedLoopRampRate(Constants.OuttakeConstants.krampratesec);
@@ -49,8 +54,8 @@ public class ShooterSubsystem extends SubsystemBase {
     //Motor 2
     m_outtakemotor2config.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-    .pid(OuttakeConstants.kOuttakeKp, OuttakeConstants.kOuttakeKi, OuttakeConstants.kOuttakeKd) //Shooter TODO: Need to set kF as well
-    .outputRange(-0.8,0.8, ClosedLoopSlot.kSlot0); //Shooter TODO: Why clamp the output range? Also, make these constants if they'll be used multiple places
+    .pid(OuttakeConstants.kOuttakeKp, OuttakeConstants.kOuttakeKi, OuttakeConstants.kOuttakeKd)
+    .feedForward.kV((Constants.OuttakeConstants.kOuttakeKf)*12); 
     m_outtakemotor2config.idleMode(IdleMode.kCoast);
     m_outtakemotor2config.smartCurrentLimit(Constants.OuttakeConstants.motorlimitcurrent);
     m_outtakemotor2config.closedLoopRampRate(Constants.OuttakeConstants.krampratesec);
@@ -58,10 +63,8 @@ public class ShooterSubsystem extends SubsystemBase {
     //Motor 3
     m_outtakemotor3config.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-    .pid(OuttakeConstants.kOuttakeKp, OuttakeConstants.kOuttakeKi, OuttakeConstants.kOuttakeKd) //Shooter TODO: Need to set kF as well
-    .outputRange(-0.8,0.8, ClosedLoopSlot.kSlot0); //Shooter TODO: Why clamp the output range? Also, make these constants if they'll be used multiple places
-    m_outtakemotor3config.closedLoop.maxMotion //not using max motion
-    .allowedProfileError(Units.inchesToMeters(0.1));
+    .pid(OuttakeConstants.kOuttakeKp, OuttakeConstants.kOuttakeKi, OuttakeConstants.kOuttakeKd)
+    .feedForward.kV(OuttakeConstants.kOuttakeKf);
     m_outtakemotor3config.idleMode(IdleMode.kCoast);
     m_outtakemotor3config.smartCurrentLimit(Constants.OuttakeConstants.motorlimitcurrent);
     m_outtakemotor3config.closedLoopRampRate(Constants.OuttakeConstants.krampratesec);
@@ -103,6 +106,10 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    //Shooter TODO: Add publishers to get key data (e.g. velocity, set velocity, velocity error, etc)
+    velocityPublisher.set(getMotorVelocity());
+    setpointPublisher.set(new double[]{m_outtakecontroller1.getSetpoint(), m_outtakecontroller2.getSetpoint(), m_outtakecontroller3.getSetpoint()});
+    errorPublisher.set(new double[]{m_outtakecontroller1.getSetpoint()-getMotorVelocity()[0], m_outtakecontroller2.getSetpoint()-getMotorVelocity()[1], m_outtakecontroller3.getSetpoint()-getMotorVelocity()[2]});
+
+    
   }
 }

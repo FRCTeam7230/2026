@@ -36,20 +36,17 @@ public final class Constants {
   }
 
   public static class OuttakeConstants {
-    public static final double kGearRatio = 7.5; //Shooter TODO: There's no gear box or turn up/down. Set this to 1 or delete
-    public static final double koutputpulleycircum = 5.5; //Shooter TODO: Is this chooter wheel circumference? If not used, delete
     public static final double EncoderTickPerRev = 1;
-    public static final double CANID1 = 1;
-    public static final double CanID2 = 2; //Shooter TODO: Check IDs and need a third
+    public static final int ShootMotor1ID = 1;
+    public static final int ShootMotor2ID = 2; 
+    public static final int ShootMotor3ID = 3; 
     public static final int motorlimitcurrent = 80;
     public static final double krampratesec = 0;
-    public static final double PositionFactor =  koutputpulleycircum / kGearRatio;
-    public static final double kOuttakeKp = 0; //Shooter TODO: Use Constants from testing to start
-    public static final double kOuttakeKi = 0; //Shooter TODO: Add kF 
+    public static final double kOuttakeKp = 0.0003; 
+    public static final double kOuttakeKi = 0; 
     public static final double kOuttakeKd = 0;
-    public static final double kOOuttakeKg = 0.35; //Shooter TODO: No kG
-    public static final double kElevMaxHeight = 1.575; //Shooter TODO: Delete
-    public static final double ShooterTolerance = 0.2; //Shooter TODO: 0.2 rpm? Seems small
+    public static final double kOuttakeKf = 0.000151;
+    public static final double ShooterTolerance = 10;
     public static final double shootSpeed = 3000; 
     public static final double testShootSpeed = 0.5;
   }

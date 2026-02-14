@@ -16,15 +16,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class FeederSubsystem extends SubsystemBase {
-  //Kicker TODO: Only one motor
   //Kicker TODO: Maybe use a velocity controller on the kicker as well? If needed
 
   private final SparkMax rollermotor = new SparkMax(Constants.FeederConstants.rollerCANID, MotorType.kBrushless);
   private final SparkMax kickermotor1 = new SparkMax(Constants.FeederConstants.kickerCANID, MotorType.kBrushless);
-  private final SparkMax kickermotor2 = new SparkMax(Constants.FeederConstants.kickerCANID, MotorType.kBrushless); 
   private final SparkMaxConfig m_rollermotorconfig = new SparkMaxConfig();
   private final SparkMaxConfig m_kickermotor1config = new SparkMaxConfig();
-  private final SparkMaxConfig m_kickermotor2config = new SparkMaxConfig();
   /** Creates a new FeederSubsystem. */
   public FeederSubsystem() {
     m_rollermotorconfig.idleMode(IdleMode.kBrake);
@@ -33,18 +30,12 @@ public class FeederSubsystem extends SubsystemBase {
     m_kickermotor1config.idleMode(IdleMode.kBrake);
     m_kickermotor1config.smartCurrentLimit(Constants.FeederConstants.kfeedermotorlimitcurrent);
     m_kickermotor1config.closedLoopRampRate(Constants.FeederConstants.kfeederrampratesec);
-    m_kickermotor2config.idleMode(IdleMode.kBrake);
-    m_kickermotor2config.smartCurrentLimit(Constants.FeederConstants.kfeedermotorlimitcurrent);
-    m_kickermotor2config.closedLoopRampRate(Constants.FeederConstants.kfeederrampratesec);
     m_rollermotorconfig.closedLoop.maxMotion
     .allowedProfileError(Units.inchesToMeters(0.1));
     m_kickermotor1config.closedLoop.maxMotion
     .allowedProfileError(Units.inchesToMeters(0.1));
-    m_kickermotor2config.closedLoop.maxMotion
-    .allowedProfileError(Units.inchesToMeters(0.1));
     rollermotor.configure(m_rollermotorconfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     kickermotor1.configure(m_kickermotor1config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-    kickermotor2.configure(m_kickermotor2config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
   }
   // Sets roller motor speed(positive is intake, negative is outtake)
@@ -53,7 +44,6 @@ public class FeederSubsystem extends SubsystemBase {
   }
   public void setKickerSpeed(double kickerspeed) {
     kickermotor1.set(kickerspeed);
-    kickermotor2.set(kickerspeed);
   }
   @Override
   public void periodic() {
