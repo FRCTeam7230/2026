@@ -49,8 +49,8 @@ public class IntakeSubsystem extends SubsystemBase
    public IntakeSubsystem(){
         
         m_config_joint.absoluteEncoder
-        //.inverted(true) // idk what this does - musa
-        .positionConversionFactor(360)
+        //.inverted(true) // idk what this does - musa //Intake TODO: You want positive motor values to correspond to positive increaing encoder values, if that's not true, you can set inverted to true
+        .positionConversionFactor(360) //Intake TODO: Are we sure about these conversion factors? What did L1 use?
         .velocityConversionFactor(360);
 
         m_config_joint.closedLoop
@@ -60,15 +60,15 @@ public class IntakeSubsystem extends SubsystemBase
         .positionWrappingEnabled(true) //need because we dont want the joint arm to go throught the robot and horizontal is 0
         .positionWrappingInputRange(-180.0, 180.0) //arm is mounted on the rear
         .maxMotion
-        .maxAcceleration(0) //we dont know what this does but it works
-        .cruiseVelocity(0) //we dont know what this does but it works
-        .allowedProfileError(Constants.IntakeConstants.kallowedError);
+        .maxAcceleration(0) //we dont know what this does but it works //Not needed, can leave with set to zero
+        .cruiseVelocity(0) //we dont know what this does but it works //Not needed, can leave with set to zero
+        .allowedProfileError(Constants.IntakeConstants.kallowedError); //Not needed, can leave with set to zero
 
         m_config_joint.idleMode(IdleMode.kBrake);
-        m_config_joint.smartCurrentLimit(Constants.IntakeConstants.kMaxCurrent);
+        m_config_joint.smartCurrentLimit(Constants.IntakeConstants.kMaxCurrent); //Intake TODO: MaxCurrent can go up for the Neo 1.1, maybe 40 or 60?
 
         m_config_roller.idleMode(SparkBaseConfig.IdleMode.kBrake);
-        m_config_roller.smartCurrentLimit(Constants.IntakeConstants.kMaxCurrent);
+        m_config_roller.smartCurrentLimit(Constants.IntakeConstants.kMaxCurrent); //Intake TODO: MaxCurrent can go up for the Neo 1.1, maybe 40 or 60?
 
         m_joint.configure(m_config_joint, ResetMode.kNoResetSafeParameters,PersistMode.kPersistParameters);
         m_roller.configure(m_config_roller, ResetMode.kNoResetSafeParameters,PersistMode.kPersistParameters);
