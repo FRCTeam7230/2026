@@ -16,9 +16,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class FeederSubsystem extends SubsystemBase {
+  //Kicker TODO: Only one motor
+  //Kicker TODO: Maybe use a velocity controller on the kicker as well? If needed
+
   private final SparkMax rollermotor = new SparkMax(Constants.FeederConstants.rollerCANID, MotorType.kBrushless);
   private final SparkMax kickermotor1 = new SparkMax(Constants.FeederConstants.kickerCANID, MotorType.kBrushless);
-  private final SparkMax kickermotor2 = new SparkMax(Constants.FeederConstants.kickerCANID, MotorType.kBrushless);
+  private final SparkMax kickermotor2 = new SparkMax(Constants.FeederConstants.kickerCANID, MotorType.kBrushless); 
   private final SparkMaxConfig m_rollermotorconfig = new SparkMaxConfig();
   private final SparkMaxConfig m_kickermotor1config = new SparkMaxConfig();
   private final SparkMaxConfig m_kickermotor2config = new SparkMaxConfig();
