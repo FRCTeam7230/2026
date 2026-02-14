@@ -130,7 +130,7 @@ public class ClimberSubsystem extends SubsystemBase
 
   //Climber TODO: Add comment to explain this (similar to other methods)
   public void setManualOutput(double percent) {
-    m_motor1.set(percent);
+    m_motor1.set(percent);// change speed of motor
   }
   /**
    * A trigger for when the height is at an acceptable tolerance.
@@ -207,6 +207,7 @@ public class ClimberSubsystem extends SubsystemBase
 
     //Climber TODO: I'm not sure yet if we'll want to reset the climber position
     //Climber TODO: Either way, reseting logic should be commented out to start
+    /*
     boolean reset = false;
     if (Math.abs(m_encoder.getVelocity()) < 0.01 && m_motor1.getOutputCurrent() > ClimberConstants.kResetCurrent) {
       if (m_motor1.getAppliedOutput() > 0) {
@@ -217,7 +218,7 @@ public class ClimberSubsystem extends SubsystemBase
       }
       m_motor1.set(0);
       reset = true;
-    }
+    }    
 
     SmartDashboard.putNumber("Climber Position (Meters)", m_encoder.getPosition());
     climReset_publisher.set(reset);
@@ -227,5 +228,6 @@ public class ClimberSubsystem extends SubsystemBase
     (atLowerLimit() && m_motor1.getAppliedOutput() < 0)) {
       m_motor1.set(0);
     }
+    */
   }
 }

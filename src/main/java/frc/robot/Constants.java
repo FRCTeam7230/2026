@@ -69,7 +69,9 @@ public final class Constants {
     /** X button */
     public static final int BRAKE_BUTTON = kButton3;
     /** Y button */
-    public static final int CLIMB = kButton4;
+    public static final int CLIMBUP = kButton4;
+
+    public static final int CLIMBDOWN = kButton7;
     /** Left button */
     public static final int ALIGN_HUB = kButton5;
     /** Right button */
@@ -202,7 +204,5 @@ public final class Constants {
     // Encoder is reset to measure 0 at the bottom, so minimum height is 0.
     public static final double kMinRealClimberHeightMeters = 0.0;    // m
     public static final double kMaxRealClimberHeightMeters = 1.575; // m //Climber TODO: Will need to tune this
-    public static final double kPostScoringHeightNoAlgeaMeters = 1.558 - 0.3; //Climber TODO: Delete as it's unused
-    public static final double kPostScoringHeightMeters = 1.558 - 0.43; //Climber TODO: Delete as it's unused
   }
 }
