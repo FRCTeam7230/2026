@@ -128,6 +128,8 @@ public class ClimberSubsystem extends SubsystemBase
     m_motor1.set(percent);
   }
 
+  //Climber TODO: Will probably also want a setManualOutput that doesn't adhere to soft limits
+
   /**
    * A trigger for when the height is at an acceptable tolerance.
    *
@@ -200,6 +202,9 @@ public class ClimberSubsystem extends SubsystemBase
     heightError_publisher.set(m_desiredHeight - getHeight());
     velocity_publisher.set(m_encoder.getVelocity());
     current1_publisher.set(m_motor1.getOutputCurrent());
+
+    //Climber TODO: I'm not sure yet if we'll want to reset the climber position
+    // Either way, reseting logic should be commented out to start
     boolean reset = false;
     if (Math.abs(m_encoder.getVelocity()) < 0.01 && m_motor1.getOutputCurrent() > ClimberConstants.kResetCurrent) {
       if (m_motor1.getAppliedOutput() > 0) {

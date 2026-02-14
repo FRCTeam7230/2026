@@ -172,36 +172,36 @@ public final class Constants {
 
   public static final class ClimberConstants {
     public static final int kClimMotor1 = 9;
-    public static final double kGearRatio = 15 / 2; // Divided by 2 stages 
-    public static final double kGearCircumference = Units.inchesToMeters(5.5); //inches - lemme double check with 
-    public static final double kResetCurrent = 45; //max current tbd TODO: Will need to tune these currents
-    public static final int kMaxCurrent   = 65;
+    public static final double kGearRatio = 15 / 2; // Divided by 2 stages CLIMBER TODO: Only 1 stage, so no need to divide by 2
+    public static final double kGearCircumference = Units.inchesToMeters(5.5); //inches - lemme double check with CLIMBER TODO: Winch radius is a little under 1 inche, what is circumference? 
+    public static final double kResetCurrent = 45; //max current tbd Climber TODO: Will we be reseting climber?
+    public static final int kMaxCurrent   = 65; //Climber TODO for testing: Ensure we're not close to this
     public static final double kRotationToMeters = kGearCircumference / kGearRatio;// Revolutions to Output units conversion factor
-    public static final double kClimberMaxVelocity = 4000; // Motor RPM - does not get affected by conversion factor TODO: Need a good inches per sec max, start slow (10?)
-    public static final double kClimberMaxAcceleration = 4000; // Motor RPM - does not get affected by conversion factor TODO: Need a good inches per sec per sec max, start slow (10?)
-    public static final double kCLimberKp = 4.5; //TODO: Will need to tune this, I lowered it to start 
+    public static final double kClimberMaxVelocity = 4000; // Motor RPM - does not get affected by conversion factor Climber TODO: Delete this, value not needed or used
+    public static final double kClimberMaxAcceleration = 4000; // Motor RPM - does not get affected by conversion factor Climber TODO: Delete this, value not needed or used
+    public static final double kCLimberKp = 4.5; //Climber TODO: Start with these gains at zero! Will need to tune later 
     public static final double kCLimberKi = 0;
-    public static final double kClimberKd = 1;
+    public static final double kClimberKd = 1; //Climber TODO: Start with these gains at zero! Will need to tune later
     public static final double kClimberRampRate = 0.2;
 
     //Climber score slow
-    public static final double kSlowElevatorKp = 4.5; //TODO: Will need to tune this, I lowered it to start 
-    public static final double kSlowElevatorKi = 0;
-    public static final double kSlowElevatorKd = 1;
-    public static final double kSlowElevatorRampRate = 0.2;
+    public static final double kSlowElevatorKp = 4.5; //Climber TODO: Delete this, value not needed or used 
+    public static final double kSlowElevatorKi = 0; //Climber TODO: Delete this, value not needed or used
+    public static final double kSlowElevatorKd = 1; //Climber TODO: Delete this, value not needed or used
+    public static final double kSlowElevatorRampRate = 0.2; //Climber TODO: Delete this, value not needed or used
       // Note: All of these should be 0.0 except kG - which we will need to determine empirically
     public static final double kClimberkS = 0.0; // volts (V)
     public static final double kClimberkG = 0.35; // volts (V) //TODO: Will need to tune
     public static final double kClimberkV = 0.0; // volt per velocity (V/(m/s))
     public static final double kClimberkA = 0.0; // volt per acceleration (V/(m/s²))
 
-    public static final double kCarriageMass = 4.0; // kg
+    public static final double kCarriageMass = 4.0; // kg //Climber TODO: Delete this, value not needed or used
 
     // Encoder is reset to measure 0 at the bottom, so minimum height is 0.
     public static final double kMinRealClimberHeightMeters = 0.01;    // m
-    public static final double kMaxRealClimberHeightMeters = 1.575; // m
+    public static final double kMaxRealClimberHeightMeters = 1.575; // m //Climber TODO: Will need to tune this
     
-    public static final double kPreScoringHeightMeters = 1.558; 
+    public static final double kPreScoringHeightMeters = 1.558; //Climber TODO: Delete this, value not needed or used
     public static final double kPostScoringHeightNoAlgeaMeters = kPreScoringHeightMeters-0.3;
     public static final double kPostScoringHeightMeters = kPreScoringHeightMeters-0.43;
   }

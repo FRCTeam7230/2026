@@ -43,6 +43,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   //Climber set
+  //Climber TODO: Rename these, since they're not "toggles" but rather setting a specific height
   private Command m_climberToggleCommand1 = Commands.runEnd(
             () -> m_Climber.reachGoal(ClimberConstants.kMaxRealClimberHeightMeters),
             () -> m_Climber.stop(),
@@ -134,6 +135,7 @@ public class RobotContainer {
 
     //Climber Controls
     //Climb UP
+    //Climber TODO: Comment these in, as we'll want these at the start of testing
     /*
     ButtonMappings.button(m_driverController, 5)
       .whileTrue(Commands.startEnd(
@@ -150,6 +152,7 @@ public class RobotContainer {
     */
 
     //Climb Up and Down
+    //Climber TODO: Comment this out until we're ready to test it
     ButtonMappings.button(m_driverController, 4)
       .onTrue(new InstantCommand(() -> {
         m_climberToggleCommand1.schedule();
