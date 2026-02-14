@@ -53,17 +53,6 @@ public final class Constants {
     public static final double shootSpeed = 3000; 
     public static final double testShootSpeed = 0.5;
   }
-  public static final class AlignClimberConstants {
-    public static final double kxkp = 0.67;
-    public static final double kzkp = 0.67;
-    public static final double kyawkp = 0.01;
-    public static final double kxSetpoint = 0.67;
-    public static final double kzSetpoint = 0.67;
-    public static final double kyawSetpoint = 0;
-    public static final double kxTolerance = 0.1;
-    public static final double kzTolerance = 0.1;
-    public static final double kyawTolerance = 0.1;
-  }
   public static final class AutoAlignToHubConstants {
     public static final double kTargetX = 0.67;
     public static final double kTargetZ = 0.67;
