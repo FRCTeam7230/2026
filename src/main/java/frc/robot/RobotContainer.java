@@ -34,6 +34,7 @@ public class RobotContainer {
   ClimberSubsystem m_Climber;
   DriveSubsystem m_robotDrive;
   private Boolean fieldRelative = true;
+  private boolean isCompetition = true;
 
   // XBox controller.
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -42,14 +43,24 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   //Climber set
-  private boolean m_climberToggleUp = true;
-  private Command m_climberToggleCommand = null;
+  private Command m_climberToggleCommand1 = Commands.runEnd(
+            () -> m_Climber.reachGoal(ClimberConstants.kMaxRealClimberHeightMeters),
+            () -> m_Climber.stop(),
+            m_Climber);
+  private Command m_climberToggleCommand2 = Commands.runEnd(
+            () -> m_Climber.reachGoal(ClimberConstants.kMaxRealClimberHeightMeters),
+            () -> m_Climber.stop(),
+            m_Climber);
+  private Command m_DriveRun = Commands.runEnd(
+            () -> m_robotDrive.drive(1, 0, 0, isCompetition),
+            () -> m_robotDrive.getSpeeds(),
+            m_robotDrive);
 
   /**
    * 
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  private boolean isCompetition = true;//What replaces this?
+//What replaces this?
 
   public RobotContainer() {
     
@@ -123,6 +134,7 @@ public class RobotContainer {
 
     //Climber Controls
     //Climb UP
+    /*
     ButtonMappings.button(m_driverController, 5)
       .whileTrue(Commands.startEnd(
           () -> m_Climber.ManualClimberUp(),
@@ -135,32 +147,16 @@ public class RobotContainer {
           () -> m_Climber.ManualClimberDown(),
           () -> m_Climber.stop(),
           m_Climber));
+    */
 
     //Climb Up and Down
     ButtonMappings.button(m_driverController, 4)
       .onTrue(new InstantCommand(() -> {
-        // cancel previous toggle command if running
-        if (m_climberToggleCommand != null) {
-          m_climberToggleCommand.cancel();
-        }
-
-        // build next toggle command
-        if (m_climberToggleUp) {
-          m_climberToggleCommand = Commands.runEnd(
-              () -> m_Climber.ManualClimberUp(),
-              () -> m_Climber.stop(),
-              m_Climber);
-        } else {
-          m_climberToggleCommand = Commands.runEnd(
-              () -> m_Climber.ManualClimberDown(),
-              () -> m_Climber.stop(),
-              m_Climber);
-        }
-
-        // schedule it and flip direction for next press
-        m_climberToggleCommand.schedule();
-        m_climberToggleUp = !m_climberToggleUp;
+        m_climberToggleCommand1.schedule();
+        m_DriveRun.schedule();
+        m_climberToggleCommand2.schedule();
       }, m_Climber));
+    m_climberToggleCommand1.andThen(m_DriveRun).andThen(m_climberToggleCommand2);
   }
 
   /**

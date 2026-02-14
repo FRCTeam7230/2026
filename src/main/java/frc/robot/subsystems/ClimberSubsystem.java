@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 import frc.robot.Constants.ClimberConstants;
 
 public class ClimberSubsystem extends SubsystemBase 
@@ -177,6 +178,11 @@ public class ClimberSubsystem extends SubsystemBase
   public void ManualClimberDown()
   {
     setManualOutputSafe(-0.15);
+  }
+
+  public void ClimberIncrementDown() 
+  {
+    reachGoal(Constants.ClimberConstants.kMinRealClimberHeightMeters); 
   }
 
   //Update telemetry

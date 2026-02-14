@@ -198,7 +198,7 @@ public final class Constants {
     public static final double kCarriageMass = 4.0; // kg
 
     // Encoder is reset to measure 0 at the bottom, so minimum height is 0.
-    public static final double kMinRealClimberHeightMeters = 0;    // m
+    public static final double kMinRealClimberHeightMeters = 0.01;    // m
     public static final double kMaxRealClimberHeightMeters = 1.575; // m
     
     public static final double kPreScoringHeightMeters = 1.558; 
