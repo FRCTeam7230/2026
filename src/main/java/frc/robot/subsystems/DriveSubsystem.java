@@ -20,9 +20,12 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator3d;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -66,7 +69,7 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kRearRightTurningCanId,
       DriveConstants.kBackRightChassisAngularOffset);
 
-  Pose2d currentPose;
+  Pose3d currentPose;
   private Field2d field = new Field2d();
   PPHolonomicDriveControllerCustom autoDriveController;
 
@@ -90,7 +93,7 @@ public class DriveSubsystem extends SubsystemBase {
       .publish();
   BooleanPublisher gyro_calibrated = NetworkTableInstance.getDefault().getBooleanTopic("IsCalibearted").publish();
 
-  StructPublisher<Pose2d> odomPublisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct)
+  StructPublisher<Pose3d> odomPublisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose3d.struct)
       .publish();
   Integer[] IDFilter = null;
 
@@ -99,15 +102,15 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   // Odometry class for tracking robot pose
-  SwerveDrivePoseEstimator m_odometry = new SwerveDrivePoseEstimator(
+  SwerveDrivePoseEstimator3d m_odometry = new SwerveDrivePoseEstimator3d(
       DriveConstants.kDriveKinematics,
-      Rotation2d.fromDegrees(getFieldAngle()),
+      new Rotation3d(m_gyro.getRoll(), m_gyro.getPitch(), getFieldAngle()),
       new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
           m_rearLeft.getPosition(),
           m_rearRight.getPosition()
-      }, new Pose2d());
+      }, new Pose3d());
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -179,9 +182,9 @@ public class DriveSubsystem extends SubsystemBase {
         allianceInitialized = true;
       }
     }
-    odomPublisher.set(getPose());
+    odomPublisher.set(get3dPose());
     currentPose = m_odometry.update(
-        Rotation2d.fromDegrees(getFieldAngle()),
+        new Rotation3d(m_gyro.getRoll(), m_gyro.getPitch(), getFieldAngle()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -212,7 +215,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void updateMegatag() {
     currentPose = m_odometry.update(
-        Rotation2d.fromDegrees(getFieldAngle()),
+        new Rotation3d(m_gyro.getRoll(), m_gyro.getPitch(), getFieldAngle()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -221,8 +224,8 @@ public class DriveSubsystem extends SubsystemBase {
         });
     boolean doRejectUpdate = false;
 
-    LimelightHelpers.SetRobotOrientation("limelight", m_odometry.getEstimatedPosition().getRotation().getDegrees(), 0,
-        0, 0, 0, 0);
+    LimelightHelpers.SetRobotOrientation("limelight", Math.toDegrees(m_odometry.getEstimatedPosition().getRotation().getZ()), 0,
+        Math.toDegrees(m_odometry.getEstimatedPosition().getRotation().getY()), 0, Math.toDegrees(m_odometry.getEstimatedPosition().getRotation().getX()), 0);
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
     ArrayList<Integer> validIDList = new ArrayList<Integer>();
     for (LimelightHelpers.RawFiducial distanceFiducial : mt2.rawFiducials) {
@@ -244,7 +247,7 @@ public class DriveSubsystem extends SubsystemBase {
       doRejectUpdate = true;
     }
     if (!doRejectUpdate) {
-      m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+      m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, .7, 9999999));
       m_odometry.addVisionMeasurement(
           mt2.pose,
           mt2.timestampSeconds);
@@ -344,12 +347,38 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Returns the currently-estimated pose of the robot.
+   * Returns the currently-estimated 3d pose of the robot.
    *
-   * @return The pose.
+   * @return The 3d pose.
+   */
+  public Pose3d get3dPose() {
+    return m_odometry.getEstimatedPosition();
+  }
+
+  /**
+   * Returns the currently-estimated 2d pose of the robot.
+   *
+   * @return The 2d pose.
    */
   public Pose2d getPose() {
-    return m_odometry.getEstimatedPosition();
+    return m_odometry.getEstimatedPosition().toPose2d();
+  }
+
+  /**
+   * Resets the odometry to the specified pose.
+   *
+   * @param pose The pose to which to set the odometry.
+   */
+  public void resetOdometry(Pose3d pose) {
+    m_odometry.resetPosition(
+        new Rotation3d(m_gyro.getRoll(), m_gyro.getPitch(), getFieldAngle()),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        },
+        pose);
   }
 
   /**
@@ -359,14 +388,14 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(
-        Rotation2d.fromDegrees(getFieldAngle()),
+        new Rotation3d(0 , 0, getFieldAngle()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         },
-        pose);
+        new Pose3d(pose));
   }
 
   /**
@@ -429,7 +458,7 @@ public class DriveSubsystem extends SubsystemBase {
     double rotationFF = 0;
 
     ChassisSpeeds c = ChassisSpeeds.fromFieldRelativeSpeeds(
-        0.0, 0.0, rotationFeedback + rotationFF, currentPose.getRotation());
+        0.0, 0.0, rotationFeedback + rotationFF, currentPose.getRotation().toRotation2d());
 
     SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(c);
 
@@ -474,14 +503,14 @@ public class DriveSubsystem extends SubsystemBase {
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
     m_gyro.reset();
-    m_odometry.resetPosition(m_gyro.getRotation2d(),
+    m_odometry.resetPosition(m_gyro.getRotation3d(),
     new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
     },
-    new Pose2d(m_odometry.getEstimatedPosition().getTranslation(), m_gyro.getRotation2d()));
+    new Pose3d(m_odometry.getEstimatedPosition().getTranslation(), m_gyro.getRotation3d()));
   }
 
   public void addAngleGyro(double angle) {

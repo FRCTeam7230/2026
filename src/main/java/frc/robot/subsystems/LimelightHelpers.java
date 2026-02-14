@@ -532,7 +532,7 @@ public class LimelightHelpers {
      * Represents a 3D Pose Estimate.
      */
     public static class PoseEstimate {
-        public Pose2d pose;
+        public Pose3d pose;
         public double timestampSeconds;
         public double latency;
         public int tagCount;
@@ -547,7 +547,7 @@ public class LimelightHelpers {
          * Instantiates a PoseEstimate object with default values
          */
         public PoseEstimate() {
-            this.pose = new Pose2d();
+            this.pose = new Pose3d();
             this.timestampSeconds = 0;
             this.latency = 0;
             this.tagCount = 0;
@@ -558,7 +558,7 @@ public class LimelightHelpers {
             this.isMegaTag2 = false;
         }
 
-        public PoseEstimate(Pose2d pose, double timestampSeconds, double latency, 
+        public PoseEstimate(Pose3d pose, double timestampSeconds, double latency, 
             int tagCount, double tagSpan, double avgTagDist, 
             double avgTagArea, RawFiducial[] rawFiducials, boolean isMegaTag2) {
 
@@ -572,6 +572,22 @@ public class LimelightHelpers {
             this.rawFiducials = rawFiducials;
             this.isMegaTag2 = isMegaTag2;
         }
+
+        public PoseEstimate(Pose2d pose, double timestampSeconds, double latency, 
+            int tagCount, double tagSpan, double avgTagDist, 
+            double avgTagArea, RawFiducial[] rawFiducials, boolean isMegaTag2) {
+
+            this.pose = new Pose3d(pose);
+            this.timestampSeconds = timestampSeconds;
+            this.latency = latency;
+            this.tagCount = tagCount;
+            this.tagSpan = tagSpan;
+            this.avgTagDist = avgTagDist;
+            this.avgTagArea = avgTagArea;
+            this.rawFiducials = rawFiducials;
+            this.isMegaTag2 = isMegaTag2;
+        }
+
 
     }
 
@@ -716,7 +732,7 @@ public class LimelightHelpers {
             return null; // or some default PoseEstimate
         }
     
-        var pose = toPose2D(poseArray);
+        var pose = toPose3D(poseArray);
         double latency = extractArrayEntry(poseArray, 6);
         int tagCount = (int)extractArrayEntry(poseArray, 7);
         double tagSpan = extractArrayEntry(poseArray, 8);
