@@ -189,6 +189,7 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
     updateMegatag();
+    field.setRobotPose(getPose());
   }
   public void ApplyMegatagFilter()
   {
@@ -224,31 +225,38 @@ public class DriveSubsystem extends SubsystemBase {
     LimelightHelpers.SetRobotOrientation("limelight", m_odometry.getEstimatedPosition().getRotation().getDegrees(), 0,
         0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-    ArrayList<Integer> validIDList = new ArrayList<Integer>();
-    for (LimelightHelpers.RawFiducial distanceFiducial : mt2.rawFiducials) {
-      if (distanceFiducial.distToRobot < Constants.LimelightConstants.maxVisionDistanceMeters) {
-        if(IDFilter == null || Arrays.asList(IDFilter).contains(distanceFiducial.id))
-        validIDList.add(distanceFiducial.id);
+    if(mt2!=null)
+    {
+      ArrayList<Integer> validIDList = new ArrayList<Integer>();
+      for (LimelightHelpers.RawFiducial distanceFiducial : mt2.rawFiducials) {
+        if (distanceFiducial.distToRobot < Constants.LimelightConstants.maxVisionDistanceMeters) {
+          if(IDFilter == null || Arrays.asList(IDFilter).contains(distanceFiducial.id))
+          validIDList.add(distanceFiducial.id);
+        }
+      }
+      int[] validIds = validIDList.stream().mapToInt(i -> i).toArray();
+      LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIds);
+      mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+    }
+
+    if(mt2!=null)
+    {
+      if (Math.abs(m_gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore
+                                            // vision updates
+      {
+        doRejectUpdate = true;
+      }
+      if (mt2.tagCount == 0) {
+        doRejectUpdate = true;
+      }
+      if (!doRejectUpdate) {
+        m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+        m_odometry.addVisionMeasurement(
+            mt2.pose,
+            mt2.timestampSeconds);
       }
     }
-    int[] validIds = validIDList.stream().mapToInt(i -> i).toArray();
-    LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIds);
-    mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-
-    if (Math.abs(m_gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore
-                                          // vision updates
-    {
-      doRejectUpdate = true;
-    }
-    if (mt2.tagCount == 0) {
-      doRejectUpdate = true;
-    }
-    if (!doRejectUpdate) {
-      m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-      m_odometry.addVisionMeasurement(
-          mt2.pose,
-          mt2.timestampSeconds);
-    }
+    
 
     double[] gyroData = { (double) m_gyro.getYaw(),
         m_gyro.getAngle(), (double) m_gyro.getRoll(),

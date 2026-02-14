@@ -28,6 +28,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.FieldManagementPublisher;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -47,6 +48,7 @@ public class RobotContainer {
 
   // The robot's subsystems
   DriveSubsystem m_robotDrive;
+  FieldManagementPublisher m_fieldManagementPublisher;
   private Boolean fieldRelative = true;
   /*
   private ShooterSubsystem m_ShooterSubsystem;
@@ -73,10 +75,10 @@ public class RobotContainer {
     m_ShooterSubsystem = new ShooterSubsystem();
     m_FeederSubsystem = new FeederSubsystem();
     */
+    m_fieldManagementPublisher = new FieldManagementPublisher();
     //Set up Subsystems
-    if (RobotBase.isReal()) {
-      m_robotDrive = new DriveSubsystem();
-    }
+    m_robotDrive = new DriveSubsystem();
+
     for(int port = 5800; port<=5809; port++)
     {
       PortForwarder.add(port, "limelight.local",port);
