@@ -31,25 +31,25 @@ public final class Constants {
     public static final int kickerCANID = 4;
     public static final int kfeedermotorlimitcurrent = 80;
     public static final double kfeederrampratesec = 0;
-    public static final double rollerSpeed = 0.5;
-    public static final double kickerSpeed = -0.5;
+    public static final double rollerSpeed = 0.5; //Note: Rollers should spin slower than kicker (check gearing on each)
+    public static final double kickerSpeed = -0.5; //Note: kicker should have a slower linear speed than shooter 
   }
 
   public static class OuttakeConstants {
-    public static final double kGearRatio = 7.5;
-    public static final double koutputpulleycircum = 5.5;
+    public static final double kGearRatio = 7.5; //Shooter TODO: There's no gear box or turn up/down. Set this to 1 or delete
+    public static final double koutputpulleycircum = 5.5; //Shooter TODO: Is this chooter wheel circumference? If not used, delete
     public static final double EncoderTickPerRev = 1;
     public static final double CANID1 = 1;
-    public static final double CanID2 = 2;
+    public static final double CanID2 = 2; //Shooter TODO: Check IDs and need a third
     public static final int motorlimitcurrent = 80;
     public static final double krampratesec = 0;
     public static final double PositionFactor =  koutputpulleycircum / kGearRatio;
-    public static final double kOuttakeKp = 0;
-    public static final double kOuttakeKi = 0;
+    public static final double kOuttakeKp = 0; //Shooter TODO: Use Constants from testing to start
+    public static final double kOuttakeKi = 0; //Shooter TODO: Add kF 
     public static final double kOuttakeKd = 0;
-    public static final double kOOuttakeKg = 0.35;
-    public static final double kElevMaxHeight = 1.575;
-    public static final double ShooterTolerance = 0.2;
+    public static final double kOOuttakeKg = 0.35; //Shooter TODO: No kG
+    public static final double kElevMaxHeight = 1.575; //Shooter TODO: Delete
+    public static final double ShooterTolerance = 0.2; //Shooter TODO: 0.2 rpm? Seems small
     public static final double shootSpeed = 3000; 
     public static final double testShootSpeed = 0.5;
   }
