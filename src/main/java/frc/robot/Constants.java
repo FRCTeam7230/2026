@@ -150,6 +150,17 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.1; // updated based on 2025 code
   }
+    public static final class AlignClimberConstants {
+    public static final double kxkp = 0.67;
+    public static final double kzkp = 0.67;
+    public static final double kyawkp = 0.01;
+    public static final double kxSetpoint = 0.67;
+    public static final double kzSetpoint = 0.67;
+    public static final double kyawSetpoint = 0;
+    public static final double kxTolerance = 0.1;
+    public static final double kzTolerance = 0.1;
+    public static final double kyawTolerance = 0.1;
+  }
 
   public static final class AutoConstants {
     public static final double kMaxSpeedMetersPerSecond = 4.8; // updated based on 2025 code
