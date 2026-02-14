@@ -11,11 +11,10 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
-
+import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,15 +23,15 @@ import frc.robot.Constants.OuttakeConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ShooterSubsystemcurrently. */
-  private final SparkMax outtakemotor1 = new SparkMax(Constants.OuttakeConstants.ShootMotor1ID, MotorType.kBrushless); 
-  private final SparkMax outtakemotor2 = new SparkMax(Constants.OuttakeConstants.ShootMotor2ID, MotorType.kBrushless); 
-  private final SparkMax outtakemotor3 = new SparkMax(Constants.OuttakeConstants.ShootMotor3ID, MotorType.kBrushless); 
+  private final SparkFlex outtakemotor1 = new SparkFlex(Constants.OuttakeConstants.ShootMotor1ID, MotorType.kBrushless); 
+  private final SparkFlex outtakemotor2 = new SparkFlex(Constants.OuttakeConstants.ShootMotor2ID, MotorType.kBrushless); 
+  private final SparkFlex outtakemotor3 = new SparkFlex(Constants.OuttakeConstants.ShootMotor3ID, MotorType.kBrushless); 
   private final RelativeEncoder m_outtakemotorencoder1 = outtakemotor1.getEncoder(); 
   private final RelativeEncoder m_outtakemotorencoder2 = outtakemotor2.getEncoder(); 
   private final RelativeEncoder m_outtakemotorencoder3 = outtakemotor3.getEncoder();  
-  private final SparkMaxConfig m_outtakemotor1config = new SparkMaxConfig();
-  private final SparkMaxConfig m_outtakemotor2config = new SparkMaxConfig();
-  private final SparkMaxConfig m_outtakemotor3config = new SparkMaxConfig();
+  private final SparkFlexConfig m_outtakemotor1config = new SparkFlexConfig(); 
+  private final SparkFlexConfig m_outtakemotor2config = new SparkFlexConfig(); 
+  private final SparkFlexConfig m_outtakemotor3config = new SparkFlexConfig(); 
   private final SparkClosedLoopController m_outtakecontroller1 = outtakemotor1.getClosedLoopController();
   private final SparkClosedLoopController m_outtakecontroller2 = outtakemotor2.getClosedLoopController();
   private final SparkClosedLoopController m_outtakecontroller3 = outtakemotor3.getClosedLoopController();

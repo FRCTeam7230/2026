@@ -27,8 +27,8 @@ public final class Constants {
   public static final double rotateDivider = 5;
 
   public static final class FeederConstants {
-    public static final int rollerCANID = 3;
-    public static final int kickerCANID = 4;
+    public static final int rollerCANID = 13;
+    public static final int kickerCANID = 12;
     public static final int kfeedermotorlimitcurrent = 80;
     public static final double kfeederrampratesec = 0;
     public static final double rollerSpeed = 0.5; //Note: Rollers should spin slower than kicker (check gearing on each)
@@ -37,12 +37,12 @@ public final class Constants {
 
   public static class OuttakeConstants {
     public static final double EncoderTickPerRev = 1;
-    public static final int ShootMotor1ID = 1;
-    public static final int ShootMotor2ID = 2; 
-    public static final int ShootMotor3ID = 3; 
+    public static final int ShootMotor1ID = 9; 
+    public static final int ShootMotor2ID = 10; 
+    public static final int ShootMotor3ID = 11; 
     public static final int motorlimitcurrent = 80;
     public static final double krampratesec = 0;
-    public static final double kOuttakeKp = 0.0003; 
+    public static final double kOuttakeKp = 0.0004; 
     public static final double kOuttakeKi = 0; 
     public static final double kOuttakeKd = 0;
     public static final double kOuttakeKf = 0.000151;
@@ -221,8 +221,8 @@ public final class Constants {
 
   public static class IntakeConstants{
 
-    public static final int kJointCANID = 0;
-    public static final int kRollerCANID = 0;
+    public static final int kJointCANID = 14;
+    public static final int kRollerCANID = 15;
     public static final double kjointkS = 0;
     public static final double kjointkG = 0;
     public static final double kjointkV = 0;
