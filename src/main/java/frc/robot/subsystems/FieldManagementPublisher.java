@@ -17,6 +17,7 @@ public class FieldManagementPublisher extends SubsystemBase {
   public FieldManagementPublisher() {}
 BooleanPublisher hubPublisher = NetworkTableInstance.getDefault().getBooleanTopic("HubActive").publish();
 DoublePublisher matchTimePublisher = NetworkTableInstance.getDefault().getDoubleTopic("MatchTime").publish();
+DoublePublisher currentShiftClockPublisher = NetworkTableInstance.getDefault().getDoubleTopic("CurrentShiftClock").publish();
   @Override
   public void periodic() {
     int hubState = getHubState();
@@ -30,9 +31,10 @@ DoublePublisher matchTimePublisher = NetworkTableInstance.getDefault().getDouble
     }
     else if(hubState  ==2)
     {
-      hubPublisher.set((DriverStation.getMatchTime()*8)%2==0);
+      hubPublisher.set(Math.round(DriverStation.getMatchTime()*4)%2==0);
     }
-    matchTimePublisher.set(DriverStation.getMatchTime());
+    matchTimePublisher.set(Math.round(10*DriverStation.getMatchTime())/10.0);
+    currentShiftClockPublisher.set(Math.round(10*((DriverStation.getMatchTime()-30)%25))/10.0);
   }
   /*
    * 1 = Active
@@ -78,39 +80,39 @@ DoublePublisher matchTimePublisher = NetworkTableInstance.getDefault().getDouble
     case Blue -> redInactiveFirst;
   };
 
-  if (matchTime > 130+3) {
+  if (matchTime > 130+3) { // Transition shift, first 7 seconds
     // Transition shift, hub is active.
     return 1;
   } 
-  else if(matchTime>130)
+  else if(matchTime>130) //  Transition shift, but hub might be deactivating
   {
   return shift1Active? 1 : 2;
   }
-  else if (matchTime > 105+3) {
+  else if (matchTime > 105+3) { // First shift, first 22 seconds
     // Shift 1
     return shift1Active? 1 : 0;
   } 
-  else if(matchTime>105)
+  else if(matchTime>105) // First shift, but hub might be deactivating
   {
-    return shift1Active? 2 : 1;
+    return shift1Active? 2 : 0;
   }
-  else if (matchTime > 80+3) {
+  else if (matchTime > 80+3) { // second shift, first 22 seconds
     // Shift 2
     return shift1Active?0:1;
   }
-  else if(matchTime>80)
+  else if(matchTime>80) // second shift, but hub might be deactivating
   {
-    return shift1Active? 1 : 2;
+    return shift1Active? 0 : 2;
   } 
-  else if (matchTime > 55+3) {
+  else if (matchTime > 55+3) { // third shift, first 22 seconds
     // Shift 3
     return shift1Active? 1 : 0;
   } 
-  else if(matchTime>55)
+  else if(matchTime>55) // third shift, but hub might be deactivating
   {
-    return shift1Active? 2 : 1;
+    return shift1Active? 2 : 0;
   }
-  else if (matchTime > 30) {
+  else if (matchTime > 30) { // Fourth shift, full thing
     // Shift 4
     return shift1Active?0:1;
   } else {
