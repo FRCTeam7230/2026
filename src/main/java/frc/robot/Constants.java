@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -248,5 +249,18 @@ public final class Constants {
     public static final double kerrorXTolerance = 0.1;
     public static final double kerrorYTolerance = 0.1;
     public static final double kerrorAngleTolerance = 1;
+  }
+
+  public static final class LEDConstants {
+
+    public static final int kPort = 0; //update
+    public static final int kLEDLength = 60; //update
+    public static final int kBottomStartIndex = 0;
+    public static final int kBottomEndIndex = 40; //update
+    public static final int kTopStartIndex = 41; //update
+    public static final int kTopEndIndex = 60; //update
+    
+    public static final Color kNiceYellow = new Color("#DEC95D");
+    
   }
 }
