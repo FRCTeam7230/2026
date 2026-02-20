@@ -21,23 +21,33 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+/**
+ * Subsystem controlling the Intake join and the roller on the end of the joint for intaking fuel into the robot. 
+ */
 public class IntakeSubsystem extends SubsystemBase
 {
   // Set up Joint and Shooter properties
-  
+  /**Motor Controlling the join for the intake, which is also connected to the hopper extensions */
   private final SparkMax                  m_joint               = new SparkMax(Constants.IntakeConstants.kJointCANID, MotorType.kBrushless);
+  /**Motor controlling the roller on the end of the intake, which must be running in order to get balls through the intake */
   private final SparkMax                  m_roller              = new SparkMax(Constants.IntakeConstants.kRollerCANID, MotorType.kBrushless);
+  /**Closed Loop (PID) Controller for the joint to move it to set positions */
   private final SparkClosedLoopController m_controller          = m_joint.getClosedLoopController();
+  /**Encoder on the joint to determine its position for PID movement and precise tracking */
   private final SparkAbsoluteEncoder      m_jointEncoder        = m_joint.getAbsoluteEncoder();
+  /**Config object for the joint motor */
   private final SparkMaxConfig            m_config_joint        = new SparkMaxConfig();
+  /**Config object for the roller motor */
   private final SparkMaxConfig            m_config_roller       = new SparkMaxConfig();
-  
+  /**The Angle we want the join to be at, used for debugging and advantageScope */
   private double desiredAngle;
-  
+
   DoublePublisher jointEncoder_publisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/jointEncoderValue").publish();
   DoublePublisher targetPosition_publisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/jointTarget").publish();
   
-
+  /**
+   * Feedforward class that accounts for gravity for the intake PID 
+  */
   ArmFeedforward m_feedforward =
       new ArmFeedforward(
         0,
@@ -45,7 +55,7 @@ public class IntakeSubsystem extends SubsystemBase
         0,
         0);
 
-
+  /**Constructs an intake subsystem */
    public IntakeSubsystem(){
         
         m_config_joint.absoluteEncoder
@@ -69,7 +79,7 @@ public class IntakeSubsystem extends SubsystemBase
 
         m_config_roller.idleMode(SparkBaseConfig.IdleMode.kBrake);
         m_config_roller.smartCurrentLimit(Constants.IntakeConstants.kMaxCurrent); //Intake TODO: MaxCurrent can go up for the Neo 1.1, maybe 40 or 60?
-
+        //This setup means that it will not reset certain "safe" parameters to their defaults, and will also persist the new parameters we set
         m_joint.configure(m_config_joint, ResetMode.kNoResetSafeParameters,PersistMode.kPersistParameters);
         m_roller.configure(m_config_roller, ResetMode.kNoResetSafeParameters,PersistMode.kPersistParameters);
         
@@ -81,22 +91,38 @@ public class IntakeSubsystem extends SubsystemBase
       return m_jointEncoder.getPosition();
     }
       */
-    
+    /**Spins the roller on the end of the joint
+     * @param percentage the percentage to spin the roller at, between -1 and 1, where 1 is full forward and -1 is full reverse.
+     */
     public void spinRoller(double percentage) {
       m_roller.set(percentage);
     }
+    /**Turns the roller off */
     public void stop() {
       m_roller.set(0);
     }
 
     //for testing
+    /**Manual joint control method for testing purposes
+     * @param percentage the percentage to spin the join at. Since the joint has constraints, less than 20% is recommended at first. 
+     */
     public void spinJoint(double percentage) {
       m_joint.set(percentage);
     }
+    /**
+     * Method for testing the kG feedforward value for the join PID. 
+     * When run, it should hold the joint at a fixed position with no loss from gravity. Adjust kG accordingly if it does not. 
+     */
     public void hoverJoint() {
-      m_controller.setSetpoint(m_feedforward.calculate(Math.toRadians(m_jointEncoder.getPosition()), Math.toRadians(m_jointEncoder.getVelocity())), ControlType.kVoltage, ClosedLoopSlot.kSlot0);
+      m_controller.setSetpoint(
+        m_feedforward.calculate(Math.toRadians(m_jointEncoder.getPosition()), Math.toRadians(m_jointEncoder.getVelocity())),
+        ControlType.kVoltage,
+        ClosedLoopSlot.kSlot0
+      );
     }
-
+    /** Adjusts the PID setpoint for the intake joint and starts the intake moving there
+     * @param goal the angle in degrees to move the joint to, where 0 is horizontal. 
+    */
     public void reachGoal(double goal) {
       desiredAngle = goal;
       m_controller.setSetpoint(
@@ -106,16 +132,19 @@ public class IntakeSubsystem extends SubsystemBase
         m_feedforward.calculate(Math.toRadians(m_jointEncoder.getPosition()), Math.toRadians(m_jointEncoder.getVelocity()))
         );
     }
-
+    /** simple run command that uses reach goal 
+     * @param goal the angle in degrees to move the joint to, where 0 is horizontal.
+    */
     public Command setGoal(double goal){
         return run(()-> reachGoal(goal));//converting runnable to command. 
     }
 
-  
+    /**
+     * Periodic runs every cycle. It published the encoder value and target position for the joint to networktables for debugging. 
+     */
     public void periodic(){
       jointEncoder_publisher.set(m_jointEncoder.getPosition());
       targetPosition_publisher.set(desiredAngle);
-
     }
 
 
