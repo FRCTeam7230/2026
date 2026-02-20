@@ -65,7 +65,7 @@ public class RobotContainer {
     {
       PortForwarder.add(port, "limelight.local",port);
     }
-
+    //m_intake = new IntakeSubsystem();
     NamedCommands.registerCommand("Going over the bump", m_robotDrive.driveExperiment());
     SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Zero/Reset sensors
@@ -95,9 +95,9 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
                 fieldRelative),
         m_robotDrive));
     
-    Command extendIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kextendedPostion);
+    //Command extendIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kextendedPostion);
 
-    Command retractIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kretractedPostion);
+    //Command retractIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kretractedPostion);
   }
 
   /**
@@ -127,7 +127,7 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
               new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
               new InstantCommand(() -> mode_publisher.set(fieldRelative))
           ));
-
+    /* 
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
       .whileTrue(new InstantCommand( ()->{
         if (intakeIsUp) {
@@ -156,6 +156,7 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
         ()-> m_intake.hoverJoint(),
         ()-> m_intake.spinJoint(0), m_intake
       ));
+      */
   }
 
   /**
