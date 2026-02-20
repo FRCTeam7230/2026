@@ -12,7 +12,10 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class AutoShooterCommand extends Command {
   private ShooterSubsystem ShooterSubsystem;
   private double speed;
-  /** Creates a new AutoShooterCommand. */
+  /** Creates a new AutoShooterCommand.
+    @param Shooting the ShooterSubsystem used by this command
+    @param speed the speed that shooter motors will be set to in RPMs
+   */
   public AutoShooterCommand(ShooterSubsystem Shooting, double speed) {
     ShooterSubsystem = Shooting;
     this.speed = speed;

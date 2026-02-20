@@ -18,7 +18,9 @@ import frc.robot.Constants;
 public class FeederSubsystem extends SubsystemBase {
   //Kicker TODO: Maybe use a velocity controller on the kicker as well? If needed
 
+/** 1 motor used for all rollers on bottom of chassis, meant for intaking and moving fuel to outtake(positive speed for intake, negative for outtake)*/
   private final SparkMax rollermotor = new SparkMax(Constants.FeederConstants.rollerCANID, MotorType.kBrushless);
+/** 1 motor used for running kicker tubes, meant for moving fuel from feeder to shooter */
   private final SparkMax kickermotor1 = new SparkMax(Constants.FeederConstants.kickerCANID, MotorType.kBrushless);
   private final SparkMaxConfig m_rollermotorconfig = new SparkMaxConfig();
   private final SparkMaxConfig m_kickermotor1config = new SparkMaxConfig();
@@ -38,10 +40,15 @@ public class FeederSubsystem extends SubsystemBase {
     kickermotor1.configure(m_kickermotor1config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
   }
-  // Sets roller motor speed(positive is intake, negative is outtake)
+  /** Sets roller motor speed in PERCENTAGE(positive is intake, negative is outtake)
+   @param rollerspeed the speed that roller motor will be set to in PERCENTAGE
+   */
   public void setRollerSpeed(double rollerspeed) {
     rollermotor.set(rollerspeed);
   }
+  /** Sets kicker motor speed in PERCENTAGE 
+@param kickerspeed the speed that kicker motor will be set to in PERCENTAGE
+  */
   public void setKickerSpeed(double kickerspeed) {
     kickermotor1.set(kickerspeed);
   }

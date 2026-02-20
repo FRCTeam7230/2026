@@ -15,6 +15,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,9 +23,11 @@ import frc.robot.Constants;
 import frc.robot.Constants.OuttakeConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
-  /** Creates a new ShooterSubsystemcurrently. */
+  /** meant to shoot fuel */
   private final SparkFlex outtakemotor1 = new SparkFlex(Constants.OuttakeConstants.ShootMotor1ID, MotorType.kBrushless); 
+  /** meant to shoot fuel */
   private final SparkFlex outtakemotor2 = new SparkFlex(Constants.OuttakeConstants.ShootMotor2ID, MotorType.kBrushless); 
+    /** meant to shoot fuel */
   private final SparkFlex outtakemotor3 = new SparkFlex(Constants.OuttakeConstants.ShootMotor3ID, MotorType.kBrushless); 
   private final RelativeEncoder m_outtakemotorencoder1 = outtakemotor1.getEncoder(); 
   private final RelativeEncoder m_outtakemotorencoder2 = outtakemotor2.getEncoder(); 
@@ -32,14 +35,21 @@ public class ShooterSubsystem extends SubsystemBase {
   private final SparkFlexConfig m_outtakemotor1config = new SparkFlexConfig(); 
   private final SparkFlexConfig m_outtakemotor2config = new SparkFlexConfig(); 
   private final SparkFlexConfig m_outtakemotor3config = new SparkFlexConfig(); 
+  /** used to tune PIDs that are built-in to motor */
   private final SparkClosedLoopController m_outtakecontroller1 = outtakemotor1.getClosedLoopController();
+  /** used to tune PIDs that are built-in to motor */
   private final SparkClosedLoopController m_outtakecontroller2 = outtakemotor2.getClosedLoopController();
+  /** used to tune PIDs that are built-in to motor */
   private final SparkClosedLoopController m_outtakecontroller3 = outtakemotor3.getClosedLoopController();
   
+  /** gives current velocity of all 3 shooter motors */
   DoubleArrayPublisher velocityPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Velocities").publish();
+    /** gives current setpoint(speed motors are trying to reach) of all 3 shooter motors */
   DoubleArrayPublisher setpointPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Setpoints").publish();
+    /** gives current error(setpoint-velocity) of all 3 shooter motors */
   DoubleArrayPublisher errorPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Errors").publish();
 
+    /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
     //Motor 1
     m_outtakemotor1config.closedLoop
@@ -77,12 +87,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
 
+  /** sets shooter motors to a velocity/setpoint using built in velocity PID controllers 
+  @param Velocity the velocity that shooter motors will try to reach in RPMs
+   */
   public void reachSpeed(double Velocity) {
     m_outtakecontroller1.setSetpoint(Velocity, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
     m_outtakecontroller2.setSetpoint(Velocity, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
     m_outtakecontroller3.setSetpoint(Velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
   }
 
+  /** sets shooter motors to a test velocity in PERCENTAGE(method not using PIDs) 
+  @param testVelocity the velocity that shooter motors will be set to in PERCENTAGE
+  */
   public void reachTestSpeed(double testVelocity) {
     outtakemotor1.set(testVelocity);
     outtakemotor2.set(testVelocity);
@@ -90,11 +106,15 @@ public class ShooterSubsystem extends SubsystemBase {
     
     
   }
+  
+    /** stops shooter motors */
   public void stopMotor() {
     outtakemotor1.stopMotor();
     outtakemotor2.stopMotor();
     outtakemotor3.stopMotor();
   }
+  
+   /** gets current velocity of shooter motors in form of a double array */
   public double[] getMotorVelocity() {
     double outtakemotor1velocity = m_outtakemotorencoder1.getVelocity();
     double outtakemotor2velocity = m_outtakemotorencoder2.getVelocity();
