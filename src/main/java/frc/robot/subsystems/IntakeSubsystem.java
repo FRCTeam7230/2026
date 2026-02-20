@@ -29,9 +29,7 @@ public class IntakeSubsystem extends SubsystemBase
   /**Motor Controlling the joint for the intake, which is also connected to the hopper extensions */
   private final SparkMax                  m_joint               = new SparkMax(Constants.IntakeConstants.kJointCANID, MotorType.kBrushless);
   /**Motor controlling the roller on one end of the intake, which must be running in order to get balls through the intake */
-  private final SparkMax                  m_roller1              = new SparkMax(Constants.IntakeConstants.kRollerCANID, MotorType.kBrushless);
-/**Motor controlling the roller on other end of the intake, which must be running in order to get balls through the intake */
-  private final SparkMax                  m_roller2              = new SparkMax(Constants.IntakeConstants.kRollerCANID, MotorType.kBrushless);
+  private final SparkMax                  m_roller              = new SparkMax(Constants.IntakeConstants.kRollerCANID, MotorType.kBrushless);
   /**Closed Loop (PID) Controller for the joint to move it to set positions */
   private final SparkClosedLoopController m_controller          = m_joint.getClosedLoopController();
   /**Encoder on the joint to determine its position for PID movement and precise tracking */
@@ -39,9 +37,7 @@ public class IntakeSubsystem extends SubsystemBase
   /**Config object for the joint motor */
   private final SparkMaxConfig            m_config_joint        = new SparkMaxConfig();
   /**Config object for the first roller motor */
-  private final SparkMaxConfig            m_config_roller1       = new SparkMaxConfig();
-  /**Config object for the second roller motor */
-  private final SparkMaxConfig            m_config_roller2       = new SparkMaxConfig();
+  private final SparkMaxConfig            m_config_roller       = new SparkMaxConfig();
   /**The Angle we want the join to be at, used for debugging and advantageScope */
   private double desiredAngle;
 
@@ -80,13 +76,11 @@ public class IntakeSubsystem extends SubsystemBase
         m_config_joint.idleMode(IdleMode.kBrake);
         m_config_joint.smartCurrentLimit(Constants.IntakeConstants.kMaxCurrent); //Intake TODO: MaxCurrent can go up for the Neo 1.1, maybe 40 or 60?
 
-        m_config_roller1.idleMode(SparkBaseConfig.IdleMode.kBrake);
-        m_config_roller1.smartCurrentLimit(Constants.IntakeConstants.kMaxCurrent); //Intake TODO: MaxCurrent can go up for the Neo 1.1, maybe 40 or 60?
+        m_config_roller.idleMode(SparkBaseConfig.IdleMode.kBrake);
+        m_config_roller.smartCurrentLimit(Constants.IntakeConstants.kMaxCurrent); //Intake TODO: MaxCurrent can go up for the Neo 1.1, maybe 40 or 60?
         //This setup means that it will not reset certain "safe" parameters to their defaults, and will also persist the new parameters we set
         m_joint.configure(m_config_joint, ResetMode.kNoResetSafeParameters,PersistMode.kPersistParameters);
-        m_roller1.configure(m_config_roller1, ResetMode.kNoResetSafeParameters,PersistMode.kPersistParameters);
-        m_config_roller2.follow(m_roller1, true);
-        m_roller2.configure(m_config_roller2, ResetMode.kNoResetSafeParameters,PersistMode.kPersistParameters);
+        m_roller.configure(m_config_roller, ResetMode.kNoResetSafeParameters,PersistMode.kPersistParameters);
         
         desiredAngle = 0;
     }
@@ -100,11 +94,11 @@ public class IntakeSubsystem extends SubsystemBase
      * @param percentage the percentage to spin the roller at, between -1 and 1, where 1 is full forward and -1 is full reverse.
      */
     public void spinRoller(double percentage) {
-      m_roller1.set(percentage);
+      m_roller.set(percentage);
     }
     /**Turns the roller off */
     public void stop() {
-      m_roller1.set(0);
+      m_roller.set(0);
     }
 
     //for testing
