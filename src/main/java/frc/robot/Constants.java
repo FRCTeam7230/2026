@@ -260,7 +260,9 @@ public final class Constants {
     public static final int kTopStartIndex = 41; //update
     public static final int kTopEndIndex = 60; //update
     
-    public static final Color kNiceYellow = new Color("#DEC95D");
+    public static final Color kNiceYellow = new Color("#DEC95D"); 
+    public static final Color kBrightNiceYellow = new Color("#FFE666");
+
     
   }
 }

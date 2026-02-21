@@ -31,31 +31,81 @@ public class LEDSubsystem extends SubsystemBase {
   }
 
   public void solidPurpleAll() {
-    LEDPattern purple = LEDPattern.solid(Color.kMediumPurple);
-    purple.applyTo(m_LEDBuffer);
+    LEDPattern purplePattern = LEDPattern.solid(Color.kMediumPurple);
+    purplePattern .applyTo(m_LEDBuffer);
     m_LED.setData(m_LEDBuffer);
   }
 
   public void solidYellowAll() {
-    LEDPattern purple = LEDPattern.solid(Constants.LEDConstants.kNiceYellow);// #DEC95D - co medium purple
-    purple.applyTo(m_LEDBuffer);
+    LEDPattern yellowPattern = LEDPattern.solid(Constants.LEDConstants.kNiceYellow);// #DEC95D - contrasts medium purple
+    yellowPattern.applyTo(m_LEDBuffer);
     m_LED.setData(m_LEDBuffer);
   }
 
   // int
-/*
-  public void changeChangeColorSmooth(int currentPhase, double time) {
-    if (!(currentPhase == 2)) {
+  // when put in periodic might want to add a delay?
+
+  public void transitionBlinkingColorSmoothAll() { // could change later if want to use mask and make breath (brightness really fast but as a funtion of percentage)
+    //is valid
+    int currentPhase = FieldManagementPublisher.getHubState();
+    if (!((currentPhase == 2) || (currentPhase == 3))) {
       return;
     }
-    Color yelpurp = Color.lerpRGB(Color.kMediumPurple, Constants.LEDConstants.kNiceYellow, time);
-
+    // yes valid
+    double percentage = 1 - (FieldManagementPublisher.timeLeftInTransition() / 3); //start transition: 0; end transition: 1
+    if (percentage > 1) {
+      return;
+    }
+    //select which is starting color based on type of transition
+    Color first;
+    Color second;
+    if (currentPhase == 2) { // testing: change to 3 if backwards
+      first = Constants.LEDConstants.kNiceYellow;
+      second = Color.kMediumPurple;
+    }
+    else {
+      first = Color.kMediumPurple;
+      second = Constants.LEDConstants.kNiceYellow;
+    }
+    //blinking or solid yelpurp
+    Color actual;
+    if (percentage % 1/12 > 1/24) {
+      actual = Color.kBlack;
+    }
+    else {
+      actual = Color.lerpRGB(first, second, percentage);
+    }
+    //set pattern
+    LEDPattern yelpurpPattern = LEDPattern.solid(actual);
+    yelpurpPattern.applyTo(m_LEDBuffer);
+    m_LED.setData(m_LEDBuffer);
   }
-*/
+  
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-
+    /*
+   * 1 = Active
+   * 0 = inactive
+   * -1 = no data
+   * 2 = transition (active to inactive)
+   * 3 = transition (inactive to active)
+   */
+    double hubState = FieldManagementPublisher.getHubState();
+    if (hubState == 2 || hubState == 3) {
+      transitionBlinkingColorSmoothAll();
+    }
+    if (hubState == 1) {
+      solidYellowAll();
+    }
+    if (hubState == 0) {
+      solidPurpleAll();
+    }
+    /* 
+    if (hubState == -1) {
+      autoPattern();
+    }
+      */
   }
   
 }
