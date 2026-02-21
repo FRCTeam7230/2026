@@ -65,7 +65,7 @@ public class RobotContainer {
     {
       PortForwarder.add(port, "limelight.local",port);
     }
-    //m_intake = new IntakeSubsystem();
+    m_intake = new IntakeSubsystem();
     NamedCommands.registerCommand("Going over the bump", m_robotDrive.driveExperiment());
     SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Zero/Reset sensors
@@ -138,11 +138,11 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
         }
         intakeIsUp = !intakeIsUp;
       }));
-
+    */
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_ROLLERS)
       .whileTrue(new StartEndCommand( ()-> m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed)
-        , ()-> m_intake.spinRoller(0), m_intake));
-
+        , ()-> m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed), m_intake));
+    /*
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_UP)
       .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(Constants.IntakeConstants.kintakeJointSpeed)
         , ()-> m_intake.spinJoint(0), m_intake));
@@ -156,7 +156,7 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
         ()-> m_intake.hoverJoint(),
         ()-> m_intake.spinJoint(0), m_intake
       ));
-      */
+    */
   }
 
   /**
