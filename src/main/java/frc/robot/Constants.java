@@ -177,8 +177,8 @@ public final class Constants {
 
   public static class IntakeConstants{
 
-    public static final int kJointCANID = 0; //need to update
-    public static final int kRollerCANID = 0; //need to update
+    public static final int kJointCANID = 14; //need to update
+    public static final int kRollerCANID = 15; //need to update
     public static final double kjointkG = 0; //need to update
     public static final double kjointKp = 0; //need to update
     public static final double kjointKi = 0;
@@ -188,7 +188,7 @@ public final class Constants {
     public static final int kMaxCurrent = 40; //amps //Intake TODO: probably higher than 20 Amps given using Neo 1.1s
     public static final double kretractedPostion = 0; //need to update
     public static final double kextendedPostion = 0; //need to update
-    public static final double kintakeRollerSpeed = 0.2; //need to update
+    public static final double kintakeRollerSpeed = -0.8; //need to update
     public static final double kintakeJointSpeed = 0.5; //need to update
 
   }

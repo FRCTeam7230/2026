@@ -141,7 +141,7 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     */
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_ROLLERS)
       .whileTrue(new StartEndCommand( ()-> m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed)
-        , ()-> m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed), m_intake));
+        , ()-> m_intake.spinRoller(0), m_intake));
     /*
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_UP)
       .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(Constants.IntakeConstants.kintakeJointSpeed)

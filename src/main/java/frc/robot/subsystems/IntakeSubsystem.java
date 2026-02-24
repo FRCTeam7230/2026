@@ -27,13 +27,13 @@ public class IntakeSubsystem extends SubsystemBase
 {
   // Set up Joint and Shooter properties
   /**Motor Controlling the joint for the intake, which is also connected to the hopper extensions */
-  private final SparkMax                  m_joint               = new SparkMax(Constants.IntakeConstants.kJointCANID, MotorType.kBrushless);
+  private final SparkMax                  m_joint               = null;//new SparkMax(Constants.IntakeConstants.kJointCANID, MotorType.kBrushless);
   /**Motor controlling the roller on one end of the intake, which must be running in order to get balls through the intake */
-  private final SparkMax                  m_roller              =null;//= new SparkMax(Constants.IntakeConstants.kRollerCANID, MotorType.kBrushless);
+  private final SparkMax                  m_roller              = new SparkMax(Constants.IntakeConstants.kRollerCANID, MotorType.kBrushless);
   /**Closed Loop (PID) Controller for the joint to move it to set positions */
-  private final SparkClosedLoopController m_controller          = m_joint.getClosedLoopController();
+  private final SparkClosedLoopController m_controller          =null;// m_joint.getClosedLoopController();
   /**Encoder on the joint to determine its position for PID movement and precise tracking */
-  private final SparkAbsoluteEncoder      m_jointEncoder        = m_joint.getAbsoluteEncoder();
+  private final SparkAbsoluteEncoder      m_jointEncoder        = null;//m_joint.getAbsoluteEncoder();
   /**Config object for the joint motor */
   private final SparkMaxConfig            m_config_joint        = new SparkMaxConfig();
   /**Config object for the first roller motor */
@@ -43,7 +43,7 @@ public class IntakeSubsystem extends SubsystemBase
 
   DoublePublisher jointEncoder_publisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/jointEncoderValue").publish();
   DoublePublisher targetPosition_publisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/jointTarget").publish();
-  
+  DoublePublisher rollerCurrentPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/RollerCurrent").publish();
   /**
    * Feedforward class that accounts for gravity for the intake PID 
   */
@@ -138,6 +138,7 @@ public class IntakeSubsystem extends SubsystemBase
     public void periodic(){
       //jointEncoder_publisher.set(m_jointEncoder.getPosition());
       targetPosition_publisher.set(desiredAngle);
+      rollerCurrentPublisher.set(m_roller.getOutputCurrent());
     }
 
 
