@@ -12,6 +12,8 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -24,6 +26,9 @@ public class FeederSubsystem extends SubsystemBase {
   private final SparkMax kickermotor1 = new SparkMax(Constants.FeederConstants.kickerCANID, MotorType.kBrushless);
   private final SparkMaxConfig m_rollermotorconfig = new SparkMaxConfig();
   private final SparkMaxConfig m_kickermotor1config = new SparkMaxConfig();
+
+  DoublePublisher rollerCurrentPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Feeder/RollerCurrent").publish();
+  DoublePublisher kickerCurrentPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Feeder/KickerCurrent").publish();
   /** Creates a new FeederSubsystem. */
   public FeederSubsystem() {
     m_rollermotorconfig.idleMode(IdleMode.kBrake);
@@ -55,5 +60,7 @@ public class FeederSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    rollerCurrentPublisher.set(rollermotor.getOutputCurrent());
+    kickerCurrentPublisher.set(kickermotor1.getOutputCurrent());
   }
 }

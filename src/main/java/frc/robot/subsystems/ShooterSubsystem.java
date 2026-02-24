@@ -44,10 +44,12 @@ public class ShooterSubsystem extends SubsystemBase {
   
   /** gives current velocity of all 3 shooter motors */
   DoubleArrayPublisher velocityPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Velocities").publish();
-    /** gives current setpoint(speed motors are trying to reach) of all 3 shooter motors */
+  /** gives current setpoint(speed motors are trying to reach) of all 3 shooter motors */
   DoubleArrayPublisher setpointPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Setpoints").publish();
-    /** gives current error(setpoint-velocity) of all 3 shooter motors */
+  /** gives current error(setpoint-velocity) of all 3 shooter motors */
   DoubleArrayPublisher errorPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Errors").publish();
+  /** work in progress*/
+  DoubleArrayPublisher currentPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Currents").publish();
 
     /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
@@ -121,6 +123,13 @@ public class ShooterSubsystem extends SubsystemBase {
     double outtakemotor3velocity = m_outtakemotorencoder3.getVelocity();
     return new double[]{outtakemotor1velocity, outtakemotor2velocity, outtakemotor3velocity};
   }
+
+  public double[] getMotorCurrent() {
+    double outtakemotor1current = outtakemotor1.getOutputCurrent();
+    double outtakemotor2current = outtakemotor2.getOutputCurrent();
+    double outtakemotor3current = outtakemotor3.getOutputCurrent();
+    return new double[]{outtakemotor1current, outtakemotor2current, outtakemotor3current};
+  }
   
   @Override
   public void periodic() {
@@ -128,6 +137,7 @@ public class ShooterSubsystem extends SubsystemBase {
     velocityPublisher.set(getMotorVelocity());
     setpointPublisher.set(new double[]{m_outtakecontroller1.getSetpoint(), m_outtakecontroller2.getSetpoint(), m_outtakecontroller3.getSetpoint()});
     errorPublisher.set(new double[]{m_outtakecontroller1.getSetpoint()-getMotorVelocity()[0], m_outtakecontroller2.getSetpoint()-getMotorVelocity()[1], m_outtakecontroller3.getSetpoint()-getMotorVelocity()[2]});
+    currentPublisher.set(getMotorCurrent());
 
     
   }
