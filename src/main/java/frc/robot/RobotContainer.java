@@ -4,6 +4,12 @@
 
 package frc.robot;
 
+import java.awt.BorderLayout;
+import java.awt.Font;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.MathUtil;
@@ -27,6 +33,8 @@ import frc.robot.commands.AutoShooterCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSimGUI;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.FieldManagementPublisher;
 
@@ -49,6 +57,8 @@ public class RobotContainer {
   // The robot's subsystems
   DriveSubsystem m_robotDrive;
   FieldManagementPublisher m_fieldManagementPublisher;
+  LEDSubsystem m_LedSubsystem;
+  LEDSimGUI m_LEDSim;
   private Boolean fieldRelative = true;
   /*
   private ShooterSubsystem m_ShooterSubsystem;
@@ -69,8 +79,29 @@ public class RobotContainer {
    */
   private boolean isCompetition = false;//What replaces this?
   private double experimentSpeed = 0;
-   
+   JFrame frame = new JFrame();
   public RobotContainer() {
+    m_LedSubsystem = new LEDSubsystem();
+      if (!isCompetition){
+        frame.setTitle("My JFrame Example");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 600);
+        frame.setLocationRelativeTo(null);
+        frame.setLayout(new BorderLayout());
+
+        JLabel label = new JLabel();
+        label.setFont(new Font("Arial",Font.BOLD, 30));
+        frame.add(label, BorderLayout.NORTH); 
+        m_LEDSim = new LEDSimGUI(m_LedSubsystem);
+        frame.add(m_LEDSim, BorderLayout.CENTER);
+
+        frame.pack();
+        frame.setVisible(true);
+      }
+      
+    
+    
+    
     /*
     m_ShooterSubsystem = new ShooterSubsystem();
     m_FeederSubsystem = new FeederSubsystem();
@@ -112,6 +143,8 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
                 -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS)), OIConstants.kDriveDeadband), //Z
                 fieldRelative),
         m_robotDrive));
+      
+      
   }
 
   /**
