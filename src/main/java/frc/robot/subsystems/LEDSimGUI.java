@@ -26,23 +26,30 @@ import frc.robot.commands.AlignToHub;
 import javax.swing.*;
 
 public class LEDSimGUI extends JPanel  implements ActionListener{
-     JLabel label;
+     //JLabel label;
      LEDSubsystem ledSubsystem;
+     Timer timer;
      public LEDSimGUI(LEDSubsystem leds){
         this.setPreferredSize(new Dimension(600,600));
         this.setBackground(Color.black);
         ledSubsystem = leds;
+        ledSubsystem.updateData();
+        timer = new Timer(100, this);
+        timer.start();
      }
-     int ledPerRow = 5;
+     int ledPerRow;
      int ledSize = 20;
      byte[] data = {0, 0, 0};
-     @Override
-    protected void paintComponent(Graphics g){
-        super.paintComponent(g);
+     //@Override
+    public void paint(Graphics g){
+        super.paint(g);
         Graphics2D g2D = (Graphics2D) g;
         SmartDashboard.putNumberArray("LED SUBSYSTEM GUI/Raw Data", LEDSubsystem.bytesToDouble(ledSubsystem.getDataForGUI()));
+        //all this draws the leds
         if (ledSubsystem.getDataForGUI()!=null){
-        for (int i = 0; i < 10; i++){
+            int totalLEDs = ledSubsystem.getDataForGUI().length/4;
+            ledPerRow = (int) Math.ceil((double) totalLEDs/Constants.LEDConstants.ledRowsInSimulation);
+        for (int i = 0; i < totalLEDs; i++){
                 int red = (int) ledSubsystem.getDataForGUI()[i*4+2] & 0xFF;
                 int green = (int) ledSubsystem.getDataForGUI()[i*4+1] & 0xFF;
                 int blue = (int) ledSubsystem.getDataForGUI()[i*4] & 0xFF;
@@ -56,6 +63,7 @@ public class LEDSimGUI extends JPanel  implements ActionListener{
             //g2D.fillRect(200,200,300,300);
         }
         }
+        
      }
     //  public void paintComponent(Graphics g){
     //     super.paintComponent(g);
@@ -64,6 +72,7 @@ public class LEDSimGUI extends JPanel  implements ActionListener{
     @Override
 	public void actionPerformed(ActionEvent e) {
         ledSubsystem.updateData();
+        SmartDashboard.putNumberArray("LED SUBSYSTEM GUI/Raw Data in Periodic", LEDSubsystem.bytesToDouble(ledSubsystem.getDataForGUI()));
 		repaint();//Periodically cals the paintComponent function.
         
 	}

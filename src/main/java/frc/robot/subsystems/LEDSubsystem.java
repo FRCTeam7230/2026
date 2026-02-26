@@ -77,10 +77,11 @@ public class LEDSubsystem extends SubsystemBase {
     m_LED.setData(m_LEDBuffer);
   }
   public byte[] getData(){
-    return m_LEDSim==null?null:m_LEDSim.getData();
+    return m_LEDSim.getData();
     //return ledData == null ? null : ledData.clone();
-
   }
+
+  
   Object ledSimLock = new Object();
   public void updateData(){
     synchronized (ledSimLock){

@@ -254,7 +254,8 @@ public final class Constants {
   public static final class LEDConstants {
 
     public static final int kPort = 0; //update
-    public static final int kLEDLength = 10; //update
+    public static final int kLEDLength = 99; //update
+    public static final int ledRowsInSimulation = 5;
     public static final int kBottomStartIndex = 0;
     public static final int kBottomEndIndex = 40; //update
     public static final int kTopStartIndex = 41; //update

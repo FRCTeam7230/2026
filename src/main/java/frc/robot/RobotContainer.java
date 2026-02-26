@@ -9,6 +9,7 @@ import java.awt.Font;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -58,7 +59,7 @@ public class RobotContainer {
   DriveSubsystem m_robotDrive;
   FieldManagementPublisher m_fieldManagementPublisher;
   LEDSubsystem m_LedSubsystem;
-  LEDSimGUI m_LEDSim;
+  JPanel m_LEDSim;
   private Boolean fieldRelative = true;
   /*
   private ShooterSubsystem m_ShooterSubsystem;
@@ -94,6 +95,7 @@ public class RobotContainer {
         frame.add(label, BorderLayout.NORTH); 
         m_LEDSim = new LEDSimGUI(m_LedSubsystem);
         frame.add(m_LEDSim, BorderLayout.CENTER);
+        //frame.addActionListener(m_LEDSim);
 
         frame.pack();
         frame.setVisible(true);
@@ -114,9 +116,9 @@ public class RobotContainer {
     {
       PortForwarder.add(port, "limelight.local",port);
     }
-
-    NamedCommands.registerCommand("Going over the bump", m_robotDrive.driveExperiment());
-    SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
+    //NamedCommands.registerCommand("Reset Gyro For Bump Auto", new InstantCommand(() -> m_robotDrive.resetOdometry(new Pose2d(3.65,5.051, new Rotation2d(Math.toRadians(180))))));
+    //NamedCommands.registerCommand("Going over the bump", m_robotDrive.driveExperiment());
+    //SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Zero/Reset sensors
     m_robotDrive.zeroHeading();
     m_robotDrive.addAngleGyro(180);
