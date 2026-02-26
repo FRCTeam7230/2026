@@ -259,6 +259,7 @@ public final class Constants {
     public static final int kBottomEndIndex = 40; //update
     public static final int kTopStartIndex = 41; //update
     public static final int kTopEndIndex = 60; //update
+    public static final int kTopMiddleIndex = (kTopStartIndex + kTopEndIndex)/2;
     
     public static final Color kNiceYellow = new Color("#DEC95D"); 
     public static final Color kBrightNiceYellow = new Color("#FFE666");
@@ -273,6 +274,10 @@ public final class Constants {
     public static final double kidleMovingFrequency = 0.25; // how many times per second the pattern should move, if applicable
     public static final double kintakeMovingFrequency = 1; // how many times per second the pattern should move, if applicable
 
+    //transition blinking
+    public static final double kblinkingFrequency = 4; //hz
+    public static final double kpercentageOfTimeYelpurp = 0.5;
+
     // purple hsv
     public static final int kPurpleH = 260;
     public static final int kPurpleS = 49;
@@ -285,6 +290,10 @@ public final class Constants {
     public static final int kOrangeH = 20;
     public static final int kOrangeS = 67;
     public static final int kOrangeV = 100;
+    
+
+    
+    
 
 
     
