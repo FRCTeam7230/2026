@@ -41,6 +41,9 @@ public class IntakeSubsystem extends SubsystemBase
   /**The Angle we want the join to be at, used for debugging and advantageScope */
   private double desiredAngle;
 
+  private boolean isIntakeOut = false;
+  private boolean isRollerSpinning = true;
+
   DoublePublisher jointEncoder_publisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/jointEncoderValue").publish();
   DoublePublisher targetPosition_publisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/jointTarget").publish();
   DoublePublisher rollerCurrentPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/RollerCurrent").publish();
@@ -89,6 +92,12 @@ public class IntakeSubsystem extends SubsystemBase
      */
     public void spinRoller(double percentage) {
       m_roller.set(percentage);
+      if(percentage == 0){
+        isRollerSpinning = false;
+      }
+      else{
+        isRollerSpinning = true;
+      }
     }
     /**Turns the roller off */
     public void stop() {
@@ -118,6 +127,12 @@ public class IntakeSubsystem extends SubsystemBase
     */
     public void reachGoal(double goal) {
       desiredAngle = goal;
+      if(goal==Constants.IntakeConstants.kretractedPostion){
+        isIntakeOut = false;
+      }
+      else{
+        isIntakeOut = true;
+      }
       m_controller.setSetpoint(
         goal,
         ControlType.kPosition,
@@ -140,7 +155,30 @@ public class IntakeSubsystem extends SubsystemBase
       targetPosition_publisher.set(desiredAngle);
       rollerCurrentPublisher.set(m_roller.getOutputCurrent());
     }
-
+    public void toggleIntake()
+    {
+      if(isIntakeOut)
+      {
+        reachGoal(Constants.IntakeConstants.kretractedPostion);
+        spinRoller(0);
+      }
+      else
+      {
+        reachGoal(Constants.IntakeConstants.kextendedPostion);
+        spinRoller(Constants.IntakeConstants.kintakeRollerSpeed);
+      }
+    }
+    public void toggleIntakeRoller()
+    {
+      if(isRollerSpinning)
+      {
+        spinRoller(0);
+      }
+      else
+      {
+        spinRoller(Constants.IntakeConstants.kintakeRollerSpeed);
+      }
+    }
 
 
 

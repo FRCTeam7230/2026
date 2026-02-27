@@ -83,6 +83,7 @@ public final class Constants {
     /** Right trigger, axis 3 */
     public static final int SPIN_INTAKE = rightTrigger;
     
+    public static final int TOGGLE_INTAKE_ROLLERS = kButton6;
     public static final int POV_RIGHT = pov90;
     public static final int TEST_INTAKE_ROLLERS = POV_RIGHT;
     public static final int POV_DOWN = pov180;

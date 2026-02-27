@@ -40,7 +40,6 @@ public class RobotContainer {
   DriveSubsystem m_robotDrive;
   IntakeSubsystem m_intake;
   private Boolean fieldRelative = true;
-  public boolean intakeIsUp = true;
 
   // XBox controller.
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -130,13 +129,11 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     /* 
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
       .whileTrue(new InstantCommand( ()->{
-        if (intakeIsUp) {
-          m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);
-        }
-        else {
-          m_intake.reachGoal(Constants.IntakeConstants.kretractedPostion);
-        }
-        intakeIsUp = !intakeIsUp;
+        m_intake.toggleIntake();
+      }));
+       ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE_ROLLERS)
+      .whileTrue(new InstantCommand( ()->{
+        m_intake.toggleIntakeRoller();
       }));
     */
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_ROLLERS)
