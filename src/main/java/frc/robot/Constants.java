@@ -260,9 +260,42 @@ public final class Constants {
     public static final int kBottomEndIndex = 40; //update
     public static final int kTopStartIndex = 41; //update
     public static final int kTopEndIndex = 60; //update
+    public static final int kTopMiddleIndex = (kTopStartIndex + kTopEndIndex)/2;
     
     public static final Color kNiceYellow = new Color("#DEC95D"); 
     public static final Color kBrightNiceYellow = new Color("#FFE666");
+    public static final Color kGreen = new Color("#32CD32");
+    public static final Color kOrange = new Color("#FF8D54");
+    public static final Color kPurple = Color.kMediumPurple;
+
+    // custom gradient
+    public static final int khalfPercentageFromBottom = 1/8;
+    public static final double krepeatTimes = 1; // how many times the pattern should repeat across the strip, if applicable
+    public static final double kshootingMovingFrequency = 0.5; // how many times per second the pattern should move, if applicable
+    public static final double kidleMovingFrequency = 0.25; // how many times per second the pattern should move, if applicable
+    public static final double kintakeMovingFrequency = 1; // how many times per second the pattern should move, if applicable
+
+    //transition blinking
+    public static final double kblinkingFrequency = 4; //hz
+    public static final double kpercentageOfTimeYelpurp = 0.5;
+
+    // purple hsv
+    public static final int kPurpleH = 260;
+    public static final int kPurpleS = 49;
+    public static final int kPurpleV = 86;
+    // yellow hsv
+    public static final int kYellowH = 50;
+    public static final int kYellowS = 60;
+    public static final int kYellowV = 100;
+    // orange hsv
+    public static final int kOrangeH = 20;
+    public static final int kOrangeS = 67;
+    public static final int kOrangeV = 100;
+    
+
+    
+    
+
 
     
   }

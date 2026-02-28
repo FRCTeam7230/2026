@@ -36,7 +36,7 @@ DoublePublisher timeLeftInTransitionPublisher = NetworkTableInstance.getDefault(
     }
     matchTimePublisher.set(Math.round(10*DriverStation.getMatchTime())/10.0);
     currentShiftClockPublisher.set(Math.round(10*((DriverStation.getMatchTime()-30)%25))/10.0);
-    timeLeftInTransitionPublisher.set(timeLeftInTransition());
+    timeLeftInTransitionPublisher.set(timeLeftInTransition(getHubState()));
   }
   /*
    * 1 = Active
@@ -123,8 +123,7 @@ DoublePublisher timeLeftInTransitionPublisher = NetworkTableInstance.getDefault(
       return 1;
     }
   }
-  public static double timeLeftInTransition() {
-    double hubState = getHubState();
+  public static double timeLeftInTransition(int hubState) {
     if (!((hubState == 2) || (hubState == 3))) {
       return -1;
     }
