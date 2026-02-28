@@ -80,47 +80,57 @@ public class AlignToHub extends Command {
 
   }
     public double[] CalculateHubPID(Pose2d pose) {
-        double robotX = pose.getX();
-		    double robotY = pose.getY();
+      //setting robot x and y
+      double robotX = pose.getX();
+		  double robotY = pose.getY();
 
-        double[] errors = new double[3];
-        for (int i = 0; i < errors.length; i++) {
-          errors[i] = 0;
-        }
-        double radius = Constants.AlignToHubConstants.kradius;
-        double hubY = Constants.AlignToHubConstants.khubY; // meters
-        double hubXBlue = Constants.AlignToHubConstants.khubXBlue;
-        double hubXRed = Constants.AlignToHubConstants.khubXRed;
-        double hubX;
-        if (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Blue))) {
-            hubX = hubXBlue;
-        }
-        else {
-            hubX = hubXRed;
-        }
+      //this array is where errorX, errorY, and errorAngle will be stored and eventally returned
+      double[] errors = new double[3];
+      //initilizes errors
+      for (int i = 0; i < errors.length; i++) {
+        errors[i] = 0;
+      }
+      //setting constants to local variables for readability
+      double radius = Constants.AlignToHubConstants.kradius;
+      double hubY = Constants.AlignToHubConstants.khubY; // meters
+      double hubXBlue = Constants.AlignToHubConstants.khubXBlue;
+      double hubXRed = Constants.AlignToHubConstants.khubXRed;
+      double hubX;
+      //determines hubX based on which alliance we are on
+      if (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Blue))) {
+          hubX = hubXBlue;
+      }
+      else {
+          hubX = hubXRed;
+      }
+      //difference in current position to center of hub
+      double distanceX = hubX - robotX;
+      double distanceY = hubY - robotY;
+      //pythagorean theorm to get overall distance
+      double distance = Math.sqrt( Math.pow( distanceX, 2) + Math.pow( distanceY, 2) );
 
-        double distanceX = hubX - robotX;
-        double distanceY = hubY - robotY;
-        double distance = Math.sqrt( Math.pow( distanceX, 2) + Math.pow( distanceY, 2) );
+      //robot position error calculations
+      double errorX = distanceX * ( (distance - radius) / distance );
+      double errorY = distanceY * ( (distance - radius) / distance );
+      //target angle and error angle calculations
+      double targetAngle = Math.signum(distanceY) * Math.acos(distanceX / distance)*180/Math.PI;
+      double errorAngle = targetAngle - pose.getRotation().getDegrees();
 
-        double errorX = distanceX * ( (distance - radius) / distance );
-        double errorY = distanceY * ( (distance - radius) / distance );
-        double targetAngle = Math.signum(distanceY) * Math.acos(distanceX / distance)*180/Math.PI;
-        double errorAngle = targetAngle - pose.getRotation().getDegrees();
-
-    if (errorX < Constants.AlignToHubConstants.kerrorXTolerance) {
-      errors[0] = 0;
-    }
-    else {errors[0] = errorX;}
-    if (errorY < Constants.AlignToHubConstants.kerrorYTolerance) {
-      errors[1] = 0;
-    }
-    else {errors[1] = errorY;}
-    if (errorAngle < Constants.AlignToHubConstants.kerrorAngleTolerance) {
-      errors[2] = 0;
-    }
-    else {errors[2] = errorAngle;}
+      //sets each error value based on whether it is within it's respective tolerance
+      if (Math.abs(errorX) < Constants.AlignToHubConstants.kerrorXTolerance) {
+        errors[0] = 0;
+      }
+      else {errors[0] = errorX;}
+      if (Math.abs(errorY) < Constants.AlignToHubConstants.kerrorYTolerance) {
+        errors[1] = 0;
+      }
+      else {errors[1] = errorY;}
+      if (Math.abs(errorAngle) < Constants.AlignToHubConstants.kerrorAngleTolerance) {
+        errors[2] = 0;
+      }
+      else {errors[2] = errorAngle;}
     
+      //publishers
       SmartDashboard.putNumber("AlignToHub/TargetAngle",targetAngle);
       SmartDashboard.putNumber("AlignToHub/ErrorX", errors[0]);
       SmartDashboard.putNumber("AlignToHub/ErrorY", errors[1]);
@@ -129,6 +139,7 @@ public class AlignToHub extends Command {
       SmartDashboard.putNumber("AlignToHub/RobotX", robotX);
       SmartDashboard.putNumber("AlignToHub/RobotY", robotY);
       SmartDashboard.putNumber("AlignToHub/RobotAngle", pose.getRotation().getDegrees());
+      
       return errors;
     }
 }

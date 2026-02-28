@@ -244,23 +244,30 @@ public final class Constants {
   }
 
   public static class AlignToHubConstants {
+    //This offset is the horizontal distance from the center of the bot to the point at which shooter ejects the fuel
     public static final double kshooterOffset = .46; //meters
-    public static final double kinitialEjectionVelocityBeforeOffset = 7; //m/s
     public static final double kejectionAngle = 68; //deg
-    public static final double kspeedMult = 0.5;
 
-    //angle offset calc constants
-    public static final double x0 = kshooterOffset;
-    public static final double vx0 = 0;
-    public static final double ax = 0;
-    public static final double z0 = 0;
-    public static final double az = 0; //ignoring any horizontal accelerations for now
+    //target radius from the center of the bot to the center of the hub horizontally
     public static final double kradius = 2.98;
     public static final double khubY = 4.03; // meters
     public static final double khubXBlue = 4.63;
     public static final double khubXRed = 11.92;
+
     public static final double kerrorXTolerance = 0.1;
     public static final double kerrorYTolerance = 0.1;
     public static final double kerrorAngleTolerance = 1;
+
+    //angle offset calc constants
+    public static final double kspeedMult = 0.65; //max speedMult experimentally determined from sim
+    public static final double kinitialEjectionVelocityBeforeOffset = 7; //m/s
+
+    public static final double x0 = kshooterOffset;
+    public static final double vx0 = 0;
+    public static final double ax = 0;
+    //z is up and down the field
+    public static final double z0 = 0;
+    public static final double az = 0; //ignoring any horizontal accelerations for now (need to change calculations if want to)
+    
   }
 }

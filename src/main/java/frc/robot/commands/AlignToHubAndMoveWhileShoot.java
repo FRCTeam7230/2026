@@ -33,10 +33,6 @@ public class AlignToHubAndMoveWhileShoot extends Command {
   double zInitialVelocityRobotRelative = 0;
   double vx0 = Constants.AlignToHubConstants.vx0;
   double x0 = Constants.AlignToHubConstants.x0;
-  public static double globalAngleOffsetRad = 0;
-  public static void setGlobalAngleOffsetRad0() {
-    globalAngleOffsetRad = 0;
-  }
   
   Command drivecommand = null;
   public AlignToHubAndMoveWhileShoot(DriveSubsystem drive, XboxController cont, ShooterSubsystem shoot) {
@@ -63,6 +59,7 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     double ySpeed = yController.calculate(errors[1]);
     double rotSpeed = Math.max(Math.min(rotController.calculate(errors[2]),1.5), -1.5);
     SmartDashboard.putNumber("Rotation delivered", rotSpeed);
+    //uses controller stick axis to control robot movement while shooting
     m_drive.drive(
         -(xSpeed + (controller.getRawAxis(Constants.ControllerConstants.leftStick_XAXIS) * Constants.AlignToHubConstants.kspeedMult * Math.sin(Math.toRadians(-globalTargetAngle)))),
         -(ySpeed + (controller.getRawAxis(Constants.ControllerConstants.leftStick_XAXIS) * Constants.AlignToHubConstants.kspeedMult * Math.cos(Math.toRadians(-globalTargetAngle)))),
@@ -86,82 +83,124 @@ public class AlignToHubAndMoveWhileShoot extends Command {
 
   }
   public double[] CalculateHubPID(Pose2d pose) {
-      double robotX = pose.getX();
-	    double robotY = pose.getY();
+    //SAME AS ALIGN TO HUB
+    //setting robot x and y  
+    double robotX = pose.getX();
+	  double robotY = pose.getY();
 
-      double[] errors = new double[3];
-      double radius = Constants.AlignToHubConstants.kradius;
-      double hubY = Constants.AlignToHubConstants.khubY; // meters
-      double hubXBlue = Constants.AlignToHubConstants.khubXBlue;
-      double hubXRed = Constants.AlignToHubConstants.khubXRed;
-      double hubX;
-      if (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Blue))) {
-          hubX = hubXBlue;
-      }
-      else {
-          hubX = hubXRed;
-      }
+    //this array is where errorX, errorY, and errorAngle will be stored and eventally returned
+    double[] errors = new double[3];
+    //initilizes errors
+    for (int i = 0; i < errors.length; i++) {
+      errors[i] = 0;
+    }
+    //setting constants to local variables for readability
+    double radius = Constants.AlignToHubConstants.kradius;
+    double hubY = Constants.AlignToHubConstants.khubY; // meters
+    double hubXBlue = Constants.AlignToHubConstants.khubXBlue;
+    double hubXRed = Constants.AlignToHubConstants.khubXRed;
+    double hubX;
+    //determines hubX based on which alliance we are on
+    if (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Blue))) {
+        hubX = hubXBlue;
+    }
+    else {
+      hubX = hubXRed;
+    }
 
-      //error calculations
-      double distanceX = hubX - robotX;
-      double distanceY = hubY - robotY;
-      double distance = Math.sqrt( Math.pow( distanceX, 2) + Math.pow( distanceY, 2) );
+    //error calculations
+    //difference in current position to center of hub
+    double distanceX = hubX - robotX;
+    double distanceY = hubY - robotY;
+    //pythagorean theorm to get overall distance
+    double distance = Math.sqrt( Math.pow( distanceX, 2) + Math.pow( distanceY, 2) );
+    
+    //robot position error calculations
+    double errorX = distanceX * ( (distance - radius) / distance );
+    double errorY = distanceY * ( (distance - radius) / distance );
+    //target angle and error angle calculations
+    double targetAngle = Math.signum(distanceY) * Math.toDegrees(Math.acos(distanceX / distance));
+    globalTargetAngle = targetAngle;
+    double errorAngle = targetAngle - pose.getRotation().getDegrees();
+
+    //DIFFERENCE TO ALIGN TO HUB
+    //reference this 3D desmos graph for visual clarification: https://www.desmos.com/3d/uvvzkss2ac
+
+    //angle offset calculations
+
+    /*  //this changes the reachSpeed of shooter for a more optimal trajectory
+    initialEjectionVelocityAfterOffset = Constants.AlignToHubConstants.kinitialEjectionVelocityBeforeOffset + Math.abs(0.3*zInitialVelocityRobotRelative);
+    m_shoot.reachSpeed(initialEjectionVelocityAfterOffset);
+    */
+
+    //initial x fuel velocity
+    vx0 = Constants.AlignToHubConstants.kinitialEjectionVelocityBeforeOffset*Math.cos(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle));
+    zInitialVelocityRobotRelative = m_drive.getRobotVelocityY();
+
+    //time of normal trajectory from shooter to hub
+    double t1 = (radius - x0)/(Constants.AlignToHubConstants.kinitialEjectionVelocityBeforeOffset*Math.cos(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle)));
+    //first angle offset calculation that makes fuel trajectory parallel with the actual target angle (it's theta2 because theta1 is the ejection angle, even though they are in different planes)
+    double theta2Rad = (Math.atan( (sz(t1)) / (radius - Constants.AlignToHubConstants.kshooterOffset) )); //rad
+
+    //new x0 due to y-axis rotation by theta2
+    double x0New = Constants.AlignToHubConstants.kshooterOffset * Math.cos((theta2Rad));
+    //new time which is dependant on theta2Rad (therefore also dependant on zInitialVelocityRobotRelative) because of the y-axis rotation by theta2
+    double t2 = (radius - x0New) / ( (vx0 * Math.cos((theta2Rad))) + (zInitialVelocityRobotRelative * Math.sin(theta2Rad)) );
+    //second angle offset calculation that corrects for the shooterOffset because it was rotated about the y-axis by theta2, truely aligning the angle with the center of the hub
+    double theta3Rad = (Math.atan( (szNew(t2,theta2Rad)) / ( (sxNew(t2,theta2Rad)) - x0New) )); //rad
+
+    //combines both angles to get the overall angleOffset
+    double angleOffsetRad = theta2Rad + theta3Rad; // rad
+
+    //applies angleOffset to errorAngle
+    double newAngleError = errorAngle - Math.toDegrees(angleOffsetRad); //deg
+
+    //sets each error value based on whether it is within it's respective tolerance
+    if (Math.abs(errorX) < Constants.AlignToHubConstants.kerrorXTolerance) {
+      errors[0] = 0;
+    }
+    else {errors[0] = errorX;}
+    if (Math.abs(errorY) < Constants.AlignToHubConstants.kerrorYTolerance) {
+      errors[1] = 0;
+    }
+    else {errors[1] = errorY;}
        
-      double errorX = distanceX * ( (distance - radius) / distance );
-      double errorY = distanceY * ( (distance - radius) / distance );
-      double targetAngle = Math.signum(distanceY) * Math.toDegrees(Math.acos(distanceX / distance));
-      globalTargetAngle = targetAngle;
-      double errorAngle = targetAngle - pose.getRotation().getDegrees();
-
-      //angle offset calculations
-      initialEjectionVelocityAfterOffset = Constants.AlignToHubConstants.kinitialEjectionVelocityBeforeOffset + Math.abs(0.1*zInitialVelocityRobotRelative);
-      m_shoot.reachSpeed(initialEjectionVelocityAfterOffset);
-      vx0 = Constants.AlignToHubConstants.kinitialEjectionVelocityBeforeOffset*Math.cos(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle));
-
-      timeOfFlight = (radius - x0)/(Constants.AlignToHubConstants.kinitialEjectionVelocityBeforeOffset*Math.cos(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle)));
-      zInitialVelocityRobotRelative = m_drive.getRobotVelocityY();
-
+    if (Math.abs(newAngleError) < Constants.AlignToHubConstants.kerrorAngleTolerance) {
+      errors[2] = 0;
+    }
+    else {errors[2] = newAngleError;}
       
-      double t1 = timeOfFlight; //time of normal trajectory from shooter to hub
-      double theta2Rad = (Math.atan( (sz(t1)) / (radius - Constants.AlignToHubConstants.kshooterOffset) )); //rad
+    SmartDashboard.putNumber("AlignToHub/theta2Deg", Math.toDegrees(theta2Rad));
+    SmartDashboard.putNumber("AlignToHub/theta3Deg", Math.toDegrees(theta3Rad));
+    SmartDashboard.putNumber("AlignToHub/angleOffset", Math.toDegrees(angleOffsetRad));
+    SmartDashboard.putNumber("AlignToHub/zInitialVelocity", zInitialVelocityRobotRelative);
+    SmartDashboard.putNumber("AlignToHub/initalEjectionVelocity", initialEjectionVelocityAfterOffset);
 
-      double x0New = Constants.AlignToHubConstants.kshooterOffset * Math.cos((theta2Rad));
-      double t2 = (radius - x0New) / ( (vx0 * Math.cos((theta2Rad))) + (zInitialVelocityRobotRelative * Math.sin(theta2Rad)) );
-      double theta3Rad = (Math.atan( (szNew(t2,theta2Rad)) / ( (sxNew(t2,theta2Rad)) - x0New) )); //rad
+    SmartDashboard.putNumber("AlignToHub/TargetAngle",targetAngle);
+    SmartDashboard.putNumber("AlignToHub/ErrorX", errors[0]);
+    SmartDashboard.putNumber("AlignToHub/ErrorY", errors[1]);
+    SmartDashboard.putNumber("AlignToHub/ErrorAngle", errors[2]);
 
-      double angleOffsetRad = theta2Rad + theta3Rad; // rad. idk if add or sub. pretty sure add
-      globalAngleOffsetRad = angleOffsetRad;
-
-		  errors[0] = errorX;
-		  errors[1] = errorY;
-		  errors[2] = errorAngle - Math.toDegrees(angleOffsetRad); //deg
+    SmartDashboard.putNumber("AlignToHub/RobotX", robotX);
+    SmartDashboard.putNumber("AlignToHub/RobotY", robotY);
+    SmartDashboard.putNumber("AlignToHub/RobotAngle", pose.getRotation().getDegrees());
       
-      SmartDashboard.putNumber("AlignToHub/theta2Deg", Math.toDegrees(theta2Rad));
-      SmartDashboard.putNumber("AlignToHub/theta3Deg", Math.toDegrees(theta3Rad));
-      SmartDashboard.putNumber("AlignToHub/angleOffset", Math.toDegrees(angleOffsetRad));
-      SmartDashboard.putNumber("AlignToHub/zInitialVelocity", zInitialVelocityRobotRelative);
-      SmartDashboard.putNumber("AlignToHub/initalEjectionVelocity", initialEjectionVelocityAfterOffset);
-
-      SmartDashboard.putNumber("AlignToHub/TargetAngle",targetAngle);
-      SmartDashboard.putNumber("AlignToHub/ErrorX", errors[0]);
-      SmartDashboard.putNumber("AlignToHub/ErrorY", errors[1]);
-      SmartDashboard.putNumber("AlignToHub/ErrorAngle", errors[2]);
-
-      SmartDashboard.putNumber("AlignToHub/RobotX", robotX);
-      SmartDashboard.putNumber("AlignToHub/RobotY", robotY);
-      SmartDashboard.putNumber("AlignToHub/RobotAngle", pose.getRotation().getDegrees());
-      
-      return errors;
+    return errors;
   }
+
+  //sx calculates the position of the fuel at any time t
   private double sx(double t) {
     return x0 + vx0*t + .5*Constants.AlignToHubConstants.ax*Math.pow(t,2);
   }
+  //sz calculates the position of the fuel at any time t
   private double sz(double t) {
     return Constants.AlignToHubConstants.z0 + zInitialVelocityRobotRelative*t + .5*Constants.AlignToHubConstants.az*Math.pow(t,2);
   }
+  //sxNew calculates the position of the fuel at any time t and applies rotation about y-axis by angle theta
   private double sxNew(double t, double theta) { //angle in rad
     return sx(t)*Math.cos((theta)) + sz(t)*Math.sin((theta)); //applies rotation about y-axis by angle theta
   }
+  //szNew calculates the position of the fuel at any time t and applies rotation about y-axis by angle theta
   private double szNew(double t, double theta) { //angle in rad
     return sz(t)*Math.cos((theta)) - sx(t)*Math.sin((theta)); //applies rotation about y-axis by angle theta
   }
