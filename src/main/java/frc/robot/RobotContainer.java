@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import java.util.Map;
+
+import javax.lang.model.util.ElementScanner14;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.MathUtil;
@@ -19,8 +23,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.OuttakeConstants;
 import frc.robot.commands.AlignToHub;
 import frc.robot.commands.AlignToPass;
 import frc.robot.commands.AutoShooterCommand;
@@ -70,7 +77,16 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   private boolean isCompetition = false;//What replaces this?
-  private double experimentSpeed = 0;
+//spins shooter to speed based on position of selector
+  private Command spinUpCommand;
+  //aligns based on selector
+  private Command alignCommand;
+
+  private enum BehaviorSelector
+  {
+    SHOOT,
+    PASS
+  }
    
   public RobotContainer() {
     /*
@@ -91,7 +107,22 @@ public class RobotContainer {
     // Zero/Reset sensors
     m_robotDrive.zeroHeading();
     m_robotDrive.addAngleGyro(180);
-    
+    /*
+    spinUpCommand = new SelectCommand<>(
+      Map.ofEntries(
+        Map.entry(BehaviorSelector.SHOOT, new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.shootSpeed)),
+        Map.entry(BehaviorSelector.PASS, new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.passSpeed))
+      ),
+      this::passOrShootSelector
+    );
+    */
+    alignCommand = new SelectCommand<>(
+      Map.ofEntries(
+        Map.entry(BehaviorSelector.SHOOT, new AlignToHub(m_robotDrive)),
+        Map.entry(BehaviorSelector.PASS, new AlignToPass(m_robotDrive))
+      ),
+      this::passOrShootSelector
+    );
     // Configure the button bindings
     configureButtonBindings();
 
@@ -114,6 +145,7 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
                 -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS)), OIConstants.kDriveDeadband), //Z
                 fieldRelative),
         m_robotDrive));
+        
   }
 
   /**
@@ -164,7 +196,7 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.SHOOT_HUB)
       .whileTrue(Commands.sequence(
-              new AutoShooterCommand(m_ShooterSubsystem, Constants.OuttakeConstants.shootSpeed),
+              spinUpCommand,
               new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
               new InstantCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
           ).finallyDo(
@@ -288,5 +320,16 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Run path following command, then stop at the end.
     //return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
     */
+  }
+  
+  public BehaviorSelector passOrShootSelector() {
+    if(true)
+    {
+      return BehaviorSelector.PASS;
+    }
+    else
+    {
+      return BehaviorSelector.SHOOT;
+    }
   }
 }

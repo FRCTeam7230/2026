@@ -63,6 +63,7 @@ public class FeederSubsystem extends SubsystemBase {
       isRollerRunning = true;
     }
   }
+  
   /** Sets kicker motor speed in PERCENTAGE 
 @param kickerspeed the speed that kicker motor will be set to in PERCENTAGE
   */

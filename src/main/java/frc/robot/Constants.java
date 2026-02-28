@@ -42,12 +42,15 @@ public final class Constants {
     public static final int ShootMotor3ID = 11; 
     public static final int motorlimitcurrent = 80;
     public static final double krampratesec = 0;
-    public static final double kOuttakeKp = 0.0004; 
-    public static final double kOuttakeKi = 0; 
+    public static final double kOuttakeKp = 0.001; 
+    public static final double kOuttakeKi = 0.000008; 
     public static final double kOuttakeKd = 0;
     public static final double kOuttakeKf = 0.000151;
+    public static final int kOuttakeSamples = 16;
+    public static final int kOuttakeAverageWindow = 20; // half of 40
     public static final double ShooterTolerance = 10;
     public static final double shootSpeed = 3000; 
+    public static final double passSpeed = 4000;
     public static final double testShootSpeed = 0.5;
   }
   public static final class AutoAlignToHubConstants {

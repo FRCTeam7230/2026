@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.networktables.DoubleArrayPublisher;
@@ -35,6 +36,9 @@ public class ShooterSubsystem extends SubsystemBase {
   private final SparkFlexConfig m_outtakemotor1config = new SparkFlexConfig(); 
   private final SparkFlexConfig m_outtakemotor2config = new SparkFlexConfig(); 
   private final SparkFlexConfig m_outtakemotor3config = new SparkFlexConfig(); 
+   private final EncoderConfig m_encoderConfig1 = new EncoderConfig(); 
+  private final EncoderConfig m_encoderConfig2 = new EncoderConfig(); 
+  private final EncoderConfig m_encoderConfig3 = new EncoderConfig(); 
   /** used to tune PIDs that are built-in to motor */
   private final SparkClosedLoopController m_outtakecontroller1 = outtakemotor1.getClosedLoopController();
   /** used to tune PIDs that are built-in to motor */
@@ -79,9 +83,22 @@ public class ShooterSubsystem extends SubsystemBase {
     m_outtakemotor3config.idleMode(IdleMode.kCoast);
     m_outtakemotor3config.smartCurrentLimit(Constants.OuttakeConstants.motorlimitcurrent);
     m_outtakemotor3config.closedLoopRampRate(Constants.OuttakeConstants.krampratesec);
+
+    //apply encoder configs to adjust windows of measurment for reduced delay
+        m_encoderConfig1.quadratureAverageDepth(OuttakeConstants.kOuttakeSamples);
+    m_encoderConfig1.quadratureMeasurementPeriod(OuttakeConstants.kOuttakeAverageWindow);
+    m_encoderConfig1.apply(m_encoderConfig1);
+    m_encoderConfig2.quadratureAverageDepth(OuttakeConstants.kOuttakeSamples);
+    m_encoderConfig2.quadratureMeasurementPeriod(OuttakeConstants.kOuttakeAverageWindow);
+    m_encoderConfig2.apply(m_encoderConfig2);
+    m_encoderConfig3.quadratureAverageDepth(OuttakeConstants.kOuttakeSamples);
+    m_encoderConfig3.quadratureMeasurementPeriod(OuttakeConstants.kOuttakeAverageWindow);
+    m_encoderConfig3.apply(m_encoderConfig3);
+
     outtakemotor1.configure(m_outtakemotor1config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     outtakemotor2.configure(m_outtakemotor2config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     outtakemotor3.configure(m_outtakemotor3config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
 
   }
 
