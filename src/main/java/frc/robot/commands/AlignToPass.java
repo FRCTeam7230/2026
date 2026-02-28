@@ -10,7 +10,7 @@ import frc.robot.subsystems.DriveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AlignToPass extends Command {
-  PIDController yawController = new PIDController(0.015, 0, 0);
+  PIDController yawController = new PIDController(0.0025, 0, 0); //Need to tune these values
   PIDController yController = new PIDController(0.5, 0, 0);
   DriveSubsystem m_drive;
   /** Creates a new AlignToPass. */
@@ -25,7 +25,7 @@ public class AlignToPass extends Command {
   @Override
   public void initialize() {
     double currentY = m_drive.getPose().getY();
-    if (currentY>158.85) {
+    if (currentY<4.035) {
       yController.setSetpoint(2.0175);
       yController.setTolerance(1);
       
