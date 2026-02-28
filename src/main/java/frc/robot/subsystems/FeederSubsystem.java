@@ -31,6 +31,8 @@ public class FeederSubsystem extends SubsystemBase {
 
   DoublePublisher rollerCurrentPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Feeder/RollerCurrent").publish();
   DoublePublisher kickerCurrentPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Feeder/KickerCurrent").publish();
+
+  private boolean isRollerRunning = false;
   /** Creates a new FeederSubsystem. */
   public FeederSubsystem() {
     m_rollermotorconfig.idleMode(IdleMode.kBrake);
@@ -52,6 +54,14 @@ public class FeederSubsystem extends SubsystemBase {
    */
   public void setRollerSpeed(double rollerspeed) {
     rollermotor.set(rollerspeed);
+    if(rollerspeed == 0)
+    {
+      isRollerRunning = false;
+    }
+    else
+    {
+      isRollerRunning = true;
+    }
   }
   /** Sets kicker motor speed in PERCENTAGE 
 @param kickerspeed the speed that kicker motor will be set to in PERCENTAGE
@@ -64,5 +74,18 @@ public class FeederSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     rollerCurrentPublisher.set(rollermotor.getOutputCurrent());
     kickerCurrentPublisher.set(kickermotor1.getOutputCurrent());
+  }
+  public void ToggleFeederRoller()
+  {
+    if (isRollerRunning)
+    {
+      setRollerSpeed(0);
+      isRollerRunning = false;
+    }
+    else
+    {
+      setRollerSpeed(Constants.FeederConstants.rollerSpeed);
+      isRollerRunning = true;
+    }
   }
 }
