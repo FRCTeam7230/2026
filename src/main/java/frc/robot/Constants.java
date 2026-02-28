@@ -30,16 +30,16 @@ public final class Constants {
 
   public static class ControllerConstants{
     //Button configurations for the XBox controller
-    public static final int kButton1 = 1; //A
-    public static final int kButton2 = 2; //B
-    public static final int kButton3 = 3; //X
-    public static final int kButton4 = 4; //Y
-    public static final int kButton5 = 5; //LB, left button
-    public static final int kButton6 = 6; //RB, right button
-    public static final int kButton7 = 7; //Screenshare button, dont use and back button     not used
-    public static final int kButton8 = 8; //Menu button, probably dont use 
-    public static final int kButton9 = 9; //Pressing down left joystick DO NOT USE
-    public static final int kButton10 = 10; //Pressing down right joystick DO NOT USE
+    public static final int kButtonA = 1; //A
+    public static final int kButtonB = 2; //B
+    public static final int kButtonX = 3; //X
+    public static final int kButtonY = 4; //Y
+    public static final int kButtonLB = 5; //LB, left button
+    public static final int kButtonRB = 6; //RB, right button
+    public static final int kButtonScreenshare = 7; //Screenshare button, dont use and back button     not used
+    public static final int kButtonMenu = 8; //Menu button, probably dont use 
+    public static final int kButtonLeftPress = 9; //Pressing down left joystick DO NOT USE
+    public static final int kButtonRightPress = 10; //Pressing down right joystick DO NOT USE
 
     /**
      * Setting the numbers of the povs to literally anything else will probably break everything 
@@ -63,24 +63,30 @@ public final class Constants {
 
     // Xbox controller mappings
     /** A button */
-    public static final int INTAKE_DOWN = kButton1;
+    public static final int INTAKE_TOGGLE = leftTrigger;
     /** B button */
-    public static final int ROBOT_RELATIVE = kButton2;
+    public static final int ROBOT_RELATIVE = kButtonB;
     /** X button */
-    public static final int BRAKE_BUTTON = kButton3;
+    public static final int BRAKE_BUTTON = kButtonX;
     /** Y button */
-    public static final int CLIMB = kButton4;
+    public static final int CLIMB = kButtonY;
     /** Left button */
-    public static final int ALIGN_HUB = kButton5;
+    public static final int ALIGN_HUB = kButtonLB;
     /** Right button */
-    public static final int SHOOT_HUB = kButton6;
+    public static final int SHOOT_HUB = rightTrigger;
     /** Menu button */
-    public static final int ZERO_HEADING_BUTTON = kButton8;
+    public static final int ZERO_HEADING_BUTTON = kButtonMenu;
 
     /** Left trigger, axis 2 */
-    public static final int ALIGN_TRENCH = leftTrigger;
+    public static final int ALIGN_BUMP = kButtonA;
     /** Right trigger, axis 3 */
-    public static final int SPIN_INTAKE = rightTrigger;
+    public static final int TOGGLE_ROLLER = kButtonRB;
+    /**Manual Climber up */
+    public static final int MANUAL_CLIMBER_UP = pov0;
+    /**Manual Climber down */
+    public static final int MANUAL_CLIMBER_DOWN = pov180;
+    /**manual kicker reversal */
+    public static final int REVERSE_KICKER = pov90;
     
     // XBox movement mappings
     public static final int MOVE_XAXIS = leftStick_XAXIS;
