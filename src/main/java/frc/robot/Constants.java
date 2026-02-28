@@ -102,7 +102,7 @@ public final class Constants {
 
     // Xbox controller mappings
     /** A button */
-    public static final int TOGGLE_INTAKE = kButton1;
+    public static final int ALIGN_PASS = kButton1;
     /** B button */
     public static final int ROBOT_RELATIVE = kButton2;
     /** X button */

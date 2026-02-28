@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AlignToHub;
+import frc.robot.commands.AlignToPass;
 import frc.robot.commands.AutoShooterCommand;
 //import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
@@ -142,8 +143,25 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
               new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
               new InstantCommand(() -> mode_publisher.set(fieldRelative))
           ));
-    //NEW SUBSYSTEM CONTROLS
-    /*
+
+  //NEW SUBSYSTEM CONTROLS
+/*
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_PASS)
+      .whileTrue(Commands.sequence(
+        new InstantCommand(() -> m_ShooterSubsystem.reachSpeed(Constants.OuttakeConstants.shootSpeed)),
+        new AlignToPass(m_robotDrive), 
+        new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
+        new InstantCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
+       ).finallyDo(
+        () -> {
+          m_ShooterSubsystem.stopMotor();
+          m_FeederSubsystem.setKickerSpeed(0);
+          m_FeederSubsystem.setRollerSpeed(0);
+        }
+      ));
+
+    
+    
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.SHOOT_HUB)
       .whileTrue(Commands.sequence(
               new AutoShooterCommand(m_ShooterSubsystem, Constants.OuttakeConstants.shootSpeed),
@@ -192,7 +210,15 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     ButtonMappings.button(m_driverController, 0)
       .whileTrue(Commands.sequence(
         new InstantCommand(() -> m_ShooterSubsystem.reachSpeed(Constants.OuttakeConstants.shootSpeed)),
-        new AlignToHub(m_robotDrive)
+        new AlignToHub(m_robotDrive),
+        new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
+        new InstantCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
+       ).finallyDo(
+        () -> {
+          m_ShooterSubsystem.stopMotor();
+          m_FeederSubsystem.setKickerSpeed(0);
+          m_FeederSubsystem.setRollerSpeed(0);
+        }
       ));
 
 
