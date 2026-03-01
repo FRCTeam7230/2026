@@ -240,7 +240,7 @@ public final class Constants {
     public static final double krollerSpeed = 0.5;
   }
 
-  public static class AlignToHubConstants {
+  public static class AlignConstants {
     public static final double kradius = 2.98;
     public static final double khubY = 4.03; // meters
     public static final double khubXBlue = 4.63;

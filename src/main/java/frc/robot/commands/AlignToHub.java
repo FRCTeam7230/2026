@@ -29,9 +29,9 @@ public class AlignToHub extends Command {
     xController.setSetpoint(0);
     yController.setSetpoint(0);
     rotController.setSetpoint(0);
-    xController.setTolerance(Constants.AlignToHubConstants.kerrorXTolerance);
-    yController.setTolerance(Constants.AlignToHubConstants.kerrorYTolerance);
-    rotController.setTolerance(Constants.AlignToHubConstants.kerrorAngleTolerance);
+    xController.setTolerance(Constants.AlignConstants.kerrorXTolerance);
+    yController.setTolerance(Constants.AlignConstants.kerrorYTolerance);
+    rotController.setTolerance(Constants.AlignConstants.kerrorAngleTolerance);
     rotController.enableContinuousInput(-180, 180);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -87,10 +87,10 @@ public class AlignToHub extends Command {
         for (int i = 0; i < errors.length; i++) {
           errors[i] = 0;
         }
-        double radius = Constants.AlignToHubConstants.kradius;
-        double hubY = Constants.AlignToHubConstants.khubY; // meters
-        double hubXBlue = Constants.AlignToHubConstants.khubXBlue;
-        double hubXRed = Constants.AlignToHubConstants.khubXRed;
+        double radius = Constants.AlignConstants.kradius;
+        double hubY = Constants.AlignConstants.khubY; // meters
+        double hubXBlue = Constants.AlignConstants.khubXBlue;
+        double hubXRed = Constants.AlignConstants.khubXRed;
         double hubX;
         if (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Blue))) {
             hubX = hubXBlue;
@@ -108,15 +108,15 @@ public class AlignToHub extends Command {
         double targetAngle = Math.signum(distanceY) * Math.acos(distanceX / distance)*180/Math.PI;
         double errorAngle = targetAngle - pose.getRotation().getDegrees();
 
-    if (errorX < Constants.AlignToHubConstants.kerrorXTolerance) {
+    if (errorX < Constants.AlignConstants.kerrorXTolerance) {
       errors[0] = 0;
     }
     else {errors[0] = errorX;}
-    if (errorY < Constants.AlignToHubConstants.kerrorYTolerance) {
+    if (errorY < Constants.AlignConstants.kerrorYTolerance) {
       errors[1] = 0;
     }
     else {errors[1] = errorY;}
-    if (errorAngle < Constants.AlignToHubConstants.kerrorAngleTolerance) {
+    if (errorAngle < Constants.AlignConstants.kerrorAngleTolerance) {
       errors[2] = 0;
     }
     else {errors[2] = errorAngle;}

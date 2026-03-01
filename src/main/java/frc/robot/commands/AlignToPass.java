@@ -27,12 +27,12 @@ public class AlignToPass extends Command {
     double currentY = m_drive.getPose().getY();
     if (currentY<4.035) {
       yController.setSetpoint(2.0175);
-      yController.setTolerance(1);
+      yController.setTolerance(0.25);
       
     }
     else {
       yController.setSetpoint(6.0525);
-      yController.setTolerance(1);
+      yController.setTolerance(0.25);
       
     }
 
