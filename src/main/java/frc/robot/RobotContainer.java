@@ -14,6 +14,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
@@ -323,7 +324,10 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
   }
   
   public BehaviorSelector passOrShootSelector() {
-    if(true)
+    double threshold = DriverStation.getAlliance().equals(DriverStation.Alliance.Red)
+    ? Constants.AlignConstants.kFieldLength - Constants.AlignConstants.kPassThreshold
+    : Constants.AlignConstants.kPassThreshold;
+    if(m_robotDrive.getPose().getX()<threshold)
     {
       return BehaviorSelector.PASS;
     }

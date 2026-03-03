@@ -248,5 +248,7 @@ public final class Constants {
     public static final double kerrorXTolerance = 0.1;
     public static final double kerrorYTolerance = 0.1;
     public static final double kerrorAngleTolerance = 1;
+    public static final double kPassThreshold = 4; // meters to end of alliance zone
+    public static final double kFieldLength = 16.54; // meters, from end of alliance zone to end of alliance zone
   }
 }
