@@ -89,4 +89,21 @@ public class FeederSubsystem extends SubsystemBase {
       isRollerRunning = true;
     }
   }
+  /**
+   * Sets the feeder roller on or off based on the boolean value passed in. Used to sync to another subsystem's state such as the intake
+   * @param on
+   */
+  public void setFeederRoller(boolean on)
+  {
+    if (on)
+    {
+      setRollerSpeed(Constants.FeederConstants.rollerSpeed);
+      isRollerRunning = true;
+    }
+    else
+    {
+      setRollerSpeed(0);
+      isRollerRunning = false;
+    }
+  }
 }

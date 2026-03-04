@@ -51,7 +51,6 @@ public final class Constants {
     public static final double ShooterTolerance = 10;
     public static final double shootSpeed = 3000; 
     public static final double passSpeed = 4000;
-    public static final double testShootSpeed = 0.5;
   }
   public static final class AutoAlignToHubConstants {
     public static final double kTargetX = 0.67;
@@ -129,6 +128,9 @@ public final class Constants {
     public static final int MANUAL_CLIMBER_DOWN = pov180;
     /**manual kicker reversal */
     public static final int REVERSE_KICKER = pov90;
+
+    public static final int MANUAL_ROLLERS_TOGGLE = pov0;
+    public static final int MANUAL_KICKERS_TEST = pov180;
     
     // XBox movement mappings
     public static final int MOVE_XAXIS = leftStick_XAXIS;
