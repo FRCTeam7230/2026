@@ -179,6 +179,14 @@ public class IntakeSubsystem extends SubsystemBase
         spinRoller(Constants.IntakeConstants.kintakeRollerSpeed);
       }
     }
+    public boolean getIntakeOut()
+    {
+      return isIntakeOut;
+    }
+    public boolean getRollerSpinning()
+    {
+      return isRollerSpinning;
+    }
 
 
 

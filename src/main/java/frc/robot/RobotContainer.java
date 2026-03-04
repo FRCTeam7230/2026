@@ -126,33 +126,46 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
               new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
               new InstantCommand(() -> mode_publisher.set(fieldRelative))
           ));
-    /* 
-    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
-      .whileTrue(new InstantCommand( ()->{
-        m_intake.toggleIntake();
-      }));
-       ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE_ROLLERS)
-      .whileTrue(new InstantCommand( ()->{
-        m_intake.toggleIntakeRoller();
-      }));
-    */
+
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_ROLLERS)
       .whileTrue(new StartEndCommand( ()-> m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed)
         , ()-> m_intake.spinRoller(0), m_intake));
-    /*
+    //Test methods for manual intake movement, spins the joint with no PID
+        /*
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_UP)
       .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(Constants.IntakeConstants.kintakeJointSpeed)
         , ()-> m_intake.spinJoint(0), m_intake));
-
+    
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_DOWN)
       .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(-Constants.IntakeConstants.kintakeJointSpeed)
         , ()-> m_intake.spinJoint(0), m_intake));
-
+        */
+    //Test method for determining kG, hold the intake out horizontal and find a value that holds it still. 
+    /*
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_HOVER)
       .whileTrue(new StartEndCommand(
         ()-> m_intake.hoverJoint(),
         ()-> m_intake.spinJoint(0), m_intake
       ));
+    */
+    //Test method for intake PID, only extends the intake and does not toggle
+    /*
+    ButtonMappings.button(m_driverController,Constants.ControllerConstants.TOGGLE_INTAKE)
+      .onTrue(new InstantCommand(()->
+      {
+        m_intake.setGoal(Constants.IntakeConstants.kextendedPostion);
+      },m_intake));
+    */
+    // TOGGLE INTAKE METHODS -> These should be the only intake methods left after testing
+    /*
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
+      .whileTrue(new InstantCommand( ()->{
+        m_intake.toggleIntake();
+      },m_intake));
+       ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE_ROLLERS)
+      .whileTrue(new InstantCommand( ()->{
+        m_intake.toggleIntakeRoller();
+      },m_intake));
     */
   }
 
