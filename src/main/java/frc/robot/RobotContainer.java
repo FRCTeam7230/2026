@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.*;
+import frc.robot.commands.AlignClimber;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.ButtonMappings;
@@ -17,8 +18,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.net.PortForwarder;
@@ -46,18 +50,18 @@ public class RobotContainer {
   //Climber TODO: Rename these, since they're not "toggles" but rather setting a specific height
   // This isn't a descriptive name, the point of this is to set the climber to max height and then to min height, right? 
   // Use something that explains that
-  private Command m_climberMaxHeightCommand = Commands.runEnd(
-            () -> m_Climber.reachGoal(ClimberConstants.kMaxRealClimberHeightMeters),
-            () -> m_Climber.stop(),
-            m_Climber);
-  private Command m_climberMinHeightCommand = Commands.runEnd(
-            () -> m_Climber.reachGoal(ClimberConstants.kMinRealClimberHeightMeters), //Climber TODO: This sets the same position as the previous command (both are set to max)
-            () -> m_Climber.stop(),
-            m_Climber);
-  private Command m_DriveRun = Commands.runEnd(
-            () -> m_robotDrive.drive(1, 0, 0, isCompetition),
-            () -> m_robotDrive.setX(),
-            m_robotDrive);
+  // private Command m_climberMaxHeightCommand = Commands.runEnd(
+  //           () -> m_Climber.reachGoal(ClimberConstants.kMaxRealClimberHeightMeters),
+  //           () -> m_Climber.stop(),
+  //           m_Climber);
+  // private Command m_climberMinHeightCommand = Commands.runEnd(
+  //           () -> m_Climber.reachGoal(ClimberConstants.kMinRealClimberHeightMeters), //Climber TODO: This sets the same position as the previous command (both are set to max)
+  //           () -> m_Climber.stop(),
+  //           m_Climber);
+  // private Command m_DriveRun = Commands.runEnd(
+  //           () -> m_robotDrive.drive(1, 0, 0, isCompetition),
+  //           () -> m_robotDrive.setX(),
+  //           m_robotDrive);
 
   /**
    * 
@@ -151,18 +155,55 @@ public class RobotContainer {
           () -> m_Climber.ManualClimberDown(),
           () -> m_Climber.stop(),
           m_Climber));
+    ButtonMappings.button(m_driverController, ControllerConstants.CLIMBHOVER)
+      .whileTrue(Commands.startEnd(
+          () -> m_Climber.HoverClimber(),
+          () -> m_Climber.stop(),
+          m_Climber));
+    // ButtonMappings.button(m_driverController, ControllerConstants.CLIMBUP)
+    //   .onTrue(new InstantCommand(()->m_Climber.reachGoal(ClimberConstants.kMinRealClimberHeightMeters)));
+    // ButtonMappings.button(m_driverController, ControllerConstants.CLIMBDOWN)
+    //   .onTrue(new InstantCommand(()->m_Climber.reachGoal(ClimberConstants.kMinRealClimberHeightMeters)));
 
+
+    ButtonMappings.button(m_driverController, ControllerConstants.CLIMBASCENT)
+      .onTrue(
+        new SequentialCommandGroup(
+          new AlignClimber(m_robotDrive)
+          .andThen(new RunCommand(() -> m_robotDrive.drive(0, 0.1, 0, false), m_robotDrive).withTimeout(0.5))
+        )
+          .alongWith(
+            m_Climber.setGoal(Constants.ClimberConstants.kMaxRealClimberHeightMeters)
+            .until(m_Climber.atHeight(Constants.ClimberConstants.kMaxRealClimberHeightMeters, 0.05))
+          )
+        .andThen(
+          //m_Climber.setGoal(Constants.ClimberConstants.kMinRealClimberHeightMeters)
+          new RunCommand(()->m_Climber.setManualOutput(-0.2))
+          .until(m_Climber.atHeight(Constants.ClimberConstants.kMinRealClimberHeightMeters, 0.05))
+        )
+      );
+    ButtonMappings.button(m_driverController, ControllerConstants.CLIMBDESCENT)
+      .onTrue(
+        new RunCommand(()->m_Climber.setManualOutput(0.2))
+        //m_Climber.setGoal(Constants.ClimberConstants.kMaxRealClimberHeightMeters)
+        .until(m_Climber.atHeight(Constants.ClimberConstants.kMaxRealClimberHeightMeters, 0.05))//Raise the tolerance if the climber doesn't need to extend all the way.
+      );
+    
+
+
+
+    
     //Climb Up and Down
     //Climber TODO: Comment this out until we're ready to test it
-    /*
-    ButtonMappings.button(m_driverController, 4)
-      .onTrue(new InstantCommand(() -> {
-        m_climberHightCommand1.schedule();
-        m_DriveRun.schedule();
-        m_climberHightCommand2.schedule();
-      }, m_Climber));
-    m_climberHightCommand1.andThen(m_DriveRun).andThen(m_climberHightCommand2);
-    */
+    
+    // ButtonMappings.button(m_driverController, 4)
+    //   .onTrue(new InstantCommand(() -> {
+    //     m_climberHightCommand1.schedule();
+    //     m_DriveRun.schedule();
+    //     m_climberHightCommand2.schedule();
+    //   }, m_Climber));
+    // m_climberHightCommand1.andThen(m_DriveRun).andThen(m_climberHightCommand2);
+    
   }
   
 

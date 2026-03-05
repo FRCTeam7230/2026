@@ -63,15 +63,21 @@ public final class Constants {
 
     // Xbox controller mappings
     /** A button */
-    public static final int INTAKE_DOWN = kButton1;
+    public static final int INTAKE_DOWN = 67;
     /** B button */
-    public static final int ROBOT_RELATIVE = kButton2;
+    public static final int ROBOT_RELATIVE = 67;
     /** X button */
-    public static final int BRAKE_BUTTON = kButton3;
+    public static final int BRAKE_BUTTON = 67;
     /** Y button */
-    public static final int CLIMBUP = kButton4;
+    public static final int CLIMBUP = kButton4;//pov 0
 
-    public static final int CLIMBDOWN = kButton7;
+    public static final int CLIMBDOWN = kButton1;//pov 180
+
+    public static final int CLIMBHOVER = pov90;
+
+    public static final int CLIMBASCENT = kButton2;//pov 0
+
+    public static final int CLIMBDESCENT = kButton3;//pov 180
     /** Left button */
     public static final int ALIGN_HUB = kButton5;
     /** Right button */
@@ -139,7 +145,7 @@ public final class Constants {
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.0656;
+    public static final double kWheelDiameterMeters = 0.069;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15
     // teeth on the bevel pinion
@@ -184,15 +190,21 @@ public final class Constants {
   }
 
   public static final class ClimberConstants {
-    public static final int kClimMotor1 = 9;
+    public static final int kClimMotor1 = 16;
     public static final double kGearRatio = 15; // Divided by 2 stages 
     public static final double kGearCircumference = Units.inchesToMeters(5.5); //inches - lemme double check with  
     public static final double kResetCurrent = 40; //max current tbd Climber TODO: Will we be reseting climber?
-    public static final int kMaxCurrent = 45; //Climber TODO for testing: Ensure we're not close to this - Change to 80 to start
+    public static final int kMaxCurrent = 80; //Climber TODO for testing: Ensure we're not close to this - Change to 80 to start
     public static final double kRotationToMeters = kGearCircumference / kGearRatio;// Revolutions to Output units conversion factor
+
     public static final double kCLimberKp = 0; //Climber TODO: Start with these gains at zero! Will need to tune later 
     public static final double kCLimberKi = 0;
     public static final double kClimberKd = 0; //Climber TODO: Start with these gains at zero! Will need to tune later
+
+    // public static final double kCLimberDKp = 0; //Climber TODO: Start with these gains at zero! Will need to tune later 
+    // public static final double kCLimberDKi = 0;
+    // public static final double kClimberDKd = 0;//Climber TODO: Start with these gains at zero! Will need to tune later
+
     public static final double kClimberRampRate = 0.2;
 
     // Note: All of these should be 0.0 except kG - which we will need to determine empirically
@@ -203,6 +215,6 @@ public final class Constants {
 
     // Encoder is reset to measure 0 at the bottom, so minimum height is 0.
     public static final double kMinRealClimberHeightMeters = 0.0;    // m
-    public static final double kMaxRealClimberHeightMeters = 1.575; // m //Climber TODO: Will need to tune this
+    public static final double kMaxRealClimberHeightMeters = 0.575; // m //Climber TODO: Will need to tune this
   }
 }

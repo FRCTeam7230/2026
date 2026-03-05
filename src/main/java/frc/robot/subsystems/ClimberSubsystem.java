@@ -12,6 +12,7 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -48,11 +49,13 @@ public class ClimberSubsystem extends SubsystemBase
 
   public ClimberSubsystem()
   {
+    //PIDController climberPID = new PIDController(ClimberConstants.kCLimberKp, ClimberConstants.kCLimberKi, ClimberConstants.kClimberKd);
     m_config_motor1.encoder
         .positionConversionFactor(ClimberConstants.kRotationToMeters)
-        .velocityConversionFactor(ClimberConstants.kRotationToMeters / 60.0);
+        .velocityConversionFactor(ClimberConstants.kRotationToMeters / 60.0);//are we using velocity?
     m_config_motor1.closedLoop
         .pid(ClimberConstants.kCLimberKp, ClimberConstants.kCLimberKi, ClimberConstants.kClimberKd, ClosedLoopSlot.kSlot0)
+        //.pid(ClimberConstants.kCLimberDKp, ClimberConstants.kCLimberDKi, ClimberConstants.kClimberDKd, ClosedLoopSlot.kSlot1)//D for descent
         .outputRange(-1, 1, ClosedLoopSlot.kSlot0);
     m_config_motor1.idleMode(SparkBaseConfig.IdleMode.kBrake);
     m_config_motor1.smartCurrentLimit(ClimberConstants.kMaxCurrent);
@@ -184,11 +187,16 @@ public class ClimberSubsystem extends SubsystemBase
     setManualOutputSafe(-0.15);
   }
 
-  public void ClimberIncrementDown() 
+  public void ClimberDown() 
   {
     reachGoal(Constants.ClimberConstants.kMinRealClimberHeightMeters); 
   }
-
+   public void ClimberUp() 
+  {
+    reachGoal(Constants.ClimberConstants.kMaxRealClimberHeightMeters); 
+  }
+    
+  // }
   //Update telemetry
   public void updateTelemetry()
   {
