@@ -12,6 +12,7 @@ import java.awt.Dimension;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AddressableLEDBufferView;
@@ -34,7 +35,9 @@ public class LEDSimGUI extends JPanel  implements ActionListener{
         this.setBackground(Color.black);
         ledSubsystem = leds;
         ledSubsystem.updateData();
-        timer = new Timer(100, this);
+        double frequency = 165; //make this the refresh rate of your monitor
+        int delay = (int)(1000/frequency);
+        timer = new Timer(delay, this);
         timer.start();
      }
      int ledPerRow;

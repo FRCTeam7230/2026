@@ -45,6 +45,8 @@ DoublePublisher timeLeftInTransitionPublisher = NetworkTableInstance.getDefault(
    * 2 = transition (active to inactive)
    * 3 = transition (inactive to active)
    */
+  
+
   public static int getHubState() { //changed to static to make it easier to use without importing :)
     Optional<Alliance> alliance = DriverStation.getAlliance();
     // If we have no alliance, we cannot be enabled, therefore no hub.
@@ -118,11 +120,15 @@ DoublePublisher timeLeftInTransitionPublisher = NetworkTableInstance.getDefault(
     else if (matchTime > 30) { // Fourth shift, full thing
       // Shift 4
       return shift1Active?0:1;
-    } else {
+    } else if (matchTime > 0){
       // End game, hub always active.
       return 1;
     }
+    else { // game has ended, no game data
+      return -1;
+    }
   }
+  
   public static double timeLeftInTransition(int hubState) {
     if (!((hubState == 2) || (hubState == 3))) {
       return -1;
