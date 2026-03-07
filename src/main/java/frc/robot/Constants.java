@@ -63,13 +63,13 @@ public final class Constants {
 
     // Xbox controller mappings
     /** A button */
-    public static final int INTAKE_TOGGLE = leftTrigger;
+   // public static final int INTAKE_DOWN = kButtonA;//was button 1
     /** B button */
-    public static final int ROBOT_RELATIVE = kButtonB;
+  //  public static final int ROBOT_RELATIVE = kButtonMenu;
     /** X button */
-    public static final int BRAKE_BUTTON = kButtonX;
+    public static final int BRAKE_BUTTON = kButtonScreenshare;//was button 3
     /** Y button */
-    public static final int CLIMB = kButtonY;
+    //public static final int CLIMB = kButtonY;
     /** Left button */
     public static final int ALIGN_HUB = kButtonLB;
     /** Right button */
@@ -77,8 +77,10 @@ public final class Constants {
     /** Menu button */
     public static final int ZERO_HEADING_BUTTON = kButtonMenu;
 
+    public static final int ALIGN_TO_BUMP = kButtonA;
+    public static final int BRING_ROBOT = kButtonX;
     /** Left trigger, axis 2 */
-    public static final int ALIGN_BUMP = kButtonA;
+    //public static final int ALIGN_BUMP = kButtonA;
     /** Right trigger, axis 3 */
     public static final int TOGGLE_ROLLER = kButtonRB;
     /**Manual Climber up */

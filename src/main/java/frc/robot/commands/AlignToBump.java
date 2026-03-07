@@ -1,4 +1,4 @@
-package frc.robot.Commands;
+package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class AlignToBump2 extends Command{//This is the better edition
+public class AlignToBump extends Command{//This is the better edition
     PIDController rotController = new PIDController(0.04, 0, 0.001);
     DriveSubsystem m_drive;
     double currentAngle;
@@ -20,11 +20,10 @@ public class AlignToBump2 extends Command{//This is the better edition
 
     double goalAngle = 38.412;//Angles 38.412, 141.588, -38.412, -141.588 all work for align to bump.
 
-    public AlignToBump2(DriveSubsystem drive) {
+    public AlignToBump(DriveSubsystem drive) {
         rotController.setSetpoint(0);//This makes the robot face 0 degrees.
         rotController.enableContinuousInput(-180, 180);
         m_drive = drive;
-        bumpSpeed = 4.8;
         addRequirements(m_drive);//i removed this when testing it with a button.
     }
      double angle1 = goalAngle;//38.412

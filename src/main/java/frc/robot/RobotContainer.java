@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -26,6 +28,7 @@ import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 import edu.wpi.first.net.PortForwarder;
+import frc.robot.commands.AlignToBump;
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -101,6 +104,7 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
    * passing it to a
    * {@link JoystickButton}.
    */
+  AlignToBump alignToBumpCommand;
   private void configureButtonBindings() {
 
 
@@ -114,11 +118,39 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
       .whileTrue(new RunCommand(
           () -> m_robotDrive.zeroHeading()));
 
-    ButtonMappings.button(m_driverController, Constants.ControllerConstants.ROBOT_RELATIVE)
-      .onTrue(Commands.sequence(
-              new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
-              new InstantCommand(() -> mode_publisher.set(fieldRelative))
-          ));
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.ROBOT_RELATIVE)
+    //   .onTrue(Commands.sequence(
+    //           new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
+    //           new InstantCommand(() -> mode_publisher.set(fieldRelative))
+    //       ));
+      // ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_TO_BUMP).onTrue(
+      //   new AlignToBump(m_robotDrive)
+      // );
+      
+      ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_TO_BUMP).onTrue(
+        Commands.runOnce(()->{
+        alignToBumpCommand = new AlignToBump(m_robotDrive);
+        alignToBumpCommand.schedule();
+        })
+      ).onFalse(
+        Commands.runOnce(()->alignToBumpCommand.cancel())
+      );
+      //double bringXPos = 4.626;
+      double bringXPos = 11.915;
+      double bringYPos = 3;          
+      SmartDashboard.putNumber("X Position", bringXPos);
+      SmartDashboard.putNumber("Y Position", bringYPos);
+      ButtonMappings.button(m_driverController, Constants.ControllerConstants.BRING_ROBOT).onTrue(
+        Commands.runOnce(() -> m_robotDrive.resetOdometry(new Pose2d(bringXPos, bringYPos,new Rotation2d(0))))
+      );
+      /*ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_TO_BUMP).whileTrue(
+        new AlignToBump(m_robotDrive)
+      );//.onFalse(
+      */
+      
+      SmartDashboard.putData("Align to Bump Command",
+      new AlignToBump(m_robotDrive));
+      //);
     // ButtonMappings.button(m_driverController, Constants.ControllerConstants.RadiusCharacterization)
     //   .whileTrue(m_robotDrive.wheelRadiusCharacterization());
     
