@@ -127,14 +127,15 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
       //   new AlignToBump(m_robotDrive)
       // );
       
-      ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_TO_BUMP).toggleOnTrue(//onTrue will constantly remake and reschedule the command.
-        Commands.runOnce(()->{
-        alignToBumpCommand = new AlignToBump(m_robotDrive);
-        alignToBumpCommand.schedule();
-        })
-      ).onFalse(
-        Commands.runOnce(()->alignToBumpCommand.cancel())
-      );
+      // ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_TO_BUMP).toggleOnTrue(//onTrue will constantly remake and reschedule the command.
+      //   Commands.runOnce(()->{
+      //   alignToBumpCommand = new AlignToBump(m_robotDrive);
+      //   alignToBumpCommand.schedule();
+      //   })
+      // ).onFalse(
+      //   Commands.runOnce(()->alignToBumpCommand.cancel())
+      // );
+      ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_TO_BUMP).onTrue(new AlignToBump(m_robotDrive));
       //double bringXPos = 4.626;
       double bringXPos = 11.915;
       double bringYPos = 3;          
