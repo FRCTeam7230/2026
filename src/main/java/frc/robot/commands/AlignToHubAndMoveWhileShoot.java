@@ -9,6 +9,7 @@ import java.util.Optional;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,6 +34,11 @@ public class AlignToHubAndMoveWhileShoot extends Command {
   double zInitialVelocityRobotRelative = 0;
   double vx0 = Constants.AlignToHubConstants.vx0;
   double x0 = Constants.AlignToHubConstants.x0;
+
+  private final Timer timer = new Timer();
+  private double lastTime = 0;
+  double radialOffset = 0;
+
   
   Command drivecommand = null;
   public AlignToHubAndMoveWhileShoot(DriveSubsystem drive, XboxController cont, ShooterSubsystem shoot) {
@@ -48,13 +54,23 @@ public class AlignToHubAndMoveWhileShoot extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() 
+  {
+    timer.start();
+    radialOffset = 0;
+    lastTime = timer.get();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double currentTime = timer.get(); // Returns time in seconds
+    double deltaTime = currentTime - lastTime;
+    lastTime = currentTime;
+    radialOffset = getHubDistance(m_drive.getPose()) - (Constants.AlignToHubConstants.kradius);
+    radialOffset+=controller.getRawAxis(Constants.ControllerConstants.leftStick_YAXIS) * deltaTime*Constants.AlignToHubConstants.kradialOffsetMult;
     Pose2d currentPose = m_drive.getPose();
-    double[] errors = CalculateHubPID(currentPose);
+    double[] errors = CalculateHubPID(currentPose,radialOffset);
     double xSpeed = xController.calculate(errors[0]);
     double ySpeed = yController.calculate(errors[1]);
     double rotSpeed = Math.max(Math.min(rotController.calculate(errors[2]),1.5), -1.5);
@@ -82,7 +98,24 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     return false;
 
   }
-  public double[] CalculateHubPID(Pose2d pose) {
+  public double getHubDistance(Pose2d pose)
+  {
+    double hubXBlue = Constants.AlignToHubConstants.khubXBlue;
+    double hubXRed = Constants.AlignToHubConstants.khubXRed;
+    double hubY = Constants.AlignToHubConstants.khubY; // meters
+    double hubX;
+    //determines hubX based on which alliance we are on
+    if (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Blue))) {
+        hubX = hubXBlue;
+    }
+    else {
+      hubX = hubXRed;
+    }
+    double distanceX = hubX - pose.getX();
+    double distanceY = hubY - pose.getY();
+    return Math.sqrt( Math.pow( distanceX, 2) + Math.pow( distanceY, 2) );
+  }
+  public double[] CalculateHubPID(Pose2d pose,double radialOffset) {
     //SAME AS ALIGN TO HUB
     //setting robot x and y  
     double robotX = pose.getX();
@@ -95,7 +128,7 @@ public class AlignToHubAndMoveWhileShoot extends Command {
       errors[i] = 0;
     }
     //setting constants to local variables for readability
-    double radius = Constants.AlignToHubConstants.kradius;
+    double radius = Constants.AlignToHubConstants.kradius+radialOffset; //meters
     double hubY = Constants.AlignToHubConstants.khubY; // meters
     double hubXBlue = Constants.AlignToHubConstants.khubXBlue;
     double hubXRed = Constants.AlignToHubConstants.khubXRed;

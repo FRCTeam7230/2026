@@ -268,6 +268,7 @@ public final class Constants {
     //z is up and down the field
     public static final double z0 = 0;
     public static final double az = 0; //ignoring any horizontal accelerations for now (need to change calculations if want to)
+    public static final double kradialOffsetMult = 0.05;
     
   }
 }
