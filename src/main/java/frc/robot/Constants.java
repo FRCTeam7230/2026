@@ -62,7 +62,6 @@ public final class Constants {
     public static final int rightStick_YAXIS = 5;
 
     // Xbox controller mappings
-    /** A button */
     public static final int TEST_INTAKE_JOINT_UP = pov0;
     public static final int TEST_INTAKE_JOINT_DOWN = pov180;
     public static final int INTAKE_TOGGLE = leftTrigger;
@@ -196,7 +195,7 @@ public final class Constants {
     public static final double kretractedPostion = 0; //need to update
     public static final double kextendedPostion = 0; //need to update
     public static final double kintakeRollerSpeed = -0.8; //need to update
-    public static final double kintakeJointSpeed = 0.5; //need to update
+    public static final double kintakeJointSpeed = 0.1; //need to update
 
   }
 }

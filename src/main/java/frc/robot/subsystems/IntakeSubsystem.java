@@ -27,13 +27,13 @@ public class IntakeSubsystem extends SubsystemBase
 {
   // Set up Joint and Shooter properties
   /**Motor Controlling the joint for the intake, which is also connected to the hopper extensions */
-  private final SparkMax                  m_joint               = null;//new SparkMax(Constants.IntakeConstants.kJointCANID, MotorType.kBrushless);
+  private final SparkMax                  m_joint               = new SparkMax(Constants.IntakeConstants.kJointCANID, MotorType.kBrushless);
   /**Motor controlling the roller on one end of the intake, which must be running in order to get balls through the intake */
   private final SparkMax                  m_roller              = new SparkMax(Constants.IntakeConstants.kRollerCANID, MotorType.kBrushless);
   /**Closed Loop (PID) Controller for the joint to move it to set positions */
-  private final SparkClosedLoopController m_controller          =null;// m_joint.getClosedLoopController();
+  private final SparkClosedLoopController m_controller          = m_joint.getClosedLoopController();
   /**Encoder on the joint to determine its position for PID movement and precise tracking */
-  private final SparkAbsoluteEncoder      m_jointEncoder        = null;//m_joint.getAbsoluteEncoder();
+  private final SparkAbsoluteEncoder      m_jointEncoder        = m_joint.getAbsoluteEncoder();
   /**Config object for the joint motor */
   private final SparkMaxConfig            m_config_joint        = new SparkMaxConfig();
   /**Config object for the first roller motor */
@@ -59,7 +59,7 @@ public class IntakeSubsystem extends SubsystemBase
 
   /**Constructs an intake subsystem */
    public IntakeSubsystem(){
-        /*
+        
         m_config_joint.absoluteEncoder
         //.inverted(true) // idk what this does - musa //Intake TODO: You want positive motor values to correspond to positive increaing encoder values, if that's not true, you can set inverted to true
         .positionConversionFactor(360) //Intake TODO: Are we sure about these conversion factors? What did L1 use? - L1 used the same
@@ -78,11 +78,11 @@ public class IntakeSubsystem extends SubsystemBase
 
         m_config_joint.idleMode(IdleMode.kBrake);
         m_config_joint.smartCurrentLimit(Constants.IntakeConstants.kMaxCurrent); //Intake TODO: MaxCurrent can go up for the Neo 1.1, maybe 40 or 60?
-        */
+        
         m_config_roller.idleMode(SparkBaseConfig.IdleMode.kBrake);
         m_config_roller.smartCurrentLimit(Constants.IntakeConstants.kMaxCurrent); //Intake TODO: MaxCurrent can go up for the Neo 1.1, maybe 40 or 60?
         //This setup means that it will not reset certain "safe" parameters to their defaults, and will also persist the new parameters we set
-       // m_joint.configure(m_config_joint, ResetMode.kNoResetSafeParameters,PersistMode.kPersistParameters);
+        m_joint.configure(m_config_joint, ResetMode.kNoResetSafeParameters,PersistMode.kPersistParameters);
         m_roller.configure(m_config_roller, ResetMode.kNoResetSafeParameters,PersistMode.kPersistParameters);
         
         desiredAngle = 0;
@@ -151,7 +151,7 @@ public class IntakeSubsystem extends SubsystemBase
      * Periodic runs every cycle. It published the encoder value and target position for the joint to networktables for debugging. 
      */
     public void periodic(){
-      //jointEncoder_publisher.set(m_jointEncoder.getPosition());
+      jointEncoder_publisher.set(m_jointEncoder.getPosition());
       targetPosition_publisher.set(desiredAngle);
       rollerCurrentPublisher.set(m_roller.getOutputCurrent());
     }
