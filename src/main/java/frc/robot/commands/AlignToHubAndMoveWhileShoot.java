@@ -64,13 +64,11 @@ public class AlignToHubAndMoveWhileShoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double currentTime = timer.get(); // Returns time in seconds
-    double deltaTime = currentTime - lastTime;
-    lastTime = currentTime;
-    radialOffset = getHubDistance(m_drive.getPose()) - (Constants.AlignToHubConstants.kradius);
-    radialOffset+=controller.getRawAxis(Constants.ControllerConstants.leftStick_YAXIS) * deltaTime*Constants.AlignToHubConstants.kradialOffsetMult;
+    double deltaTime = timer.get() - lastTime;
+    lastTime = timer.get();
+    radialOffset = controller.getRawAxis(1)*deltaTime*Constants.AlignToHubConstants.kSpeedMulti;
     Pose2d currentPose = m_drive.getPose();
-    double[] errors = CalculateHubPID(currentPose,radialOffset);
+    double[] errors = CalculateHubPID(currentPose, radialOffset);
     double xSpeed = xController.calculate(errors[0]);
     double ySpeed = yController.calculate(errors[1]);
     double rotSpeed = Math.max(Math.min(rotController.calculate(errors[2]),1.5), -1.5);
@@ -98,24 +96,7 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     return false;
 
   }
-  public double getHubDistance(Pose2d pose)
-  {
-    double hubXBlue = Constants.AlignToHubConstants.khubXBlue;
-    double hubXRed = Constants.AlignToHubConstants.khubXRed;
-    double hubY = Constants.AlignToHubConstants.khubY; // meters
-    double hubX;
-    //determines hubX based on which alliance we are on
-    if (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Blue))) {
-        hubX = hubXBlue;
-    }
-    else {
-      hubX = hubXRed;
-    }
-    double distanceX = hubX - pose.getX();
-    double distanceY = hubY - pose.getY();
-    return Math.sqrt( Math.pow( distanceX, 2) + Math.pow( distanceY, 2) );
-  }
-  public double[] CalculateHubPID(Pose2d pose,double radialOffset) {
+  public double[] CalculateHubPID(Pose2d pose,double radalOffset) {
     //SAME AS ALIGN TO HUB
     //setting robot x and y  
     double robotX = pose.getX();
@@ -128,7 +109,7 @@ public class AlignToHubAndMoveWhileShoot extends Command {
       errors[i] = 0;
     }
     //setting constants to local variables for readability
-    double radius = Constants.AlignToHubConstants.kradius+radialOffset; //meters
+    double Radius = Constants.AlignToHubConstants.kradius; //meters
     double hubY = Constants.AlignToHubConstants.khubY; // meters
     double hubXBlue = Constants.AlignToHubConstants.khubXBlue;
     double hubXRed = Constants.AlignToHubConstants.khubXRed;
@@ -148,6 +129,19 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     //pythagorean theorm to get overall distance
     double distance = Math.sqrt( Math.pow( distanceX, 2) + Math.pow( distanceY, 2) );
     
+    double radius = distance + radalOffset;
+    double targetVelocityX = Math.sqrt(
+      (9.81*Math.pow(distance, 2))
+      /(2*Math.tan(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle))*distance - (Constants.AlignToHubConstants.kHubHeight-0.38))
+      );
+
+    double targetVelocity =  targetVelocityX / Math.cos(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle)) - m_drive.getSpeeds().vxMetersPerSecond;
+    
+    if((radius-Radius)>Constants.AlignToHubConstants.kRadiusToleranceBackward){
+        radius = Radius + Constants.AlignToHubConstants.kRadiusToleranceBackward;
+    } else if((radius-Radius)<Constants.AlignToHubConstants.kRadiusToleranceForward){
+      radius = Radius + Constants.AlignToHubConstants.kRadiusToleranceForward;
+    }
     //robot position error calculations
     double errorX = distanceX * ( (distance - radius) / distance );
     double errorY = distanceY * ( (distance - radius) / distance );
@@ -161,10 +155,11 @@ public class AlignToHubAndMoveWhileShoot extends Command {
 
     //angle offset calculations
 
-    /*  //this changes the reachSpeed of shooter for a more optimal trajectory
+    //this changes the reachSpeed of shooter for a more optimal trajectory
     initialEjectionVelocityAfterOffset = Constants.AlignToHubConstants.kinitialEjectionVelocityBeforeOffset + Math.abs(0.3*zInitialVelocityRobotRelative);
+    initialEjectionVelocityAfterOffset += targetVelocity-Constants.AlignToHubConstants.kinitalAtTwoPointSevenFive;
     m_shoot.reachSpeed(initialEjectionVelocityAfterOffset);
-    */
+    
 
     //initial x fuel velocity
     vx0 = Constants.AlignToHubConstants.kinitialEjectionVelocityBeforeOffset*Math.cos(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle));

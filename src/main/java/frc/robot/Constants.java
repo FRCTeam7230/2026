@@ -249,17 +249,25 @@ public final class Constants {
     public static final double kejectionAngle = 68; //deg
 
     //target radius from the center of the bot to the center of the hub horizontally
-    public static final double kradius = 2.98;
+    public static final double kradius = 2.75;
     public static final double khubY = 4.03; // meters
     public static final double khubXBlue = 4.63;
     public static final double khubXRed = 11.92;
+
+    //Forward/backward shoot while move vars
+    public static final double kSpeedMulti = 17; //meters
+    public static final double kRadiusToleranceForward = -0.4; //meters
+    public static final double kRadiusToleranceBackward = 3; //meters
+    public static final double kHubHeight = 1.8146; //meters
+    public static final double kinitalAtTwoPointSevenFive = 6.58865945551; //m/s
+    
 
     public static final double kerrorXTolerance = 0.1;
     public static final double kerrorYTolerance = 0.1;
     public static final double kerrorAngleTolerance = 1;
 
     //angle offset calc constants
-    public static final double kspeedMult = 0.65; //max speedMult experimentally determined from sim
+    public static final double kspeedMult = 0.5; //max speedMult experimentally determined from sim
     public static final double kinitialEjectionVelocityBeforeOffset = 7; //m/s
 
     public static final double x0 = kshooterOffset;
