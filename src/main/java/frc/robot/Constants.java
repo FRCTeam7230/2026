@@ -278,7 +278,7 @@ public final class Constants {
     public static final int kshootingRepeatTimes = 10;
     public static final double kidleScrollingMovingFrequency = 1; // how many times per second the pattern should move, if applicable
     public static final double kidleSinusoidalMovingFrequency = 0.5; // how many times per second the pattern should move, if applicable
-    public static final int kidleRepeatTimes = 50000001; 
+    public static final int kidleRepeatTimes =  5;//50000001; 
     public static final double kintakeMovingFrequency = 0.75; // how many times per second the pattern should move, if applicable
     public static final int kintakingtRepeatTimes = 6;
 
@@ -312,6 +312,9 @@ public final class Constants {
     public static final int kRedS = 255;
     public static final int kRedV = 178;
 
+    public static final int kWhiteH = 0;
+    public static final int kWhiteS = 0;
+    public static final int kWhiteV = 255;
 
     
   }

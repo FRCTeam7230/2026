@@ -35,7 +35,7 @@ public class LEDSimGUI extends JPanel  implements ActionListener{
         this.setBackground(Color.black);
         ledSubsystem = leds;
         ledSubsystem.updateData();
-        double frequency = 165; //make this the refresh rate of your monitor
+        double frequency = 60; //make this the refresh rate of your monitor
         int delay = (int)(1000/frequency);
         timer = new Timer(delay, this);
         timer.start();

@@ -17,7 +17,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.awt.event.KeyEvent;
 import java.nio.ByteBuffer;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import edu.wpi.first.wpilibj.AddressableLED;
@@ -217,6 +216,7 @@ public class LEDSubsystem extends SubsystemBase {
     m_LED.setData(m_LEDBuffer);
   }
 
+  /** cool pattern but not used currently for match */
   public void crazyPattern() {
     currentState = 5;
     LEDPattern base = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kMediumPurple, Constants.LEDConstants.kNiceYellow);
@@ -271,6 +271,8 @@ public class LEDSubsystem extends SubsystemBase {
     setCustomGradientToBuffer(h, s, v, Constants.LEDConstants.kshootingMovingFrequency, Constants.LEDConstants.kshootingRepeatTimes);
     m_LED.setData(m_LEDBuffer);
   }
+
+
   /** current state = 8, used for passing but mirrored on top and bottom(also blue sinusoidal pattern) */
   public void passingPatternMirroredPulse(int hubState) {
     currentState = 8;
@@ -287,11 +289,6 @@ public class LEDSubsystem extends SubsystemBase {
     }
     setCustomGradientToBuffer2(h, s, v, Constants.LEDConstants.kshootingMovingFrequency, Constants.LEDConstants.kshootingRepeatTimes);
     m_LED.setData(m_LEDBuffer);
-  }
-
-  public void endPattern() {
-    currentState = 9;
-
   }
 
   /** manually sets gradient to entire buffer
@@ -371,22 +368,49 @@ public class LEDSubsystem extends SubsystemBase {
     double c = 0.5 + Constants.LEDConstants.khalfPercentageFromBottom;
     return a*Math.cos(b*(index - offset)) + c;
   }
+
+  double tenSecondsLeft = 1;
+  /** used for last ten seconds of match, blinks faster and faster until match ends */
+    public void tenSecondsLeft() {
+    currentState = 9;
+    tenSecondsLeft -= 0.0015;
+    LEDPattern blinkbase = LEDPattern.solid(Color.kWhite);
+    LEDPattern blinkpattern = blinkbase.blink(Units.Seconds.of(tenSecondsLeft));
+    blinkpattern.applyTo(m_LEDBuffer);
+    m_LED.setData(m_LEDBuffer);
+  }
+
   /** current state = 0, used when robot is idle(purple sinusoidal) */
   public void idlePattern() { // could change later if want to use mask and make breath (brightness really fast but as a funtion of percentage)
-    if (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Red))) {
-      setCustomGradientToBuffer(Constants.LEDConstants.kRedH, Constants.LEDConstants.kRedS, Constants.LEDConstants.kRedV, Constants.LEDConstants.kidleSinusoidalMovingFrequency, Constants.LEDConstants.kidleRepeatTimes);
-      m_LED.setData(m_LEDBuffer);
-    }
-    else if (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Blue))) {
-      setCustomGradientToBuffer(Constants.LEDConstants.kBlueH, Constants.LEDConstants.kBlueS, Constants.LEDConstants.kBlueV, Constants.LEDConstants.kidleSinusoidalMovingFrequency, Constants.LEDConstants.kidleRepeatTimes);
-      m_LED.setData(m_LEDBuffer);
-    }
-    else {
+    // If the Driver Station is not attached, show the red/blue scrolling gradient
+    if (!DriverStation.isDSAttached() || DriverStation.isAutonomous() || DriverStation.isTest() || DriverStation.isDisabled()) {
       LEDPattern basegradient = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Constants.LEDConstants.kRed, Constants.LEDConstants.kBlue);
       LEDPattern scrollpattern = basegradient.scrollAtRelativeSpeed(Units.Hertz.of(Constants.LEDConstants.kidleScrollingMovingFrequency));
       scrollpattern.applyTo(m_LEDBuffer);
       m_LED.setData(m_LEDBuffer);
+      return;
     }
+
+    // Use the optional alliance value when DS is attached
+    var allianceOpt = DriverStation.getAlliance();
+    if (allianceOpt.isPresent()) {
+      var alliance = allianceOpt.get();
+      if (alliance == DriverStation.Alliance.Red) {
+        setCustomGradientToBuffer(Constants.LEDConstants.kRedH, Constants.LEDConstants.kRedS, Constants.LEDConstants.kRedV, Constants.LEDConstants.kidleSinusoidalMovingFrequency, Constants.LEDConstants.kidleRepeatTimes);
+        m_LED.setData(m_LEDBuffer);
+        return;
+      } else if (alliance == DriverStation.Alliance.Blue) {
+        setCustomGradientToBuffer(Constants.LEDConstants.kBlueH, Constants.LEDConstants.kBlueS, Constants.LEDConstants.kBlueV, Constants.LEDConstants.kidleSinusoidalMovingFrequency, Constants.LEDConstants.kidleRepeatTimes);
+        m_LED.setData(m_LEDBuffer);
+        return;
+      }
+    }
+
+    // Fallback: if we don't have a known alliance, show the red/blue scrolling gradient
+    LEDPattern basegradient = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Constants.LEDConstants.kRed, Constants.LEDConstants.kBlue);
+    LEDPattern scrollpattern = basegradient.scrollAtRelativeSpeed(Units.Hertz.of(Constants.LEDConstants.kidleScrollingMovingFrequency));
+    scrollpattern.applyTo(m_LEDBuffer);
+    m_LED.setData(m_LEDBuffer);
   }
   public void idlePatternMirroredPulse() {
     currentState = 0;
@@ -429,7 +453,7 @@ public class LEDSubsystem extends SubsystemBase {
     
     //shootingPattern();
     //shootingPatternMirroredPulse();
-    idlePattern();
+    //idlePattern();
     //idlePatternMirroredPulse();
     //intakePattern();
     //intakePatternMirroredPulse();
@@ -437,6 +461,7 @@ public class LEDSubsystem extends SubsystemBase {
     //passingPattern(FieldManagementPublisher.getHubState());
     //passingPatternMirroredPulse();
     //autoPattern();
+    //tenSecondsLeft();
     
     
 
@@ -482,6 +507,12 @@ public class LEDSubsystem extends SubsystemBase {
     // second priority
     else if (currentState == 7) {
       intakePattern();
+    }
+    else if (currentState == 8) {
+      passingPattern();
+    }
+    else if (currentState == 9) {
+      tenSecondsLeft();
     }
     // default pattern
     /* 
