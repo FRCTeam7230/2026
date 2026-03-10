@@ -11,10 +11,18 @@ import edu.wpi.first.math.util.Units;
 public class AlignToBump extends Command{//This is the better edition
     PIDController rotController = new PIDController(0.07, 0, 0);
     PIDController yController = new PIDController(1, 0, 0);
+    PIDController xController = new PIDController(1, 0, 0);
     DriveSubsystem m_drive;
+    double robotDiagonalLength = 38.3813;
+    //double robotDiagonalLength = Units.inchesToMeters(42.426);
+    
     double currentAngle;
     double currentY;
+    double currentX;
     double rotSpeed;
+    double ySpeed;
+    double xSpeed;
+    
     int drivingOverTheBumpDirectionMode;
     double bumpSpeed = 1.7/4.8;//This is percentage of the power needed, so it would be (needed speed / max speed).
     
@@ -29,10 +37,10 @@ public class AlignToBump extends Command{//This is the better edition
         bumpSpeed = 4.8;
         addRequirements(m_drive);//i removed this when testing it with a button.
     }
-     double angle1 = goalAngle;//38.412
-    double angle2 = (180-goalAngle);//141.588
-    double angle3 = (180+goalAngle);//-38.412
-    double angle4 = (360-goalAngle);//-141.588
+     double angle1 = goalAngle;//38.412115
+    double angle2 = (180-goalAngle);//141.588115
+    double angle3 = (180+goalAngle);//-38.412115
+    double angle4 = (360-goalAngle);//-141.588115
     @Override
     public void initialize() {
         //SmartDashboard.putData("AlignToBump/rotController", rotController);115
@@ -56,19 +64,46 @@ public class AlignToBump extends Command{//This is the better edition
             
         }
          currentY = m_drive.getPose().getY();
-        if (currentY<Units.inchesToMeters(81.06)) {//38.3813 in. robot diagonal length115
-            yController.setSetpoint(Units.inchesToMeters(81.06));
+         double tolerance = 5;//inches
+        if (currentY<Units.inchesToMeters(50.67+12+robotDiagonalLength/2+tolerance)) {//38.3813 in. robot diagonal length115
+            yController.setSetpoint(Units.inchesToMeters(50.67+12+robotDiagonalLength/2+tolerance));
         }
-        else if (currentY>Units.inchesToMeters(115.68)&&currentY<Units.inchesToMeters(158.84)){
-            yController.setSetpoint(Units.inchesToMeters(115.68));       
+        else if (currentY>Units.inchesToMeters(50.67+12+73-robotDiagonalLength/2-tolerance)&&currentY<Units.inchesToMeters(158.84)){
+            yController.setSetpoint(Units.inchesToMeters(50.67+12+73-robotDiagonalLength/2-tolerance));       
         }
-        else if (currentY<Units.inchesToMeters(201.528)&&currentY>Units.inchesToMeters(158.84)){
-            yController.setSetpoint(Units.inchesToMeters(201.528));
+        else if (currentY<Units.inchesToMeters(50.67+12+73+47+robotDiagonalLength/2+tolerance)&&currentY>Units.inchesToMeters(158.84)){
+            yController.setSetpoint(Units.inchesToMeters(50.67+12+73+47+robotDiagonalLength/2+tolerance));
         }
-        else if (currentY>Units.inchesToMeters(236.147)){
-            yController.setSetpoint(Units.inchesToMeters(236.147));
-        } 
-        yController.setTolerance(0.1);
+        else if (currentY>Units.inchesToMeters(50.67+12+73+47+73-robotDiagonalLength/2-tolerance)){
+            yController.setSetpoint(Units.inchesToMeters(50.67+12+73+47+73-robotDiagonalLength/2-tolerance));
+        } else {
+            yController.setSetpoint(currentY);
+        }
+        yController.setTolerance(0.2);
+
+        //center of field: 325.06 
+        //Center of blue bump: 181.56
+        //Center of red bump: 468.6
+        currentX = m_drive.getPose().getX();
+        if (currentX<Units.inchesToMeters(181.56)) {//38.3813 in. robot diagonal length115
+            xController.setSetpoint(Units.inchesToMeters(147.16-robotDiagonalLength/2));
+        }
+        else if (currentX>Units.inchesToMeters(181.56)&&currentX<Units.inchesToMeters(325.06)){  
+            xController.setSetpoint(Units.inchesToMeters(215.96+robotDiagonalLength/2));  
+        }
+        else if (currentX<Units.inchesToMeters(468.6)&&currentX>Units.inchesToMeters(325.06)){
+            xController.setSetpoint(Units.inchesToMeters(434.2-robotDiagonalLength/2));
+        }
+        else if (currentX>Units.inchesToMeters(468.6)){
+            xController.setSetpoint(Units.inchesToMeters(503+robotDiagonalLength/2));
+        } else {
+            xController.setSetpoint(currentX);
+        }
+        xController.setTolerance(0.2);
+        
+
+
+        
         // if (currentAngle>angle1 && currentAngle<angle3){115
         //     rotController.setSetpoint(angle1);115
         // } 115
@@ -102,6 +137,7 @@ public class AlignToBump extends Command{//This is the better edition
         }
         SmartDashboard.putNumber("AlignToBump/Target Angle", rotController.getSetpoint());
         SmartDashboard.putNumber("AlignToBump/Target Y", yController.getSetpoint());
+            SmartDashboard.putNumber("AlignToBump/Target X", xController.getSetpoint());
     }
    
     @Override
@@ -119,23 +155,28 @@ public class AlignToBump extends Command{//This is the better edition
                 currentAngle = m_drive.getPose().getRotation().getDegrees()%360;
                 rotSpeed = rotController.calculate(currentAngle); 
                 currentY = m_drive.getPose().getY();
-                 double ySpeed = yController.calculate(currentY);
+                ySpeed = yController.calculate(currentY);
+                currentX = m_drive.getPose().getX();
+                xSpeed = xController.calculate(currentX);
                 SmartDashboard.putNumber("AlignToBump/Current Angle", currentAngle);
+                SmartDashboard.putNumber("AlignToBump/XError", xController.getError());
                 SmartDashboard.putNumber("AlignToBump/YError", yController.getError());
                 SmartDashboard.putNumber("AlignToBump/RotError", rotController.getError());
                 SmartDashboard.putNumber("AlignToBump/Rotation Speed", rotSpeed);
+                SmartDashboard.putNumber("AlignToBump/X Speed", xSpeed);
                 SmartDashboard.putNumber("AlignToBump/Y Speed", ySpeed);
                 SmartDashboard.putNumber("AlignToBump/Turn Rate", Math.abs(m_drive.getTurnRate()));
 
-                m_drive.drive(0, ySpeed, rotSpeed, true);
-                if (Math.abs(rotController.getError())<2&&Math.abs(m_drive.getTurnRate())<0.018&&yController.atSetpoint()){ //change turn rate to115 1 deg.
+                m_drive.drive(xSpeed, ySpeed, rotSpeed, true);
+                if (Math.abs(rotController.getError())<2*1.5&&Math.abs(m_drive.getTurnRate())<0.018&&yController.atSetpoint()&&xController.atSetpoint()){ //change turn rate to115 1 deg.
                     drivingOverTheBumpDirectionMode = findDrivingDirection();//2, 0.02
+                    //drivingOverTheBumpDirectionMode = 5;
                 }
         }
     }
     @Override
     public void end(boolean interrupted) {
-        m_drive.drive(0,0,0,true);
+        m_drive.drive(0,0,0,false);
     }
     @Override 
     public boolean isFinished(){
@@ -148,6 +189,8 @@ public class AlignToBump extends Command{//This is the better edition
                 return m_drive.getPose().getX()>11.915+0.5588+odomError;
             case 4:
                 return m_drive.getPose().getX()<11.915-0.5588-odomError;
+            case 5:
+                return true;
             default:
                 return false;
         }
