@@ -30,6 +30,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -90,11 +91,14 @@ public class DriveSubsystem extends SubsystemBase {
       .publish();
   BooleanPublisher gyro_calibrated = NetworkTableInstance.getDefault().getBooleanTopic("IsCalibearted").publish();
 
-  StructPublisher<Pose2d> odomPublisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct)
-      .publish();
   Integer[] IDFilter = null;
+  StructPublisher<Pose2d> odomPublisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct).publish();  
 
-  public double getFieldAngle() {
+  DoublePublisher xSpeedDeliveredPublisher = NetworkTableInstance.getDefault().getDoubleTopic("xSpeedDelivered").publish();
+  DoublePublisher ySpeedDeliveredPublisher = NetworkTableInstance.getDefault().getDoubleTopic("ySpeedDelivered").publish();
+
+  
+  public double getFieldAngle(){
     return -m_gyro.getAngle();
   }
 
@@ -387,9 +391,13 @@ public class DriveSubsystem extends SubsystemBase {
    *                      field.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    // Convert the commanded speeds into the correct units for the drivetrain
+    // Convert the commanded speeds into the correct units for the drivetraina
+
+
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+    xSpeedDeliveredPublisher.set(xSpeedDelivered);
+    ySpeedDeliveredPublisher.set(ySpeedDelivered);
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
     xSpeedDelivered = driveLimitX.calculate(xSpeedDelivered);
     ySpeedDelivered = driveLimitY.calculate(ySpeedDelivered);
