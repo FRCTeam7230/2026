@@ -61,11 +61,11 @@ public class RobotContainer {
   DriveSubsystem m_robotDrive;
   FieldManagementPublisher m_fieldManagementPublisher;
   private Boolean fieldRelative = true;
-  /*
+  
   private ShooterSubsystem m_ShooterSubsystem;
   private FeederSubsystem m_FeederSubsystem;
   private IntakeSubsystem m_IntakeSubsystem;
-  */
+  
 
   // XBox controller.
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -90,10 +90,10 @@ public class RobotContainer {
   }
    
   public RobotContainer() {
-    /*
+    
     m_ShooterSubsystem = new ShooterSubsystem();
     m_FeederSubsystem = new FeederSubsystem();
-    */
+    
     m_fieldManagementPublisher = new FieldManagementPublisher();
     //Set up Subsystems
     m_robotDrive = new DriveSubsystem();
@@ -110,7 +110,7 @@ public class RobotContainer {
     m_robotDrive.addAngleGyro(180);
     //Start with this spinUpCommand, the switch to the select version once megatag is confirmed
     //spinUpCommand = new AutoShooterCommand(m_ShooterSubsystem, Constants.OuttakeConstants.shootSpeed);
-    /*
+    
     spinUpCommand = new SelectCommand<>(
       Map.ofEntries(
         Map.entry(BehaviorSelector.SHOOT, new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.shootSpeed)),
@@ -118,7 +118,7 @@ public class RobotContainer {
       ),
       this::passOrShootSelector
     );
-    */
+    
     alignCommand = new SelectCommand<>(
       Map.ofEntries(
         Map.entry(BehaviorSelector.SHOOT, new AlignToHub(m_robotDrive)),
@@ -181,21 +181,22 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
 
   //NEW SUBSYSTEM CONTROLS
     //Feeder rolllers manual on/off
-    /*
+    
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.MANUAL_ROLLERS_TOGGLE)
       .onTrue(new InstantCommand(
-      ()-> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed), m_FeederSubsystem
+      ()-> m_FeederSubsystem.ToggleFeederRoller(), 
+      m_FeederSubsystem
       ));
-    */
+    
     //Manual Kicker on/off button for testing purposes
-    /*
+    
         ButtonMappings.button(m_driverController, Constants.ControllerConstants.MANUAL_KICKERS_TEST)
       .onTrue(new StartEndCommand(
       ()-> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed), 
       ()-> m_FeederSubsystem.setKickerSpeed(0),
       m_FeederSubsystem
       ));
-    */
+    
     //Shooter PID testing binding, replace later with full shoot process
     /*
         ButtonMappings.button(m_driverController,Constants.ControllerConstants.SHOOT_HUB)

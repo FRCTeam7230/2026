@@ -31,7 +31,7 @@ public final class Constants {
     public static final int kickerCANID = 12;
     public static final int kfeedermotorlimitcurrent = 80;
     public static final double kfeederrampratesec = 0;
-    public static final double rollerSpeed = 0.5; //Note: Rollers should spin slower than kicker (check gearing on each)
+    public static final double rollerSpeed = -1; //Note: Rollers should spin slower than kicker (check gearing on each)
     public static final double kickerSpeed = -0.5; //Note: kicker should have a slower linear speed than shooter 
   }
 
