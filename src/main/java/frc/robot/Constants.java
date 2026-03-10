@@ -195,7 +195,7 @@ public final class Constants {
     public static final double kretractedPostion = 0; //need to update
     public static final double kextendedPostion = 0; //need to update
     public static final double kintakeRollerSpeed = -0.8; //need to update
-    public static final double kintakeJointSpeed = 0.1; //need to update
+    public static final double kintakeJointSpeed = 0.05; //need to update
 
   }
 }
