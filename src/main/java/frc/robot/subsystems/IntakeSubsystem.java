@@ -146,7 +146,7 @@ public class IntakeSubsystem extends SubsystemBase
      * @param goal the angle in degrees to move the joint to, where 0 is horizontal.
     */
     public Command setGoal(double goal){
-        return run(()-> jointreachGoal(goal));//converting runnable to command. 
+        return run(()-> reachGoal(goal));//converting runnable to command. 
     }
 
     /**

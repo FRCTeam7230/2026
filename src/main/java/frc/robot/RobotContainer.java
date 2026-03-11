@@ -64,7 +64,7 @@ public class RobotContainer {
   
   private ShooterSubsystem m_ShooterSubsystem;
   private FeederSubsystem m_FeederSubsystem;
-  private IntakeSubsystem m_IntakeSubsystem;
+  private IntakeSubsystem m_intake;
   
 
   // XBox controller.

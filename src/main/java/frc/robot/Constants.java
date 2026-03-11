@@ -227,7 +227,8 @@ public final class Constants {
   }
 
   public static class IntakeConstants{
-
+    public static final int kJointCANID = 14;
+    public static final int kRollerCANID = 15;
     public static final double kjointkG = 0.18; //need to update
     public static final double kjointKp = 0.024; //need to update
     public static final double kjointKi = 0;
