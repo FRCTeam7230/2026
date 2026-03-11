@@ -369,6 +369,20 @@ public class LEDSubsystem extends SubsystemBase {
     return a*Math.cos(b*(index - offset)) + c;
   }
 
+  private double calculateBrightnessPercentage2(double matchTime) {
+    if (matchTime <= 0) {
+      return 1;
+    }
+    double b = 0.01;
+    int k = 4;
+    double a = 10-(2/(b*(1+4*k)));
+    if (a >=0 ) {
+      return 1;
+    }
+    return (0.5 - Constants.LEDConstants.khalfPercentageFromBottom) * Math.sin((Math.PI)/(b*(matchTime-a))) + (0.5 + Constants.LEDConstants.khalfPercentageFromBottom);
+  }
+
+
   double tenSecondsLeft = 1;
   /** used for last ten seconds of match, blinks faster and faster until match ends */
     public void tenSecondsLeft() {
@@ -378,6 +392,13 @@ public class LEDSubsystem extends SubsystemBase {
     LEDPattern blinkpattern = blinkbase.blink(Units.Seconds.of(tenSecondsLeft));
     blinkpattern.applyTo(m_LEDBuffer);
     m_LED.setData(m_LEDBuffer);
+  }
+
+  public void tenSecondsLeft2() {
+    currentState = 9;
+    double matchTime = DriverStation.getMatchTime();
+    int newV = (int)((Constants.LEDConstants.kYellowV) * (calculateBrightnessPercentage2(matchTime)));
+    solidColorAll(Color.fromHSV(Constants.LEDConstants.kYellowH, Constants.LEDConstants.kYellowS, newV));
   }
 
   /** current state = 0, used when robot is idle(purple sinusoidal) */
@@ -461,7 +482,7 @@ public class LEDSubsystem extends SubsystemBase {
     //passingPattern(FieldManagementPublisher.getHubState());
     //passingPatternMirroredPulse();
     //autoPattern();
-    //tenSecondsLeft();
+    tenSecondsLeft2();
     
     
 
