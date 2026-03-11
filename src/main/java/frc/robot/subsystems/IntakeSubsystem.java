@@ -47,6 +47,8 @@ public class IntakeSubsystem extends SubsystemBase
   DoublePublisher jointEncoder_publisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/jointEncoderValue").publish();
   DoublePublisher targetPosition_publisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/jointTarget").publish();
   DoublePublisher rollerCurrentPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/RollerCurrent").publish();
+  DoublePublisher jointCurrentPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/JointCurrent").publish();
+  DoublePublisher jointVoltagePublisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/JointVoltage").publish();
   /**
    * Feedforward class that accounts for gravity for the intake PID 
   */
@@ -154,6 +156,7 @@ public class IntakeSubsystem extends SubsystemBase
       jointEncoder_publisher.set(m_jointEncoder.getPosition());
       targetPosition_publisher.set(desiredAngle);
       rollerCurrentPublisher.set(m_roller.getOutputCurrent());
+      jointCurrentPublisher.set(m_joint.getOutputCurrent());
     }
     public void toggleIntake()
     {

@@ -102,7 +102,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
+    public static final double kMaxSpeedMetersPerSecond = 1.5;//was 4.8
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     // Chassis configuration
@@ -185,17 +185,18 @@ public final class Constants {
 
     public static final int kJointCANID = 14;
     public static final int kRollerCANID = 15;
-    public static final double kjointkG = 0; //need to update
-    public static final double kjointKp = 0; //need to update
+    public static final double kjointkG = 0.18; //need to update
+    public static final double kjointKp = 0.024; //need to update
     public static final double kjointKi = 0;
-    public static final double kjointKd = 0;
+    public static final double kjointKd = 0.0013;
     public static final double koutputMin = -0.3; //Intake TODO: See what value makes sense (do the math to see how fast it goes at full speed), start small and go bigger
     public static final double koutputMax = 0.3;
     public static final int kMaxCurrent = 40; //amps //Intake TODO: probably higher than 20 Amps given using Neo 1.1s
-    public static final double kretractedPostion = 0; //need to update
-    public static final double kextendedPostion = 0; //need to update
+    public static final double kretractedPostion = 100.09-20; //need to update
+    public static final double kextendedPostion = 345.9; //need to update
     public static final double kintakeRollerSpeed = -0.8; //need to update
     public static final double kintakeJointSpeed = 0.05; //need to update
-
+    //it retracts at 100.09 degrees
+    //
   }
 }

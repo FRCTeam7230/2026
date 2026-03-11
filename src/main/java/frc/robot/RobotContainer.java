@@ -117,6 +117,7 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
           () -> m_robotDrive.setX(),
           m_robotDrive));
 
+          
     ButtonMappings.button(m_driverController,Constants.ControllerConstants.ZERO_HEADING_BUTTON)
       .whileTrue(new RunCommand(
           () -> m_robotDrive.zeroHeading()));
@@ -139,25 +140,33 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_DOWN)
       .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(-Constants.IntakeConstants.kintakeJointSpeed)
         , ()-> m_intake.spinJoint(0), m_intake));
+
+
         
     //Test method for determining kG, hold the intake out horizontal and find a value that holds it still. 
-    /*
+    
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_HOVER)
       .whileTrue(new StartEndCommand(
         ()-> m_intake.hoverJoint(),
         ()-> m_intake.spinJoint(0), m_intake
       ));
-    */
+    
     //Test method for intake PID, only extends the intake and does not toggle
-    /*
-    ButtonMappings.button(m_driverController,Constants.ControllerConstants.TOGGLE_INTAKE)
-      .onTrue(new InstantCommand(()->
-      {
-        m_intake.setGoal(Constants.IntakeConstants.kextendedPostion);
-      },m_intake));
-    */
+  
+    // ButtonMappings.button(m_driverController,Constants.ControllerConstants.TOGGLE_INTAKE)
+    //   .onTrue(new InstantCommand(()->
+    //   {
+    //     m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);
+    //   },m_intake));
+    // ButtonMappings.button(m_driverController,-3)
+    //   .onTrue(new InstantCommand(()->
+    //   {
+    //     m_intake.reachGoal(Constants.IntakeConstants.kretractedPostion);
+    //   },m_intake));
+    
+    
     // TOGGLE INTAKE METHODS -> These should be the only intake methods left after testing
-    /*
+    
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
       .whileTrue(new InstantCommand( ()->{
         m_intake.toggleIntake();
@@ -166,7 +175,7 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
       .whileTrue(new InstantCommand( ()->{
         m_intake.toggleIntakeRoller();
       },m_intake));
-    */
+    
   }
 
   /**
