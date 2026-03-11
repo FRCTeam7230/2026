@@ -117,7 +117,7 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
           () -> m_robotDrive.setX(),
           m_robotDrive));
 
-          
+
     ButtonMappings.button(m_driverController,Constants.ControllerConstants.ZERO_HEADING_BUTTON)
       .whileTrue(new RunCommand(
           () -> m_robotDrive.zeroHeading()));
@@ -128,28 +128,28 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
               new InstantCommand(() -> mode_publisher.set(fieldRelative))
           ));
 
-    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_ROLLERS)
-      .whileTrue(new StartEndCommand( ()-> m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed)
-        , ()-> m_intake.spinRoller(0), m_intake));
-    //Test methods for manual intake movement, spins the joint with no PID
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_ROLLERS)
+    //   .whileTrue(new StartEndCommand( ()-> m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed)
+    //     , ()-> m_intake.spinRoller(0), m_intake));
+    // //Test methods for manual intake movement, spins the joint with no PID
         
-    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_UP)
-      .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(Constants.IntakeConstants.kintakeJointSpeed)
-        , ()-> m_intake.spinJoint(0), m_intake));
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_UP)
+    //   .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(Constants.IntakeConstants.kintakeJointSpeed)
+    //     , ()-> m_intake.spinJoint(0), m_intake));
     
-    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_DOWN)
-      .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(-Constants.IntakeConstants.kintakeJointSpeed)
-        , ()-> m_intake.spinJoint(0), m_intake));
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_DOWN)
+    //   .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(-Constants.IntakeConstants.kintakeJointSpeed)
+    //     , ()-> m_intake.spinJoint(0), m_intake));
 
 
         
     //Test method for determining kG, hold the intake out horizontal and find a value that holds it still. 
     
-    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_HOVER)
-      .whileTrue(new StartEndCommand(
-        ()-> m_intake.hoverJoint(),
-        ()-> m_intake.spinJoint(0), m_intake
-      ));
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_HOVER)
+    //   .whileTrue(new StartEndCommand(
+    //     ()-> m_intake.hoverJoint(),
+    //     ()-> m_intake.spinJoint(0), m_intake
+    //   ));
     
     //Test method for intake PID, only extends the intake and does not toggle
   
