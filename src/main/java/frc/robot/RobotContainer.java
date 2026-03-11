@@ -102,7 +102,7 @@ public class RobotContainer {
     {
       PortForwarder.add(port, "limelight.local",port);
     }
-
+    m_intake = new IntakeSubsystem();
     NamedCommands.registerCommand("Going over the bump", m_robotDrive.driveExperiment());
     SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Zero/Reset sensors
@@ -148,7 +148,10 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
                 -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS)), OIConstants.kDriveDeadband), //Z
                 fieldRelative),
         m_robotDrive));
-        
+    
+    //Command extendIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kextendedPostion);
+
+    //Command retractIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kretractedPostion);
   }
 
   /**
@@ -168,6 +171,7 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
       .whileTrue(new RunCommand(
           () -> m_robotDrive.setX(),
           m_robotDrive));
+
 
     ButtonMappings.button(m_driverController,Constants.ControllerConstants.ZERO_HEADING_BUTTON)
       .whileTrue(new RunCommand(
@@ -239,6 +243,54 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
           */
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_HUB)
     .whileTrue(new AlignToHub(m_robotDrive));
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_ROLLERS)
+    //   .whileTrue(new StartEndCommand( ()-> m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed)
+    //     , ()-> m_intake.spinRoller(0), m_intake));
+    // //Test methods for manual intake movement, spins the joint with no PID
+        
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_UP)
+    //   .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(Constants.IntakeConstants.kintakeJointSpeed)
+    //     , ()-> m_intake.spinJoint(0), m_intake));
+    
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_DOWN)
+    //   .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(-Constants.IntakeConstants.kintakeJointSpeed)
+    //     , ()-> m_intake.spinJoint(0), m_intake));
+
+
+        
+    //Test method for determining kG, hold the intake out horizontal and find a value that holds it still. 
+    
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_HOVER)
+    //   .whileTrue(new StartEndCommand(
+    //     ()-> m_intake.hoverJoint(),
+    //     ()-> m_intake.spinJoint(0), m_intake
+    //   ));
+    
+    //Test method for intake PID, only extends the intake and does not toggle
+  
+    // ButtonMappings.button(m_driverController,Constants.ControllerConstants.TOGGLE_INTAKE)
+    //   .onTrue(new InstantCommand(()->
+    //   {
+    //     m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);
+    //   },m_intake));
+    // ButtonMappings.button(m_driverController,-3)
+    //   .onTrue(new InstantCommand(()->
+    //   {
+    //     m_intake.reachGoal(Constants.IntakeConstants.kretractedPostion);
+    //   },m_intake));
+    
+    
+    // TOGGLE INTAKE METHODS -> These should be the only intake methods left after testing
+    
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
+      .whileTrue(new InstantCommand( ()->{
+        m_intake.toggleIntake();
+      },m_intake));
+       ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE_ROLLERS)
+      .whileTrue(new InstantCommand( ()->{
+        m_intake.toggleIntakeRoller();
+      },m_intake));
+    
   }
 
 
