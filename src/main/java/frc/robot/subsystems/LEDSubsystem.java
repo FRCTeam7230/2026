@@ -53,9 +53,6 @@ public class LEDSubsystem extends SubsystemBase {
 
   double timer = 0;
   byte[] ledData;
-  AddressableLEDBufferView m_firstHalf;
-
-  AddressableLEDBufferView m_secondHalf;
   /** Used to tell if button is pressed(true when button is pressed)*/
   boolean isOverriden;
   /** used for sinusoidal pattern because it is time based */
@@ -83,8 +80,6 @@ public class LEDSubsystem extends SubsystemBase {
     
     m_bottom = m_LEDBuffer.createView(Constants.LEDConstants.kBottomStartIndex, Constants.LEDConstants.kBottomEndIndex);
     m_top = m_LEDBuffer.createView(Constants.LEDConstants.kTopStartIndex, Constants.LEDConstants.kTopEndIndex);
-    m_firstHalf = m_LEDBuffer.createView(Constants.LEDConstants.kTopStartIndex, Constants.LEDConstants.kTopMiddleIndex);
-    m_secondHalf = m_LEDBuffer.createView(Constants.LEDConstants.kTopMiddleIndex + 1, Constants.LEDConstants.kTopEndIndex);
     robotTimer = new Timer();
     robotTimer.start();
     isOverriden = false;
@@ -373,13 +368,13 @@ public class LEDSubsystem extends SubsystemBase {
     if (matchTime <= 0) {
       return 1;
     }
-    double b = 0.01;
-    int k = 4;
+    double b = Constants.LEDConstants.kTenSecondsLeftWarpConstant;
+    int k = Constants.LEDConstants.kTenSecondsLeftMaximumIndex;
     double a = 10-(2/(b*(1+4*k)));
     if (a >=0 ) {
       return 1;
     }
-    return (0.5 - Constants.LEDConstants.khalfPercentageFromBottom) * Math.sin((Math.PI)/(b*(matchTime-a))) + (0.5 + Constants.LEDConstants.khalfPercentageFromBottom);
+    return (0.5 - Constants.LEDConstants.kTenSecondsLeftHalfPercentageFromBottom) * Math.sin((Math.PI)/(b*(matchTime-a))) + (0.5 + Constants.LEDConstants.kTenSecondsLeftHalfPercentageFromBottom);
   }
 
 
@@ -483,6 +478,7 @@ public class LEDSubsystem extends SubsystemBase {
     //passingPatternMirroredPulse();
     //autoPattern();
     tenSecondsLeft2();
+
     
     
 

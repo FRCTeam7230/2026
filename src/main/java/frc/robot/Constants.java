@@ -281,10 +281,14 @@ public final class Constants {
     public static final int kidleRepeatTimes =  5;//50000001; 
     public static final double kintakeMovingFrequency = 0.75; // how many times per second the pattern should move, if applicable
     public static final int kintakingtRepeatTimes = 6;
+    public static final int kTenSecondsLeftMaximumIndex = 3; //Backup = 3
+    public static final double kTenSecondsLeftWarpConstant = 0.0112; //Backup = 0.0112
+    public static final double kTenSecondsLeftHalfPercentageFromBottom = 0.05; 
 
     //transition blinking
     public static final double kblinkingFrequency = 4; //hz
     public static final double kpercentageOfTimeYelpurp = 0.5;
+
 
     //HSV range:
     //H: 0-180
