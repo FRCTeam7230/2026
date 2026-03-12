@@ -32,7 +32,7 @@ public final class Constants {
     public static final int kfeedermotorlimitcurrent = 80;
     public static final double kfeederrampratesec = 0;
     public static final double rollerSpeed = -1; //Note: Rollers should spin slower than kicker (check gearing on each)
-    public static final double kickerSpeed = 0.5; //Note: kicker should have a slower linear speed than shooter 
+    public static final double kickerSpeed = 1; //Note: kicker should have a slower linear speed than shooter 
   }
 
   public static class OuttakeConstants {
@@ -49,7 +49,7 @@ public final class Constants {
     public static final int kOuttakeSamples = 16;
     public static final int kOuttakeAverageWindow = 20; // half of 40
     public static final double ShooterTolerance = 10;
-    public static final double shootSpeed = 3000; 
+    public static final double shootSpeed = 3001; 
     public static final double passSpeed = 4000;
   }
   public static final class AutoAlignToHubConstants {
@@ -238,7 +238,7 @@ public final class Constants {
     public static final int kMaxCurrent = 80; //amps //Intake TODO: probably higher than 20 Amps given using Neo 1.1s
     public static final double kretractedPostion = 100.09-20; //need to update
     public static final double kextendedPostion = 345.9; //need to update
-    public static final double kintakeRollerSpeed = -0.8; //need to update
+    public static final double kintakeRollerSpeed = -0.6; //need to update
     public static final double kintakeJointSpeed = 0.05; //need to update
   }
 

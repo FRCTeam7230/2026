@@ -65,7 +65,8 @@ public class ShooterSubsystem extends SubsystemBase {
     m_outtakemotor1config.idleMode(IdleMode.kCoast);
     m_outtakemotor1config.smartCurrentLimit(Constants.OuttakeConstants.motorlimitcurrent);
     m_outtakemotor1config.closedLoopRampRate(Constants.OuttakeConstants.krampratesec);
-    
+        m_outtakemotor1config.inverted(true);
+
     //Motor 2
     m_outtakemotor2config.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -74,7 +75,8 @@ public class ShooterSubsystem extends SubsystemBase {
     m_outtakemotor2config.idleMode(IdleMode.kCoast);
     m_outtakemotor2config.smartCurrentLimit(Constants.OuttakeConstants.motorlimitcurrent);
     m_outtakemotor2config.closedLoopRampRate(Constants.OuttakeConstants.krampratesec);
-    
+        m_outtakemotor2config.inverted(true);
+
     //Motor 3
     m_outtakemotor3config.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -83,7 +85,7 @@ public class ShooterSubsystem extends SubsystemBase {
     m_outtakemotor3config.idleMode(IdleMode.kCoast);
     m_outtakemotor3config.smartCurrentLimit(Constants.OuttakeConstants.motorlimitcurrent);
     m_outtakemotor3config.closedLoopRampRate(Constants.OuttakeConstants.krampratesec);
-
+    m_outtakemotor3config.inverted(true);
     //apply encoder configs to adjust windows of measurment for reduced delay
         m_encoderConfig1.quadratureAverageDepth(OuttakeConstants.kOuttakeSamples);
     m_encoderConfig1.quadratureMeasurementPeriod(OuttakeConstants.kOuttakeAverageWindow);
