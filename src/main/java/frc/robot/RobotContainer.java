@@ -195,21 +195,21 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     //Manual Kicker on/off button for testing purposes
     
         ButtonMappings.button(m_driverController, Constants.ControllerConstants.MANUAL_KICKERS_TEST)
-      .onTrue(new StartEndCommand(
+      .whileTrue(new StartEndCommand(
       ()-> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed), 
       ()-> m_FeederSubsystem.setKickerSpeed(0),
       m_FeederSubsystem
       ));
     
     //Shooter PID testing binding, replace later with full shoot process
-    /*
+    
         ButtonMappings.button(m_driverController,Constants.ControllerConstants.SHOOT_HUB)
-      .whileTrue(new InstantCommand(
-      ()-> m_ShooterSubsystem.reachSpeed(Constants.OuttakeConstants.shootSpeed), m_ShooterSubsystem
-    ).finallyDo(
-      () -> m_ShooterSubsystem.stopMotor()
+      .whileTrue(new StartEndCommand(
+      ()-> m_ShooterSubsystem.reachSpeed(Constants.OuttakeConstants.shootSpeed),
+      () -> m_ShooterSubsystem.stopMotor(),
+      m_ShooterSubsystem
     ));
-    */
+    
     //Composite Shooter Command -> runs all three systems at once to shoot balls
     /*
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.SHOOT_HUB)

@@ -70,7 +70,7 @@ public class ShooterSubsystem extends SubsystemBase {
     m_outtakemotor2config.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .pid(OuttakeConstants.kOuttakeKp, OuttakeConstants.kOuttakeKi, OuttakeConstants.kOuttakeKd)
-    .feedForward.kV((Constants.OuttakeConstants.kOuttakeKf)*12); 
+    .feedForward.kV(Constants.OuttakeConstants.kOuttakeKf); 
     m_outtakemotor2config.idleMode(IdleMode.kCoast);
     m_outtakemotor2config.smartCurrentLimit(Constants.OuttakeConstants.motorlimitcurrent);
     m_outtakemotor2config.closedLoopRampRate(Constants.OuttakeConstants.krampratesec);

@@ -32,7 +32,7 @@ public final class Constants {
     public static final int kfeedermotorlimitcurrent = 80;
     public static final double kfeederrampratesec = 0;
     public static final double rollerSpeed = -1; //Note: Rollers should spin slower than kicker (check gearing on each)
-    public static final double kickerSpeed = -0.5; //Note: kicker should have a slower linear speed than shooter 
+    public static final double kickerSpeed = 0.5; //Note: kicker should have a slower linear speed than shooter 
   }
 
   public static class OuttakeConstants {
@@ -45,7 +45,7 @@ public final class Constants {
     public static final double kOuttakeKp = 0.001; 
     public static final double kOuttakeKi = 0.000008; 
     public static final double kOuttakeKd = 0;
-    public static final double kOuttakeKf = 0.000151;
+    public static final double kOuttakeKf = 0.000151*12;
     public static final int kOuttakeSamples = 16;
     public static final int kOuttakeAverageWindow = 20; // half of 40
     public static final double ShooterTolerance = 10;
