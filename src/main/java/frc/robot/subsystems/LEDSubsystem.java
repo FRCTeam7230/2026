@@ -106,25 +106,33 @@ public class LEDSubsystem extends SubsystemBase {
   /** used to make solid color based on input
    @param c color of the pattern
    */
-  public void solidColorAll(Color c) {
+  public void solidColorTop(Color c) {
     LEDPattern colorPattern = LEDPattern.solid(c);
-    colorPattern.applyTo(m_LEDBuffer);
+    colorPattern.applyTo(m_top);
     m_LED.setData(m_LEDBuffer);
   }
 
   /**current state = 1, makes LEDs purple */
-  public void solidPurpleAll() {
+  public void solidPurpleTop() {
     currentState = 1;
-    solidColorAll(Color.kMediumPurple);// #9370DB
+    solidColorTop(Color.kMediumPurple);// #9370DB
     defaultHubColor = (Color.kMediumPurple);
   }
 
+
   /** current state = 2, makes LEDs yellow */
-  public void solidYellowAll() {
+  public void solidYellowTop() {
     currentState = 2;
-    solidColorAll(Constants.LEDConstants.kNiceYellow);// #DEC95D - contrasts medium purple
+    solidColorTop(Constants.LEDConstants.kNiceYellow);// #DEC95D - contrasts medium purple
     defaultHubColor = Constants.LEDConstants.kNiceYellow;
   }
+
+  public void setDefaultHubColor() {
+     LEDPattern colorPattern = LEDPattern.solid(defaultHubColor);
+    colorPattern.applyTo(m_bottom);
+    m_LED.setData(m_LEDBuffer);
+  }
+
   public byte[] getData(){
     return m_LEDSim.getData();
     //return ledData == null ? null : ledData.clone();
@@ -149,9 +157,9 @@ public class LEDSubsystem extends SubsystemBase {
   // int
   // when put in periodic might want to add a delay?
   /**current state = 3, makes LEDs green */
-  public void solidGreenAll() {
+  public void solidGreenTop() {
     currentState = 3;
-    solidColorAll(Constants.LEDConstants.kGreen);
+    solidColorTop(Constants.LEDConstants.kGreen);
   }
 
   /** current state = 4, used for transition between shifts
@@ -196,7 +204,7 @@ public class LEDSubsystem extends SubsystemBase {
       defaultHubColor = actual;
     }
     //set pattern
-    solidColorAll(actual);
+    solidColorTop(actual);
   }
   
   /** LED pattern runs during Auto(gradient, breathe, and scroll) */
@@ -393,8 +401,34 @@ public class LEDSubsystem extends SubsystemBase {
     currentState = 9;
     double matchTime = DriverStation.getMatchTime();
     int newV = (int)((Constants.LEDConstants.kYellowV) * (calculateBrightnessPercentage2(matchTime)));
-    solidColorAll(Color.fromHSV(Constants.LEDConstants.kYellowH, Constants.LEDConstants.kYellowS, newV));
+    solidColorTop(Color.fromHSV(Constants.LEDConstants.kYellowH, Constants.LEDConstants.kYellowS, newV));
+  } 
+
+  public void tenSecondsLeft3() {
+    currentState = 9;
+    double matchTime = DriverStation.getMatchTime();
+    double percentage = calculateBrightnessPercentage2(matchTime);
+    // int newS = manuallyLinearlyInterpolate(Constants.LEDConstants.kYellowS, Constants.LEDConstants.kPurpleS, percentage, false);
+    // int newV = manuallyLinearlyInterpolate(Constants.LEDConstants.kYellowV, Constants.LEDConstants.kPurpleV, percentage, false);
+    // int newH = manuallyLinearlyInterpolate(Constants.LEDConstants.kYellowH, Constants.LEDConstants.kPurpleH, percentage, true);
+    solidColorTop(Color.lerpRGB(Constants.LEDConstants.kPurple, Constants.LEDConstants.kNiceYellow, percentage));
   }
+
+  private int manuallyLinearlyInterpolate(int val1, int val2, double t, boolean isHue) {
+    if (isHue) {
+      int deltaH = val2 - val1;
+      int hue = (int)(val1 + (deltaH * t));
+      return (hue + 180) % 180;
+    }
+    else {
+      return (int)(val1 + (t * (val2 - val1)));
+    }
+    
+  }
+
+
+  
+
 
   /** current state = 0, used when robot is idle(purple sinusoidal) */
   public void idlePattern() { // could change later if want to use mask and make breath (brightness really fast but as a funtion of percentage)
@@ -451,7 +485,7 @@ public class LEDSubsystem extends SubsystemBase {
 
   /** If the robot is aligning to hub, LEDs are green */
   public Command whileAlignSolidGreen() { //call with aligntohub alongwith i think
-    return startEnd(()->{setIsOverriden(true); solidGreenAll();}, ()->{setIsOverriden(false);});
+    return startEnd(()->{setIsOverriden(true); solidGreenTop();}, ()->{setIsOverriden(false);});
   }
 
   /** If the robot is shooting, LEDs are yellow sinusoidal pattern */
@@ -477,7 +511,7 @@ public class LEDSubsystem extends SubsystemBase {
     //passingPattern(FieldManagementPublisher.getHubState());
     //passingPatternMirroredPulse();
     //autoPattern();
-    tenSecondsLeft2();
+    tenSecondsLeft3();
 
     
     
