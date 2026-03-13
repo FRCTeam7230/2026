@@ -255,11 +255,13 @@ public final class Constants {
     public static final double khubXRed = 11.92;
 
     //Forward/backward shoot while move vars
-    public static final double kSpeedMulti = 17; //meters
-    public static final double kRadiusToleranceForward = -0.4; //meters
+    public static final double kSpeedMulti = 25; //meters
+    public static final double kRadiusToleranceForward = -0.6; //meters
     public static final double kRadiusToleranceBackward = 3; //meters
-    public static final double kHubHeight = 1.8146; //meters
-    public static final double kinitalAtTwoPointSevenFive = 6.58865945551; //m/s
+    public static final double kHubHeight = 1.8288; //meters
+    public static final double kinitalAtTwoPointSevenFive = 6.588; //m/s
+    public static final double kShooterHeight = 0.677; //meters from bottom of wheel 
+    public static final double kShooterWheelRadius = 1.8125; // inches
     
 
     public static final double kerrorXTolerance = 0.1;

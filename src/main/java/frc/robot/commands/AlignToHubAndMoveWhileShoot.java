@@ -131,8 +131,8 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     
     double radius = distance + radalOffset;
     double targetVelocityX = Math.sqrt(
-      (9.81*Math.pow(distance, 2))
-      /(2*Math.tan(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle))*distance - (Constants.AlignToHubConstants.kHubHeight-0.38))
+      (9.81*Math.pow(distance*1.1, 2))
+      /(2*Math.tan(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle))*distance*1.1 - (Constants.AlignToHubConstants.kHubHeight-Constants.AlignToHubConstants.kShooterHeight))
       );
 
     double targetVelocity =  targetVelocityX / Math.cos(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle)) - m_drive.getSpeeds().vxMetersPerSecond;
@@ -158,7 +158,7 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     //this changes the reachSpeed of shooter for a more optimal trajectory
     initialEjectionVelocityAfterOffset = Constants.AlignToHubConstants.kinitialEjectionVelocityBeforeOffset + Math.abs(0.3*zInitialVelocityRobotRelative);
     initialEjectionVelocityAfterOffset += targetVelocity-Constants.AlignToHubConstants.kinitalAtTwoPointSevenFive;
-    m_shoot.reachSpeed(initialEjectionVelocityAfterOffset);
+    m_shoot.reachSpeed(m_shoot.LinearVelToRPM(initialEjectionVelocityAfterOffset));
     
 
     //initial x fuel velocity

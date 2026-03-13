@@ -69,11 +69,24 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
 
-
+  /**
+   * Angular velocity, RPM
+   * @param Velocity
+   */
   public void reachSpeed(double Velocity) {
     m_outtakecontroller1.setSetpoint(Velocity, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
     m_outtakecontroller2.setSetpoint(Velocity, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
     m_outtakecontroller3.setSetpoint(Velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+  }
+
+  /**
+   * 
+   * @param linearVelocity
+   * @return RPM
+   */
+  public double LinearVelToRPM(double linearVelocity){
+    double calculated = linearVelocity/(0.0254*Constants.AlignToHubConstants.kShooterWheelRadius);
+    return calculated * (60.0/Math.PI);
   }
 
   public void reachTestSpeed(double testVelocity) {
