@@ -76,7 +76,12 @@ public class RobotContainer {
         
     // ));
 
-        //NamedCommands.registerCommand("Shoot",(new SpamShootCommands(drive)));
+        // NamedCommands.registerCommand("Shoot",
+        //         Commands.sequence(
+        //         new InstantCommand( ()->{m_intake.toggleIntake();},  m_intake),
+        //         new WaitCommand(10))//set a timer
+        //         .repeatedly()
+        // );
         NamedCommands.registerCommand("Intake Fuel", 
                 new InstantCommand(()->{
                    m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);

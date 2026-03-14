@@ -29,16 +29,13 @@ public class AlignToBump extends Command{//This is the better edition
     double odomError = 0.3;
 
     double goalAngle = 38.412;//Angles 38.412, 141.588, -38.412, -141.588 all work for align to bump. But 38.412 is the best for some reason, maybe because of the way the field is set up or the way the robot is built, but it is also possible that there is some error in the code that makes it so that 38.412 works better than the other angles. I will investigate this further in testing.
-    
+    boolean autoMode = false;
     public AlignToBump(DriveSubsystem drive, boolean autoMode) {
         rotController.setSetpoint(0);//This makes the robot face 0 degrees.
         rotController.enableContinuousInput(-180, 180);
         m_drive = drive;
        // bumpSpeed = 4.8;
-       drivingOverTheBumpDirectionMode = 0;
-    //     if (autoMode){//If autos appears to be smooth and doesn't have a need to realign, then use this.
-    //     drivingOverTheBumpDirectionMode = findDrivingDirection();
-    //    }
+        this.autoMode = autoMode;
         addRequirements(m_drive);//i removed this when testing it with a button.
     }
      double angle1 = goalAngle;//38.412115
@@ -47,6 +44,10 @@ public class AlignToBump extends Command{//This is the better edition
     double angle4 = (360-goalAngle);//-141.588115
     @Override
     public void initialize() {
+         drivingOverTheBumpDirectionMode = 0;
+        if (autoMode){//If autos appears to be smooth and doesn't have a need to realign, then use this.
+        drivingOverTheBumpDirectionMode = findDrivingDirection();
+       }
         //SmartDashboard.putData("AlignToBump/rotController", rotController);115
         //Makes the angle in a range of -180 to 180115
         // if (currentAngle > 180) {115
