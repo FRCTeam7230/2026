@@ -28,13 +28,17 @@ public class AlignToBump extends Command{//This is the better edition
     
     double odomError = 0.3;
 
-    double goalAngle = 38.412;//Angles 38.412, 141.588, -38.412, -141.588 all work for align to bump.
-
-    public AlignToBump(DriveSubsystem drive) {
+    double goalAngle = 38.412;//Angles 38.412, 141.588, -38.412, -141.588 all work for align to bump. But 38.412 is the best for some reason, maybe because of the way the field is set up or the way the robot is built, but it is also possible that there is some error in the code that makes it so that 38.412 works better than the other angles. I will investigate this further in testing.
+    
+    public AlignToBump(DriveSubsystem drive, boolean autoMode) {
         rotController.setSetpoint(0);//This makes the robot face 0 degrees.
         rotController.enableContinuousInput(-180, 180);
         m_drive = drive;
-        bumpSpeed = 4.8;
+       // bumpSpeed = 4.8;
+       drivingOverTheBumpDirectionMode = 0;
+        if (autoMode){
+        drivingOverTheBumpDirectionMode = findDrivingDirection();
+       }
         addRequirements(m_drive);//i removed this when testing it with a button.
     }
      double angle1 = goalAngle;//38.412115
@@ -52,7 +56,7 @@ public class AlignToBump extends Command{//This is the better edition
         // currentAngle += 360;115
         // }115
 
-        drivingOverTheBumpDirectionMode = 0;
+        
         currentAngle = m_drive.getPose().getRotation().getDegrees();
         while (currentAngle > 360 || currentAngle<0) {
             if(currentAngle>360){
@@ -86,16 +90,16 @@ public class AlignToBump extends Command{//This is the better edition
         //Center of red bump: 468.6
         currentX = m_drive.getPose().getX();
         if (currentX<Units.inchesToMeters(181.56)) {//38.3813 in. robot diagonal length115
-            xController.setSetpoint(Units.inchesToMeters(147.16-robotDiagonalLength/2));
+            xController.setSetpoint(Units.inchesToMeters(152.16-robotDiagonalLength/2));
         }
         else if (currentX>Units.inchesToMeters(181.56)&&currentX<Units.inchesToMeters(325.06)){  
-            xController.setSetpoint(Units.inchesToMeters(215.96+robotDiagonalLength/2));  
+            xController.setSetpoint(Units.inchesToMeters(220.96+robotDiagonalLength/2));  
         }
         else if (currentX<Units.inchesToMeters(468.6)&&currentX>Units.inchesToMeters(325.06)){
-            xController.setSetpoint(Units.inchesToMeters(434.2-robotDiagonalLength/2));
+            xController.setSetpoint(Units.inchesToMeters(439.2-robotDiagonalLength/2));
         }
         else if (currentX>Units.inchesToMeters(468.6)){
-            xController.setSetpoint(Units.inchesToMeters(503+robotDiagonalLength/2));
+            xController.setSetpoint(Units.inchesToMeters(508+robotDiagonalLength/2));
         } else {
             xController.setSetpoint(currentX);
         }

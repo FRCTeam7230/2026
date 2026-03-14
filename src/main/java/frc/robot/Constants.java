@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import javax.naming.spi.StateFactory;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -27,6 +25,8 @@ public final class Constants {
 
   public static final double movementDivider = 4; // from 2025 code
   public static final double rotateDivider = 5;
+
+
 
   public static class ControllerConstants{
     //Button configurations for the XBox controller
@@ -62,10 +62,11 @@ public final class Constants {
     public static final int rightStick_YAXIS = 5;
 
     // Xbox controller mappings
-    /** A button */
-   // public static final int INTAKE_DOWN = kButtonA;//was button 1
+    public static final int TEST_INTAKE_JOINT_UP = pov0;
+    public static final int TEST_INTAKE_JOINT_DOWN = pov180;
+    public static final int INTAKE_TOGGLE = leftTrigger;
     /** B button */
-  //  public static final int ROBOT_RELATIVE = kButtonMenu;
+    public static final int ROBOT_RELATIVE = kButtonB;
     /** X button */
     public static final int BRAKE_BUTTON = kButtonScreenshare;//was button 3
     /** Y button */
@@ -80,16 +81,20 @@ public final class Constants {
     public static final int ALIGN_TO_BUMP = kButtonA;
     public static final int BRING_ROBOT = kButtonX;
     /** Left trigger, axis 2 */
-    //public static final int ALIGN_BUMP = kButtonA;
-    /** Right trigger, axis 3 */
+
+    public static final int TOGGLE_INTAKE = leftTrigger;
     public static final int TOGGLE_ROLLER = kButtonRB;
-    /**Manual Climber up */
     public static final int MANUAL_CLIMBER_UP = pov0;
     /**Manual Climber down */
     public static final int MANUAL_CLIMBER_DOWN = pov180;
     /**manual kicker reversal */
     public static final int REVERSE_KICKER = pov90;
     
+    public static final int TOGGLE_INTAKE_ROLLERS = kButtonRB;
+    public static final int POV_RIGHT = pov90;
+    public static final int TEST_INTAKE_ROLLERS = POV_RIGHT;
+    public static final int POV_DOWN = pov180;
+    public static final int TEST_INTAKE_HOVER = pov270;
     // XBox movement mappings
     public static final int MOVE_XAXIS = leftStick_XAXIS;
     public static final int MOVE_YAXIS = leftStick_YAXIS;
@@ -99,7 +104,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
+    public static final double kMaxSpeedMetersPerSecond = 1.5;//was 4.8
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     // Chassis configuration
@@ -176,5 +181,24 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
+  }
+
+  public static class IntakeConstants{
+
+    public static final int kJointCANID = 14;
+    public static final int kRollerCANID = 15;
+    public static final double kjointkG = 0.18; //need to update
+    public static final double kjointKp = 0.024; //need to update
+    public static final double kjointKi = 0;
+    public static final double kjointKd = 0.0013;
+    public static final double koutputMin = -0.3; //Intake TODO: See what value makes sense (do the math to see how fast it goes at full speed), start small and go bigger
+    public static final double koutputMax = 0.3;
+    public static final int kMaxCurrent = 80; //amps //Intake TODO: probably higher than 20 Amps given using Neo 1.1s
+    public static final double kretractedPostion = 100.09-20; //need to update
+    public static final double kextendedPostion = 345.9; //need to update
+    public static final double kintakeRollerSpeed = -0.8; //need to update
+    public static final double kintakeJointSpeed = 0.05; //need to update
+    //it retracts at 100.09 degrees
+    //
   }
 }

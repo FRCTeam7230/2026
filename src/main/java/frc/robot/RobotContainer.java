@@ -14,11 +14,14 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.*;
 //import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.utils.ButtonMappings;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -39,6 +42,7 @@ public class RobotContainer {
 
   // The robot's subsystems
   DriveSubsystem m_robotDrive;
+  IntakeSubsystem m_intake;
   private Boolean fieldRelative = true;
 
   // XBox controller.
@@ -64,8 +68,27 @@ public class RobotContainer {
     {
       PortForwarder.add(port, "limelight.local",port);
     }
-
+    m_intake = new IntakeSubsystem();
     NamedCommands.registerCommand("Going over the bump", m_robotDrive.driveExperiment());
+    NamedCommands.registerCommand("Align To Bump", new AlignToBump(m_robotDrive,true));
+    // NamedCommands.registerCommand("Align",
+    //   new AlignToHub(m_robotDrive).alongWith(
+        
+    // ));
+
+        //NamedCommands.registerCommand("Shoot",(new SpamShootCommands(drive)));
+        NamedCommands.registerCommand("Intake Fuel", 
+                new InstantCommand(()->{
+                   m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);
+                m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed); }, m_intake)
+        );
+        NamedCommands.registerCommand("Stop Intake Roller", 
+                new InstantCommand(()->{ m_intake.spinRoller(0); }, m_intake)
+        );
+        NamedCommands.registerCommand("Intake From Depot", 
+                ///Commands.runOnce(drive::intakeStop, drive)
+                Commands.run(()->{m_robotDrive.drive(-0.5,0,0,false);},m_robotDrive).withTimeout(1.2/(4.8*0.5))//1 meter, plus some extra
+        );
     SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Zero/Reset sensors
     m_robotDrive.zeroHeading();
@@ -93,6 +116,10 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
                 -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS)), OIConstants.kDriveDeadband), //Z
                 fieldRelative),
         m_robotDrive));
+    
+    //Command extendIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kextendedPostion);
+
+    //Command retractIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kretractedPostion);
   }
 
   /**
@@ -114,44 +141,16 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
           () -> m_robotDrive.setX(),
           m_robotDrive));
 
+
     ButtonMappings.button(m_driverController,Constants.ControllerConstants.ZERO_HEADING_BUTTON)
       .whileTrue(new RunCommand(
           () -> m_robotDrive.zeroHeading()));
 
-    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.ROBOT_RELATIVE)
-    //   .onTrue(Commands.sequence(
-    //           new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
-    //           new InstantCommand(() -> mode_publisher.set(fieldRelative))
-    //       ));
-      // ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_TO_BUMP).onTrue(
-      //   new AlignToBump(m_robotDrive)
-      // );
-      
-      // ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_TO_BUMP).toggleOnTrue(//onTrue will constantly remake and reschedule the command.
-      //   Commands.runOnce(()->{
-      //   alignToBumpCommand = new AlignToBump(m_robotDrive);
-      //   alignToBumpCommand.schedule();
-      //   })
-      // ).onFalse(
-      //   Commands.runOnce(()->alignToBumpCommand.cancel())
-      // );
-      ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_TO_BUMP).onTrue(new AlignToBump(m_robotDrive));
-      //double bringXPos = 4.626;
-      double bringXPos = 11.915;
-      double bringYPos = 3;          
-      SmartDashboard.putNumber("X Position", bringXPos);
-      SmartDashboard.putNumber("Y Position", bringYPos);
-      ButtonMappings.button(m_driverController, Constants.ControllerConstants.BRING_ROBOT).onTrue(
-        Commands.runOnce(() -> m_robotDrive.resetOdometry(new Pose2d(bringXPos, bringYPos,new Rotation2d(0))))
-      );
-      /*ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_TO_BUMP).whileTrue(
-        new AlignToBump(m_robotDrive)
-      );//.onFalse(
-      */
-      
-      SmartDashboard.putData("Align to Bump Command",
-      new AlignToBump(m_robotDrive));
-      //);
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.ROBOT_RELATIVE)
+      .onTrue(Commands.sequence(
+              new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
+              new InstantCommand(() -> mode_publisher.set(fieldRelative))
+          ));
     // ButtonMappings.button(m_driverController, Constants.ControllerConstants.RadiusCharacterization)
     //   .whileTrue(m_robotDrive.wheelRadiusCharacterization());
     
