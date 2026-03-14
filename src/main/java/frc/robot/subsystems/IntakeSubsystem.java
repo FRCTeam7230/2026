@@ -168,7 +168,7 @@ public class IntakeSubsystem extends SubsystemBase
       else
       {
         reachGoal(Constants.IntakeConstants.kextendedPostion);
-        spinRoller(Constants.IntakeConstants.kintakeRollerSpeed);
+        spinRoller(0);
       }
     }
     public void toggleIntakeRoller()
