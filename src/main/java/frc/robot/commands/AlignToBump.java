@@ -36,9 +36,9 @@ public class AlignToBump extends Command{//This is the better edition
         m_drive = drive;
        // bumpSpeed = 4.8;
        drivingOverTheBumpDirectionMode = 0;
-        if (autoMode){
-        drivingOverTheBumpDirectionMode = findDrivingDirection();
-       }
+    //     if (autoMode){//If autos appears to be smooth and doesn't have a need to realign, then use this.
+    //     drivingOverTheBumpDirectionMode = findDrivingDirection();
+    //    }
         addRequirements(m_drive);//i removed this when testing it with a button.
     }
      double angle1 = goalAngle;//38.412115
