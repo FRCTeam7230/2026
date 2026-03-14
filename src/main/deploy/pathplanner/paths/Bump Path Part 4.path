@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.5820120481927713,
+        "y": 5.28
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.9082674904218857,
+        "y": 5.375102959762975
+      },
+      "isLocked": false,
+      "linkedName": "Bump Auto Alliance Shoot"
+    },
+    {
+      "anchor": {
+        "x": 1.9818116975748925,
+        "y": 5.374151212553495
+      },
+      "prevControl": {
+        "x": 2.650456956832623,
+        "y": 5.32492348369747
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Neutral Shooting"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.8,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -25.880273670068846
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -38.412
+  },
+  "useDefaultConstraints": true
+}
