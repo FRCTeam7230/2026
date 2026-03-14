@@ -253,48 +253,73 @@ public final class Constants {
 
   public static final class LEDConstants {
 
+    //2 HZ MAXIMUM
+
     public static final int kPort = 0; //update
-    public static final int kLEDLength = 60; //update
+    public static final int kLEDLength = 300; //update
     public static final int kBottomStartIndex = 0;
     public static final int kBottomEndIndex = 40; //update
-    public static final int kTopStartIndex = 41; //update
-    public static final int kTopEndIndex = 60; //update
+    public static final int kTopStartIndex = kBottomEndIndex + 1; //update
+    public static final int kTopEndIndex = kLEDLength-1; //update
     public static final int kTopMiddleIndex = (kTopStartIndex + kTopEndIndex)/2;
     
     public static final Color kNiceYellow = new Color("#DEC95D"); 
     public static final Color kBrightNiceYellow = new Color("#FFE666");
     public static final Color kGreen = new Color("#32CD32");
     public static final Color kOrange = new Color("#FF8D54");
+    public static final Color kBlue = new Color("#18399b");
+    public static final Color kRed = new Color("#B20000"); 
     public static final Color kPurple = Color.kMediumPurple;
 
     // custom gradient
-    public static final int khalfPercentageFromBottom = 1/8;
-    public static final double krepeatTimes = 1; // how many times the pattern should repeat across the strip, if applicable
+    public static final double khalfPercentageFromBottom = ((25.0)/100)/2;
+    public static final double kdefaultRepeatTimes = 4; // how many times the pattern should repeat across the strip, if applicable
+    
     public static final double kshootingMovingFrequency = 0.5; // how many times per second the pattern should move, if applicable
-    public static final double kidleMovingFrequency = 0.25; // how many times per second the pattern should move, if applicable
-    public static final double kintakeMovingFrequency = 1; // how many times per second the pattern should move, if applicable
+    public static final int kshootingRepeatTimes = 4;
+    public static final double kidleScrollingMovingFrequency = 1; // how many times per second the pattern should move, if applicable
+    public static final double kidleSinusoidalMovingFrequency = 0.5; // how many times per second the pattern should move, if applicable
+    public static final int kidleRepeatTimes = 3;//50000001; 
+    public static final double kintakeMovingFrequency = 0.75; // how many times per second the pattern should move, if applicable
+    public static final int kintakingtRepeatTimes = 4;
+    public static final int kTenSecondsLeftMaximumIndex = 3; //Backup = 3
+    public static final double kTenSecondsLeftWarpConstant = 0.012; //Backup = 0.0112
+    public static final double kTenSecondsLeftHalfPercentageFromBottom = 0.05; 
 
     //transition blinking
-    public static final double kblinkingFrequency = 4; //hz
+    public static final double kblinkingFrequency = 2; //hz
     public static final double kpercentageOfTimeYelpurp = 0.5;
 
+
+    //HSV range:
+    //H: 0-180
+    //S: 0-255
+    //V: 0-255
+
     // purple hsv
-    public static final int kPurpleH = 260;
-    public static final int kPurpleS = 49;
-    public static final int kPurpleV = 86;
+    public static final int kPurpleH = 147;
+    public static final int kPurpleS = 112;
+    public static final int kPurpleV = 219;
     // yellow hsv
-    public static final int kYellowH = 50;
-    public static final int kYellowS = 60;
-    public static final int kYellowV = 100;
+    public static final int kYellowH = 28; //0-180
+    public static final int kYellowS = 153; //0-255
+    public static final int kYellowV = 255; //0-255
     // orange hsv
-    public static final int kOrangeH = 20;
-    public static final int kOrangeS = 67;
-    public static final int kOrangeV = 100;
+    public static final int kOrangeH = 11;
+    public static final int kOrangeS = 169;
+    public static final int kOrangeV = 255;
     
+    public static final int kBlueH = 113;
+    public static final int kBlueS = 215;
+    public static final int kBlueV = 200;
+    
+    public static final int kRedH = 0;
+    public static final int kRedS = 255;
+    public static final int kRedV = 178;
 
-    
-    
-
+    public static final int kWhiteH = 0;
+    public static final int kWhiteS = 0;
+    public static final int kWhiteV = 255;
 
     
   }
