@@ -131,8 +131,8 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     
     double radius = distance + radalOffset;
     double targetVelocityX = Math.sqrt(
-      (9.81*Math.pow(distance*1.1, 2))
-      /(2*Math.tan(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle))*distance*1.1 - (Constants.AlignToHubConstants.kHubHeight-Constants.AlignToHubConstants.kShooterHeight))
+      (9.81*Math.pow(distance*Constants.AlignToHubConstants.kDistMulti, 2))
+      /(2*Math.tan(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle))*distance*Constants.AlignToHubConstants.kDistMulti - (Constants.AlignToHubConstants.kHubHeight-Constants.AlignToHubConstants.kShooterHeight))
       );
 
     double targetVelocity =  targetVelocityX / Math.cos(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle)) - m_drive.getSpeeds().vxMetersPerSecond;

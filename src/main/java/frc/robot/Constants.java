@@ -262,6 +262,8 @@ public final class Constants {
     public static final double kinitalAtTwoPointSevenFive = 6.588; //m/s
     public static final double kShooterHeight = 0.677; //meters from bottom of wheel 
     public static final double kShooterWheelRadius = 1.8125; // inches
+    public static final double kDistMulti = 1.2; // multi, should be min of 1.1,
+    // If the multi undershoots at here, I would recommend slowly raising by 0.1s until maybe 1.3 or so should work, for code orange peopel
     
 
     public static final double kerrorXTolerance = 0.1;
