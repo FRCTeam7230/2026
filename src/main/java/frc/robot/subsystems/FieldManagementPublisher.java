@@ -128,6 +128,16 @@ DoublePublisher timeLeftInTransitionPublisher = NetworkTableInstance.getDefault(
       return -1;
     }
   }
+
+  public static boolean isLastTenSeconds() {
+    double matchTime = DriverStation.getMatchTime();
+    if (matchTime <= 10 && matchTime > 0) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
   
   public static double timeLeftInTransition(int hubState) {
     if (!((hubState == 2) || (hubState == 3))) {

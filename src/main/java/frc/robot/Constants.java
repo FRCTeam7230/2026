@@ -253,9 +253,11 @@ public final class Constants {
 
   public static final class LEDConstants {
 
+    //2 HZ MAXIMUM
+
     public static final int kPort = 0; //update
     public static final int kLEDLength = 300; //update
-    public static final int ledRowsInSimulation = 5;
+    public static final int ledRowsInSimulation = 10;
     public static final int kBottomStartIndex = 0;
     public static final int kBottomEndIndex = 40; //update
     public static final int kTopStartIndex = kBottomEndIndex + 1; //update
@@ -275,18 +277,18 @@ public final class Constants {
     public static final double kdefaultRepeatTimes = 4; // how many times the pattern should repeat across the strip, if applicable
     
     public static final double kshootingMovingFrequency = 0.5; // how many times per second the pattern should move, if applicable
-    public static final int kshootingRepeatTimes = 10;
+    public static final int kshootingRepeatTimes = 4;
     public static final double kidleScrollingMovingFrequency = 1; // how many times per second the pattern should move, if applicable
     public static final double kidleSinusoidalMovingFrequency = 0.5; // how many times per second the pattern should move, if applicable
-    public static final int kidleRepeatTimes =  5;//50000001; 
+    public static final int kidleRepeatTimes = 3;//50000001; 
     public static final double kintakeMovingFrequency = 0.75; // how many times per second the pattern should move, if applicable
-    public static final int kintakingtRepeatTimes = 6;
+    public static final int kintakingtRepeatTimes = 4;
     public static final int kTenSecondsLeftMaximumIndex = 3; //Backup = 3
     public static final double kTenSecondsLeftWarpConstant = 0.012; //Backup = 0.0112
     public static final double kTenSecondsLeftHalfPercentageFromBottom = 0.05; 
 
     //transition blinking
-    public static final double kblinkingFrequency = 4; //hz
+    public static final double kblinkingFrequency = 2; //hz
     public static final double kpercentageOfTimeYelpurp = 0.5;
 
 

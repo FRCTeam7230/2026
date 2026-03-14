@@ -112,6 +112,12 @@ public class LEDSubsystem extends SubsystemBase {
     m_LED.setData(m_LEDBuffer);
   }
 
+  public void solidColorBottom(Color c) {
+    LEDPattern colorPattern = LEDPattern.solid(c);
+    colorPattern.applyTo(m_bottom);
+    m_LED.setData(m_LEDBuffer);
+  }
+
   /**current state = 1, makes LEDs purple */
   public void solidPurpleTop() {
     currentState = 1;
@@ -125,12 +131,6 @@ public class LEDSubsystem extends SubsystemBase {
     currentState = 2;
     solidColorTop(Constants.LEDConstants.kNiceYellow);// #DEC95D - contrasts medium purple
     defaultHubColor = Constants.LEDConstants.kNiceYellow;
-  }
-
-  public void setDefaultHubColor() {
-     LEDPattern colorPattern = LEDPattern.solid(defaultHubColor);
-    colorPattern.applyTo(m_bottom);
-    m_LED.setData(m_LEDBuffer);
   }
 
   public byte[] getData(){
@@ -215,7 +215,7 @@ public class LEDSubsystem extends SubsystemBase {
     LEDPattern base = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kMediumPurple, Constants.LEDConstants.kNiceYellow);
     LEDPattern DCbreathe = base.breathe(Units.Seconds.of(2));
     LEDPattern pattern = DCbreathe.scrollAtRelativeSpeed(Units.Hertz.of(0.5));
-    pattern.applyTo(m_LEDBuffer);
+    pattern.applyTo(m_LEDBuffer); //applies to both top and bottom
     m_LED.setData(m_LEDBuffer);
   }
 
@@ -226,7 +226,7 @@ public class LEDSubsystem extends SubsystemBase {
     LEDPattern DCbreathe = base.breathe(Units.Seconds.of(2));
     LEDPattern pattern = base.scrollAtRelativeSpeed(Units.Hertz.of(0.5));
     LEDPattern maskedthing = DCbreathe.mask(pattern);
-    maskedthing.applyTo(m_LEDBuffer);
+    maskedthing.applyTo(m_top);
     m_LED.setData(m_LEDBuffer);
   }
   
@@ -317,11 +317,13 @@ public class LEDSubsystem extends SubsystemBase {
   public void setCustomGradientToBuffer2(int h, int s, int v, double movingFrequency, int repeatTimes) {
     double time = robotTimer.get();
     //under glow
+    /* 
     for (int i=0; i < (Constants.LEDConstants.kTopStartIndex); i++) {
       int vAfterBrightness = (int)(v * calculateBrightnessPercentage(i, time, movingFrequency, repeatTimes));
       Color colorAfterBrightness = Color.fromHSV(h, s, vAfterBrightness);
       m_LEDBuffer.setLED(i, colorAfterBrightness);
     }
+    */
     //first half
     for (int i=Constants.LEDConstants.kTopStartIndex; i < (Constants.LEDConstants.kTopMiddleIndex+1); i++) {
       int vAfterBrightness = (int)(v * calculateBrightnessPercentage(i, time, movingFrequency, repeatTimes));
@@ -329,25 +331,11 @@ public class LEDSubsystem extends SubsystemBase {
       m_LEDBuffer.setLED(i, colorAfterBrightness);
     }
     //second half, backwards
-    /*
-    for (int i=Constants.LEDConstants.kTopMiddleIndex; i < (Constants.LEDConstants.kTopEndIndex+1); i++) {
-      int vAfterBrightness = (int)(v * calculateBrightnessPercentage(i, time, movingFrequency));
-      Color colorAfterBrightness = Color.fromHSV(h, s, vAfterBrightness);
-      m_LEDBuffer.setLED(i, colorAfterBrightness);
-    }
-       */
     for (int i=Constants.LEDConstants.kTopEndIndex; i > (Constants.LEDConstants.kTopMiddleIndex); i--) {
       int vAfterBrightness = (int)(v * calculateBrightnessPercentage((Constants.LEDConstants.kTopStartIndex + (Constants.LEDConstants.kTopEndIndex-i)), time, movingFrequency, repeatTimes));
       Color colorAfterBrightness = Color.fromHSV(h, s, vAfterBrightness);
       m_LEDBuffer.setLED(i, colorAfterBrightness);
     }
-    /* 
-    for (int i=(Constants.LEDConstants.kTopEndIndex); i >= Constants.LEDConstants.kTopMiddleIndex+1; i--) {
-      int vAfterBrightness = (int)(v * calculateBrightnessPercentage(Constants.LEDConstants.kTopStartIndex + (Constants.LEDConstants.kTopEndIndex - i), time, movingFrequency));
-      Color colorAfterBrightness = Color.fromHSV(h, s, vAfterBrightness);
-      m_LEDBuffer.setLED(i, colorAfterBrightness);
-    }
-      */
 
   }
 
@@ -393,7 +381,7 @@ public class LEDSubsystem extends SubsystemBase {
     tenSecondsLeft -= 0.0015;
     LEDPattern blinkbase = LEDPattern.solid(Color.kWhite);
     LEDPattern blinkpattern = blinkbase.blink(Units.Seconds.of(tenSecondsLeft));
-    blinkpattern.applyTo(m_LEDBuffer);
+    blinkpattern.applyTo(m_top);
     m_LED.setData(m_LEDBuffer);
   }
 
@@ -426,17 +414,13 @@ public class LEDSubsystem extends SubsystemBase {
     
   }
 
-
-  
-
-
   /** current state = 0, used when robot is idle(purple sinusoidal) */
   public void idlePattern() { // could change later if want to use mask and make breath (brightness really fast but as a funtion of percentage)
     // If the Driver Station is not attached, show the red/blue scrolling gradient
     if (!DriverStation.isDSAttached() || DriverStation.isAutonomous() || DriverStation.isTest() || DriverStation.isDisabled()) {
       LEDPattern basegradient = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Constants.LEDConstants.kRed, Constants.LEDConstants.kBlue);
       LEDPattern scrollpattern = basegradient.scrollAtRelativeSpeed(Units.Hertz.of(Constants.LEDConstants.kidleScrollingMovingFrequency));
-      scrollpattern.applyTo(m_LEDBuffer);
+      scrollpattern.applyTo(m_LEDBuffer); //applies to both top and bottom
       m_LED.setData(m_LEDBuffer);
       return;
     }
@@ -454,14 +438,15 @@ public class LEDSubsystem extends SubsystemBase {
         m_LED.setData(m_LEDBuffer);
         return;
       }
-    }
+    } 
 
     // Fallback: if we don't have a known alliance, show the red/blue scrolling gradient
     LEDPattern basegradient = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Constants.LEDConstants.kRed, Constants.LEDConstants.kBlue);
     LEDPattern scrollpattern = basegradient.scrollAtRelativeSpeed(Units.Hertz.of(Constants.LEDConstants.kidleScrollingMovingFrequency));
-    scrollpattern.applyTo(m_LEDBuffer);
+    scrollpattern.applyTo(m_top);
     m_LED.setData(m_LEDBuffer);
   }
+
   public void idlePatternMirroredPulse() {
     currentState = 0;
     setCustomGradientToBuffer2(Constants.LEDConstants.kBlueH, Constants.LEDConstants.kBlueS, Constants.LEDConstants.kBlueV, Constants.LEDConstants.kidleSinusoidalMovingFrequency, Constants.LEDConstants.kidleRepeatTimes);
@@ -511,7 +496,7 @@ public class LEDSubsystem extends SubsystemBase {
     //passingPattern(FieldManagementPublisher.getHubState());
     //passingPatternMirroredPulse();
     //autoPattern();
-    tenSecondsLeft3();
+    //tenSecondsLeft2();
 
     
     
@@ -526,26 +511,31 @@ public class LEDSubsystem extends SubsystemBase {
    * 3 = transition (inactive to active)
    */
     
-   /* 
-    if (DriverStation.isAutonomousEnabled() && currentState != 5) { 
+   int hubState = FieldManagementPublisher.getHubState();
+    if (DriverStation.isAutonomousEnabled()){// && currentState != 5) { 
       autoPattern();
     }
-    */
 
-    /*
+    ///*
     // this section is the default pattern based on the match when no button is pressed
-     if (!isOverriden) { //had currentState == 0 before idk why
-      int hubState = FieldManagementPublisher.getHubState();
+    
+    else if (FieldManagementPublisher.isLastTenSeconds() && hubState != -1) {
+      tenSecondsLeft2();
+    }
+    else if (!isOverriden) { //had currentState == 0 before idk why
       hubStatePublisher.set(hubState);
       matchTimePublisher.set(DriverStation.getMatchTime());
       if (hubState == 2 || hubState == 3) {
         transitionBlinkingColorSmoothAll(hubState);
+        solidColorBottom(defaultHubColor);
       }
       if (hubState == 1){// && currentState != 2) {
-        solidYellowAll();
+        solidYellowTop();
+        solidColorBottom(defaultHubColor);
       }
       if (hubState == 0){// && currentState != 1) {
-        solidPurpleAll();
+        solidPurpleTop();
+        solidColorBottom(defaultHubColor);
       }
       if (hubState == -1) {
         idlePattern();
@@ -560,17 +550,9 @@ public class LEDSubsystem extends SubsystemBase {
       intakePattern();
     }
     else if (currentState == 8) {
-      passingPattern();
+      passingPattern(hubState);
     }
-    else if (currentState == 9) {
-      tenSecondsLeft();
-    }
-    // default pattern
-    /* 
-    else {
-      idlePattern();
-    }
-      */
+    //*/
     
     
 
