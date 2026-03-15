@@ -9,11 +9,11 @@ import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.math.util.Units;
 
 public class AlignToBump extends Command{//This is the better edition
-    PIDController rotController = new PIDController(0.07, 0, 0);
+    PIDController rotController = new PIDController(0.007, 0, 0);
     PIDController yController = new PIDController(1, 0, 0);
     PIDController xController = new PIDController(1, 0, 0);
     DriveSubsystem m_drive;
-    double robotDiagonalLength = 38.3813;
+    double robotDiagonalLength = 51;//was 38.3813;
     //double robotDiagonalLength = Units.inchesToMeters(42.426);
     
     double currentAngle;
@@ -174,8 +174,8 @@ public class AlignToBump extends Command{//This is the better edition
 
                 m_drive.drive(xSpeed, ySpeed, rotSpeed, true);
                 if (Math.abs(rotController.getError())<2*1.5&&Math.abs(m_drive.getTurnRate())<0.018&&yController.atSetpoint()&&xController.atSetpoint()){ //change turn rate to115 1 deg.
-                    drivingOverTheBumpDirectionMode = findDrivingDirection();//2, 0.02
-                    //drivingOverTheBumpDirectionMode = 5;
+                    //drivingOverTheBumpDirectionMode = findDrivingDirection();//2, 0.02
+                    drivingOverTheBumpDirectionMode = 5;
                 }
         }
     }

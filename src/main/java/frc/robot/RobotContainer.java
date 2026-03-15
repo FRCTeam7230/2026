@@ -67,7 +67,6 @@ public class RobotContainer {
   
   private ShooterSubsystem m_ShooterSubsystem;
   private FeederSubsystem m_FeederSubsystem;
-  private IntakeSubsystem m_intake;
   
 
   // XBox controller.
@@ -119,6 +118,7 @@ public class RobotContainer {
         //         new WaitCommand(10))//set a timer
         //         .repeatedly()
         // );
+        /*
         NamedCommands.registerCommand("Intake Fuel", 
                 new InstantCommand(()->{
                    m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);
@@ -126,11 +126,12 @@ public class RobotContainer {
         );
         NamedCommands.registerCommand("Stop Intake Roller", 
                 new InstantCommand(()->{ m_intake.spinRoller(0); }, m_intake)
-        );
+        );*/
         NamedCommands.registerCommand("Intake From Depot", 
                 ///Commands.runOnce(drive::intakeStop, drive)
-                Commands.run(()->{m_robotDrive.drive(-0.5,0,0,false);},m_robotDrive).withTimeout(1.2/(4.8*0.5))//1 meter, plus some extra
+                Commands.run(()->{m_robotDrive.drive(-0.2,0,0,false);},m_robotDrive).withTimeout(4)//1 meter, plus some extra
         );
+        
     SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Zero/Reset sensors
     m_robotDrive.zeroHeading();
@@ -210,7 +211,8 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
               new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
               new InstantCommand(() -> mode_publisher.set(fieldRelative))
           ));
-
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_TO_BUMP)
+    .whileTrue(new AlignToBump(m_robotDrive, isCompetition));
   //NEW SUBSYSTEM CONTROLS
     //Feeder rolllers manual on/off
     

@@ -15,9 +15,9 @@ import frc.robot.subsystems.DriveSubsystem;
 public class AutoAlignToHub extends Command {
   /** Creates a new AlignToHub. */
   DriveSubsystem m_drive;
-  PIDController xController = new PIDController(0.5, 0, 0);
-  PIDController yController = new PIDController(0.5, 0, 0);
-  PIDController rotController = new PIDController(0.015, 0, 0);
+  PIDController xController = new PIDController(2, 0, 0);
+  PIDController yController = new PIDController(2, 0, 0);
+  PIDController rotController = new PIDController(0.005, 0, 0);
 
 
   public AutoAlignToHub(DriveSubsystem drive, Pose2d targetPose) {
