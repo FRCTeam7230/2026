@@ -48,7 +48,11 @@ public class LEDSubsystem extends SubsystemBase {
   DoublePublisher robotTimerPublisher = NetworkTableInstance.getDefault().getDoubleTopic("LEDSubsystem/RobotTimer").publish();
   BooleanPublisher timerIsRunningPublisher = NetworkTableInstance.getDefault().getBooleanTopic("LEDSubsystem/timerIsRunning").publish();
   IntegerPublisher hubStatePublisher = NetworkTableInstance.getDefault().getIntegerTopic("LEDSubsystem/HubState").publish();
-  DoublePublisher matchTimePublisher = NetworkTableInstance.getDefault().getDoubleTopic("LEDSubsystem/matchTim").publish();
+  DoublePublisher matchTimePublisher = NetworkTableInstance.getDefault().getDoubleTopic("LEDSubsystem/matchTime").publish();
+
+  DoublePublisher firstLEDR = NetworkTableInstance.getDefault().getDoubleTopic("LEDSubsystem/firstLEDR").publish();
+  DoublePublisher firstLEDG = NetworkTableInstance.getDefault().getDoubleTopic("LEDSubsystem/firstLEDG").publish();
+  DoublePublisher firstLEDB = NetworkTableInstance.getDefault().getDoubleTopic("LEDSubsystem/firstLEDB").publish();
   
   /** Creates a new LEDSubsystem. */
   public LEDSubsystem() {
@@ -57,7 +61,6 @@ public class LEDSubsystem extends SubsystemBase {
     m_bottom = m_LEDBuffer.createView(Constants.LEDConstants.kBottomStartIndex, Constants.LEDConstants.kBottomEndIndex);
     m_top = m_LEDBuffer.createView(Constants.LEDConstants.kTopStartIndex, Constants.LEDConstants.kTopEndIndex);
     robotTimer = new Timer();
-    robotTimer.start();
     isOverriden = false;
     currentState = 0; // 0 is idle
     defaultHubColor = Constants.LEDConstants.kPurple;
@@ -437,6 +440,7 @@ public class LEDSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
   
+    solidColorBottom(Constants.LEDConstants.kPurple);
     //shootingPattern();
     //shootingPatternMirroredPulse();
     //idlePattern();
@@ -461,7 +465,7 @@ public class LEDSubsystem extends SubsystemBase {
    * 2 = transition (active to inactive)
    * 3 = transition (inactive to active)
    */
-    
+    /* 
    int hubState = FieldManagementPublisher.getHubState();
     if (DriverStation.isAutonomousEnabled()){// && currentState != 5) { 
       autoPattern();
@@ -503,7 +507,9 @@ public class LEDSubsystem extends SubsystemBase {
     else if (currentState == 8) {
       passingPattern(hubState);
     }
-    //*/
+    */
+
+    
     
     
 

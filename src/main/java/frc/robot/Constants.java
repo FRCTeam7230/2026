@@ -256,11 +256,11 @@ public final class Constants {
     //2 HZ MAXIMUM
 
     public static final int kPort = 0; //update
-    public static final int kLEDLength = 300; //update
+    public static final int kLEDLength = 240; 
     public static final int kBottomStartIndex = 0;
     public static final int kBottomEndIndex = 40; //update
-    public static final int kTopStartIndex = kBottomEndIndex + 1; //update
-    public static final int kTopEndIndex = kLEDLength-1; //update
+    public static final int kTopStartIndex = kBottomEndIndex + 1; 
+    public static final int kTopEndIndex = kLEDLength-1; 
     public static final int kTopMiddleIndex = (kTopStartIndex + kTopEndIndex)/2;
     
     public static final Color kNiceYellow = new Color("#DEC95D"); 
