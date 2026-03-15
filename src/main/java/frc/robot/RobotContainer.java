@@ -4,25 +4,42 @@
 
 package frc.robot;
 
+import java.util.Map;
+
+import javax.lang.model.util.ElementScanner14;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.Constants.*;
-//import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.utils.ButtonMappings;
+import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
+import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.OuttakeConstants;
+import frc.robot.commands.AlignToHub;
+import frc.robot.commands.AlignToPass;
+import frc.robot.commands.AutoShooterCommand;
+//import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.FieldManagementPublisher;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -38,12 +55,20 @@ import frc.robot.commands.AlignToBump;
  * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
  */
+import frc.robot.utils.ButtonMappings;
 public class RobotContainer {
 
   // The robot's subsystems
+
   DriveSubsystem m_robotDrive;
   IntakeSubsystem m_intake;
+  FieldManagementPublisher m_fieldManagementPublisher;
   private Boolean fieldRelative = true;
+  
+  private ShooterSubsystem m_ShooterSubsystem;
+  private FeederSubsystem m_FeederSubsystem;
+  private IntakeSubsystem m_intake;
+  
 
   // XBox controller.
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -56,14 +81,26 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   private boolean isCompetition = false;//What replaces this?
-  private double experimentSpeed = 0;
+//spins shooter to speed based on position of selector
+  private Command spinUpCommand;
+  //aligns based on selector
+  private Command alignCommand;
+
+  private enum BehaviorSelector
+  {
+    SHOOT,
+    PASS
+  }
    
   public RobotContainer() {
     
+    m_ShooterSubsystem = new ShooterSubsystem();
+    m_FeederSubsystem = new FeederSubsystem();
+    
+    m_fieldManagementPublisher = new FieldManagementPublisher();
     //Set up Subsystems
-    if (RobotBase.isReal()) {
-      m_robotDrive = new DriveSubsystem();
-    }
+    m_robotDrive = new DriveSubsystem();
+
     for(int port = 5800; port<=5809; port++)
     {
       PortForwarder.add(port, "limelight.local",port);
@@ -98,7 +135,24 @@ public class RobotContainer {
     // Zero/Reset sensors
     m_robotDrive.zeroHeading();
     m_robotDrive.addAngleGyro(180);
+    //Start with this spinUpCommand, the switch to the select version once megatag is confirmed
+    //spinUpCommand = new AutoShooterCommand(m_ShooterSubsystem, Constants.OuttakeConstants.shootSpeed);
     
+    spinUpCommand = new SelectCommand<>(
+      Map.ofEntries(
+        Map.entry(BehaviorSelector.SHOOT, new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.shootSpeed)),
+        Map.entry(BehaviorSelector.PASS, new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.passSpeed))
+      ),
+      this::passOrShootSelector
+    );
+    
+    alignCommand = new SelectCommand<>(
+      Map.ofEntries(
+        Map.entry(BehaviorSelector.SHOOT, new AlignToHub(m_robotDrive)),
+        Map.entry(BehaviorSelector.PASS, new AlignToPass(m_robotDrive))
+      ),
+      this::passOrShootSelector
+    );
     // Configure the button bindings
     configureButtonBindings();
 
@@ -156,12 +210,94 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
               new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
               new InstantCommand(() -> mode_publisher.set(fieldRelative))
           ));
-    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.RadiusCharacterization)
-    //   .whileTrue(m_robotDrive.wheelRadiusCharacterization());
+
+  //NEW SUBSYSTEM CONTROLS
+    //Feeder rolllers manual on/off
     
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.MANUAL_ROLLERS_TOGGLE)
+      .onTrue(new InstantCommand(
+      ()-> m_FeederSubsystem.ToggleFeederRoller(), 
+      m_FeederSubsystem
+      ));
+    
+    //Manual Kicker on/off button for testing purposes
+    
+        ButtonMappings.button(m_driverController, Constants.ControllerConstants.MANUAL_KICKERS_TEST)
+      .whileTrue(new StartEndCommand(
+      ()-> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed), 
+      ()-> m_FeederSubsystem.setKickerSpeed(0),
+      m_FeederSubsystem
+      ));
+    
+    //Shooter PID testing binding, replace later with full shoot process
+    /* 
+        ButtonMappings.button(m_driverController,Constants.ControllerConstants.SHOOT_HUB)
+      .whileTrue(new StartEndCommand(
+      ()-> m_ShooterSubsystem.reachSpeed(Constants.OuttakeConstants.shootSpeed),
+      () -> m_ShooterSubsystem.stopMotor(),
+      m_ShooterSubsystem
+    ));
+    */
+    //Composite Shooter Command -> runs all three systems at once to shoot balls
+    
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.SHOOT_HUB)
+      .whileTrue(Commands.sequence(
+              spinUpCommand,
+              new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
+              new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
+          ).finallyDo(
+            () -> {
+              m_ShooterSubsystem.stopMotor();
+              m_FeederSubsystem.setKickerSpeed(0);
+              m_FeederSubsystem.setRollerSpeed(0);
+            }
+          ));
+                //What is this for? bound to 0?
+    /* 
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_HUB)
+      .whileTrue(Commands.sequence(
+        new InstantCommand(() -> m_ShooterSubsystem.reachSpeed(Constants.OuttakeConstants.shootSpeed)),
+        new AlignToHub(m_robotDrive)
+       ).finallyDo(
+        () -> {
+          m_ShooterSubsystem.stopMotor();
+          m_FeederSubsystem.setKickerSpeed(0);
+        }
+      ));
+    */
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_HUB)
+    .whileTrue(new AlignToHub(m_robotDrive));
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_UP)
+    //   .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(Constants.IntakeConstants.kintakeJointSpeed)
+    //     , ()-> m_intake.spinJoint(0), m_intake));
+    
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_DOWN)
+    //   .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(-Constants.IntakeConstants.kintakeJointSpeed)
+    //     , ()-> m_intake.spinJoint(0), m_intake));
 
 
+        
+    //Test method for determining kG, hold the intake out horizontal and find a value that holds it still. 
+    
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_HOVER)
+    //   .whileTrue(new StartEndCommand(
+    //     ()-> m_intake.hoverJoint(),
+    //     ()-> m_intake.spinJoint(0), m_intake
+    //   ));
+    
+    // TOGGLE INTAKE METHODS -> These should be the only intake methods left after testing
+    
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
+      .whileTrue(
+        m_intake.toggleIntake()
+      );
+       ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE_ROLLERS)
+      .whileTrue(new InstantCommand( ()->{
+        m_intake.toggleIntakeRoller();
+      },m_intake));
+    
   }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -212,5 +348,21 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Run path following command, then stop at the end.
     //return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
     */
+  }
+  
+  public BehaviorSelector passOrShootSelector() {
+    return BehaviorSelector.SHOOT;
+    /* 
+    boolean isBlue = DriverStation.getAlliance().equals(DriverStation.Alliance.Blue);
+    double threshold = isBlue ? Constants.AlignConstants.kPassThreshold : Constants.AlignConstants.kFieldLength - Constants.AlignConstants.kPassThreshold;
+    if(m_robotDrive.getPose().getX()>threshold == isBlue)
+    {
+      return BehaviorSelector.PASS;
+    }
+    else
+    {
+      return BehaviorSelector.SHOOT;
+    }
+      */
   }
 }

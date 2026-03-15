@@ -28,6 +28,49 @@ public final class Constants {
 
 
 
+  public static final class FeederConstants {
+    public static final int rollerCANID = 13;
+    public static final int kickerCANID = 12;
+    public static final int kfeedermotorlimitcurrent = 80;
+    public static final double kfeederrampratesec = 0;
+    public static final double rollerSpeed = -1; //Note: Rollers should spin slower than kicker (check gearing on each)
+    public static final double kickerSpeed = 1; //Note: kicker should have a slower linear speed than shooter 
+  }
+
+  public static class OuttakeConstants {
+    public static final double EncoderTickPerRev = 1;
+    public static final int ShootMotor1ID = 9; 
+    public static final int ShootMotor2ID = 10; 
+    public static final int ShootMotor3ID = 11; 
+    public static final int motorlimitcurrent = 80;
+    public static final double krampratesec = 0;
+    public static final double kOuttakeKp = 0.001; 
+    public static final double kOuttakeKi = 0.000008; 
+    public static final double kOuttakeKd = 0;
+    public static final double kOuttakeKf = 0.000151*12;
+    public static final int kOuttakeSamples = 16;
+    public static final int kOuttakeAverageWindow = 20; // half of 40
+    public static final double ShooterTolerance = 10;
+    public static final double shootSpeed = 3001; 
+    public static final double passSpeed = 4000;
+  }
+  public static final class AutoAlignToHubConstants {
+    public static final double kTargetX = 0.67;
+    public static final double kTargetZ = 0.67;
+    public static final double kTargetRotation = 0;
+    public static final double kxkp = 0.5;
+    public static final double kykp = 0.5;
+    public static final double krkp = 0.015;
+    public static final double kxTolerance = 0.1;
+    public static final double kyTolerance = 0.1;
+    public static final double krTolerance = 1;
+  }
+
+
+  public static class LimelightConstants {
+    public static final double maxVisionDistanceMeters = 4.0; // maximum distance to accept vision measurements
+  }
+
   public static class ControllerConstants{
     //Button configurations for the XBox controller
     public static final int kButtonA = 1; //A
@@ -89,6 +132,9 @@ public final class Constants {
     public static final int MANUAL_CLIMBER_DOWN = pov180;
     /**manual kicker reversal */
     public static final int REVERSE_KICKER = pov90;
+
+    public static final int MANUAL_ROLLERS_TOGGLE = pov0;
+    public static final int MANUAL_KICKERS_TEST = pov180;
     
     public static final int TOGGLE_INTAKE_ROLLERS = kButtonRB;
     public static final int POV_RIGHT = pov90;
@@ -104,7 +150,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 1.5;//was 4.8
+    public static final double kMaxSpeedMetersPerSecond = 4.8;//was 4.8
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     // Chassis configuration
@@ -151,6 +197,7 @@ public final class Constants {
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
     public static final double kWheelDiameterMeters = 0.069;
+
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15
     // teeth on the bevel pinion
@@ -184,21 +231,30 @@ public final class Constants {
   }
 
   public static class IntakeConstants{
-
     public static final int kJointCANID = 14;
     public static final int kRollerCANID = 15;
     public static final double kjointkG = 0.18; //need to update
-    public static final double kjointKp = 0.024; //need to update
+    public static final double kjointKp = 0.020; //need to update
     public static final double kjointKi = 0;
     public static final double kjointKd = 0.0013;
     public static final double koutputMin = -0.3; //Intake TODO: See what value makes sense (do the math to see how fast it goes at full speed), start small and go bigger
     public static final double koutputMax = 0.3;
     public static final int kMaxCurrent = 80; //amps //Intake TODO: probably higher than 20 Amps given using Neo 1.1s
-    public static final double kretractedPostion = 100.09-20; //need to update
+    public static final double kretractedPostion = 75; //need to update
     public static final double kextendedPostion = 345.9; //need to update
-    public static final double kintakeRollerSpeed = -0.8; //need to update
+    public static final double kintakeRollerSpeed = -0.6; //need to update
     public static final double kintakeJointSpeed = 0.05; //need to update
-    //it retracts at 100.09 degrees
-    //
+  }
+
+  public static class AlignConstants {
+    public static final double kradius = 2.75;
+    public static final double khubY = 4.03; // meters
+    public static final double khubXBlue = 4.63;
+    public static final double khubXRed = 11.92;
+    public static final double kerrorXTolerance = 0.01;
+    public static final double kerrorYTolerance = 0.01;
+    public static final double kerrorAngleTolerance = 1;
+    public static final double kPassThreshold = 4; // meters to end of alliance zone
+    public static final double kFieldLength = 16.54; // meters, from end of alliance zone to end of alliance zone
   }
 }
