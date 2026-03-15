@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -17,7 +19,9 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 
 /**
@@ -77,8 +81,8 @@ public class IntakeSubsystem extends SubsystemBase
         .maxAcceleration(0) //we dont know what this does but it works //Not needed, can leave with set to zero
         .cruiseVelocity(0) //we dont know what this does but it works //Not needed, can leave with set to zero
         .allowedProfileError(0); //Not needed, can leave with set to zero
-
-        m_config_joint.idleMode(IdleMode.kBrake);
+        
+        m_config_joint.idleMode(IdleMode.kCoast);
         m_config_joint.smartCurrentLimit(Constants.IntakeConstants.kMaxCurrent); //Intake TODO: MaxCurrent can go up for the Neo 1.1, maybe 40 or 60?
         
         m_config_roller.idleMode(SparkBaseConfig.IdleMode.kBrake);
@@ -158,18 +162,23 @@ public class IntakeSubsystem extends SubsystemBase
       rollerCurrentPublisher.set(m_roller.getOutputCurrent());
       jointCurrentPublisher.set(m_joint.getOutputCurrent());
     }
-    public void toggleIntake()
+    public Command toggleIntake()
     {
+      
       if(isIntakeOut)
       {
+        return new InstantCommand(()->{
         reachGoal(Constants.IntakeConstants.kretractedPostion);
         spinRoller(0);
+        }
+        );
       }
       else
       {
-        reachGoal(Constants.IntakeConstants.kextendedPostion);
-        spinRoller(0);
-      }
+        return new InstantCommand(()->{reachGoal(Constants.IntakeConstants.kextendedPostion);})
+        .andThen(new WaitUntilCommand(m_joint.getClosedLoopController()::isAtSetpoint))
+        .andThen(new InstantCommand(()->spinRoller(Constants.IntakeConstants.kintakeRollerSpeed)));
+        }
     }
     public void toggleIntakeRoller()
     {

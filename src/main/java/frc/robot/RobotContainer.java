@@ -202,21 +202,21 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
       ));
     
     //Shooter PID testing binding, replace later with full shoot process
-    
+    /* 
         ButtonMappings.button(m_driverController,Constants.ControllerConstants.SHOOT_HUB)
       .whileTrue(new StartEndCommand(
       ()-> m_ShooterSubsystem.reachSpeed(Constants.OuttakeConstants.shootSpeed),
       () -> m_ShooterSubsystem.stopMotor(),
       m_ShooterSubsystem
     ));
-    
+    */
     //Composite Shooter Command -> runs all three systems at once to shoot balls
-    /*
+    
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.SHOOT_HUB)
       .whileTrue(Commands.sequence(
               spinUpCommand,
               new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
-              new InstantCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
+              new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
           ).finallyDo(
             () -> {
               m_ShooterSubsystem.stopMotor();
@@ -224,23 +224,19 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
               m_FeederSubsystem.setRollerSpeed(0);
             }
           ));
-      */
-          //What is this for? bound to 0?
-          /*
-    ButtonMappings.button(m_driverController, 0)
+                //What is this for? bound to 0?
+    /* 
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_HUB)
       .whileTrue(Commands.sequence(
         new InstantCommand(() -> m_ShooterSubsystem.reachSpeed(Constants.OuttakeConstants.shootSpeed)),
-        new AlignToHub(m_robotDrive),
-        new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
-        new InstantCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
+        new AlignToHub(m_robotDrive)
        ).finallyDo(
         () -> {
           m_ShooterSubsystem.stopMotor();
           m_FeederSubsystem.setKickerSpeed(0);
-          m_FeederSubsystem.setRollerSpeed(0);
         }
       ));
-          */
+    */
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_HUB)
     .whileTrue(new AlignToHub(m_robotDrive));
     // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_UP)
@@ -264,9 +260,9 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // TOGGLE INTAKE METHODS -> These should be the only intake methods left after testing
     
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
-      .whileTrue(new InstantCommand( ()->{
-        m_intake.toggleIntake();
-      },m_intake));
+      .whileTrue(
+        m_intake.toggleIntake()
+      );
        ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE_ROLLERS)
       .whileTrue(new InstantCommand( ()->{
         m_intake.toggleIntakeRoller();
@@ -327,6 +323,8 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
   }
   
   public BehaviorSelector passOrShootSelector() {
+    return BehaviorSelector.SHOOT;
+    /* 
     boolean isBlue = DriverStation.getAlliance().equals(DriverStation.Alliance.Blue);
     double threshold = isBlue ? Constants.AlignConstants.kPassThreshold : Constants.AlignConstants.kFieldLength - Constants.AlignConstants.kPassThreshold;
     if(m_robotDrive.getPose().getX()>threshold == isBlue)
@@ -337,5 +335,6 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     {
       return BehaviorSelector.SHOOT;
     }
+      */
   }
 }

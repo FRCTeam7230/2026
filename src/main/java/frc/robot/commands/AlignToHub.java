@@ -8,6 +8,11 @@ import java.util.Optional;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,9 +23,11 @@ import frc.robot.subsystems.DriveSubsystem;
 public class AlignToHub extends Command {
   /** Creates a new AlignToHub. */
   DriveSubsystem m_drive;
-  PIDController xController = new PIDController(0.5, 0, 0);
-  PIDController yController = new PIDController(0.5, 0, 0);
-  PIDController rotController = new PIDController(0.015, 0, 0);
+  PIDController xController = new PIDController(2, 0, 0.2);
+  PIDController yController = new PIDController(2, 0, 0.2);
+  PIDController rotController = new PIDController(0.005, 0, 0);
+  DoublePublisher distanceErrorPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Align Distance Error").publish(); 
+  StructPublisher<Pose2d> targetPosePublisher = NetworkTableInstance.getDefault().getStructTopic("Align target Pose", Pose2d.struct).publish();  
 
   public AlignToHub(DriveSubsystem drive) {
     m_drive = drive;
@@ -51,7 +58,8 @@ public class AlignToHub extends Command {
     
     double xSpeed = xController.calculate(errors[0]);
     double ySpeed = yController.calculate(errors[1]);
-    double rotSpeed= Math.max(Math.min(rotController.calculate(errors[2]),1.5), -1.5);
+    //double rotSpeed= Math.max(Math.min(rotController.calculate(errors[2]),1.5), -1.5);
+    double rotSpeed = rotController.calculate(errors[2]);
     SmartDashboard.putNumber("Rotation delivered", rotSpeed);
     m_drive.drive(-xSpeed, -ySpeed, -rotSpeed,true);
     
@@ -71,7 +79,7 @@ public class AlignToHub extends Command {
   public boolean isFinished() {
     if(xController.atSetpoint()&&yController.atSetpoint()&&rotController.atSetpoint())
     {
-      return true;
+      return false;
     }
     else
     {
@@ -102,21 +110,23 @@ public class AlignToHub extends Command {
         double distanceX = hubX - robotX;
         double distanceY = hubY - robotY;
         double distance = Math.sqrt( Math.pow( distanceX, 2) + Math.pow( distanceY, 2) );
-
+        double distanceError = radius-distance;
+        distanceErrorPublisher.set(distanceError);
         double errorX = distanceX * ( (distance - radius) / distance );
         double errorY = distanceY * ( (distance - radius) / distance );
         double targetAngle = Math.signum(distanceY) * Math.acos(distanceX / distance)*180/Math.PI;
         double errorAngle = targetAngle - pose.getRotation().getDegrees();
-
-    if (errorX < Constants.AlignConstants.kerrorXTolerance) {
+        Pose2d targetPose = pose.plus(new Transform2d(errorX,errorY,new Rotation2d(Math.toRadians(errorAngle))));
+        targetPosePublisher.set(targetPose);
+        if (Math.abs(errorX) < Constants.AlignConstants.kerrorXTolerance) {
       errors[0] = 0;
     }
     else {errors[0] = errorX;}
-    if (errorY < Constants.AlignConstants.kerrorYTolerance) {
+    if (Math.abs(errorY) < Constants.AlignConstants.kerrorYTolerance) {
       errors[1] = 0;
     }
     else {errors[1] = errorY;}
-    if (errorAngle < Constants.AlignConstants.kerrorAngleTolerance) {
+    if (Math.abs(errorAngle) < Constants.AlignConstants.kerrorAngleTolerance) {
       errors[2] = 0;
     }
     else {errors[2] = errorAngle;}
@@ -124,7 +134,7 @@ public class AlignToHub extends Command {
 
         SmartDashboard.putNumber("AlignToHub/ErrorX", errors[0]);
         SmartDashboard.putNumber("AlignToHub/ErrorY", errors[1]);
-        SmartDashboard.putNumber("AlignToHub/ErrorAngle", errors[2]);
+        SmartDashboard.putNumber("AlignToHub/ErrorAngle", errorAngle);
 
        SmartDashboard.putNumber("AlignToHub/RobotX", robotX);
         SmartDashboard.putNumber("AlignToHub/RobotY", robotY);

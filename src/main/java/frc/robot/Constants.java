@@ -146,7 +146,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 1.5;//was 4.8
+    public static final double kMaxSpeedMetersPerSecond = 4.8;//was 4.8
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     // Chassis configuration
@@ -243,12 +243,12 @@ public final class Constants {
   }
 
   public static class AlignConstants {
-    public static final double kradius = 2.98;
+    public static final double kradius = 2.75;
     public static final double khubY = 4.03; // meters
     public static final double khubXBlue = 4.63;
     public static final double khubXRed = 11.92;
-    public static final double kerrorXTolerance = 0.1;
-    public static final double kerrorYTolerance = 0.1;
+    public static final double kerrorXTolerance = 0.01;
+    public static final double kerrorYTolerance = 0.01;
     public static final double kerrorAngleTolerance = 1;
     public static final double kPassThreshold = 4; // meters to end of alliance zone
     public static final double kFieldLength = 16.54; // meters, from end of alliance zone to end of alliance zone
