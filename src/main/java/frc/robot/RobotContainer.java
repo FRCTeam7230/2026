@@ -33,6 +33,7 @@ import frc.robot.Constants.OuttakeConstants;
 import frc.robot.commands.AlignToHub;
 import frc.robot.commands.AlignToPass;
 import frc.robot.commands.AutoShooterCommand;
+import frc.robot.commands.UnjamHopper;
 //import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
@@ -267,6 +268,9 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
       .whileTrue(new InstantCommand( ()->{
         m_intake.toggleIntakeRoller();
       },m_intake));
+
+    ButtonMappings.button(m_driverController, Constants.ControllerConstants.UNJAM_HOPPER)
+      .whileTrue(new UnjamHopper(m_FeederSubsystem));
     
   }
 
