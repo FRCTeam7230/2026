@@ -9,9 +9,9 @@ import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.math.util.Units;
 
 public class AlignToBump extends Command{//This is the better edition
-    PIDController rotController = new PIDController(0.007, 0, 0);
-    PIDController yController = new PIDController(1, 0, 0);
-    PIDController xController = new PIDController(1, 0, 0);
+    PIDController rotController = new PIDController(0.05, 0, 0.002);//was 0.007
+    PIDController yController = new PIDController(3, 0, 0.03);
+    PIDController xController = new PIDController(3, 0, 0.03);
     DriveSubsystem m_drive;
     double robotDiagonalLength = 51;//was 38.3813;
     //double robotDiagonalLength = Units.inchesToMeters(42.426);
@@ -70,21 +70,46 @@ public class AlignToBump extends Command{//This is the better edition
         }
          currentY = m_drive.getPose().getY();
          double tolerance = 5;//inches
-        if (currentY<Units.inchesToMeters(50.67+12+robotDiagonalLength/2+tolerance)) {//38.3813 in. robot diagonal length115
-            yController.setSetpoint(Units.inchesToMeters(50.67+12+robotDiagonalLength/2+tolerance));
-        }
-        else if (currentY>Units.inchesToMeters(50.67+12+73-robotDiagonalLength/2-tolerance)&&currentY<Units.inchesToMeters(158.84)){
-            yController.setSetpoint(Units.inchesToMeters(50.67+12+73-robotDiagonalLength/2-tolerance));       
-        }
-        else if (currentY<Units.inchesToMeters(50.67+12+73+47+robotDiagonalLength/2+tolerance)&&currentY>Units.inchesToMeters(158.84)){
-            yController.setSetpoint(Units.inchesToMeters(50.67+12+73+47+robotDiagonalLength/2+tolerance));
-        }
-        else if (currentY>Units.inchesToMeters(50.67+12+73+47+73-robotDiagonalLength/2-tolerance)){
-            yController.setSetpoint(Units.inchesToMeters(50.67+12+73+47+73-robotDiagonalLength/2-tolerance));
+        // if (currentY<Units.inchesToMeters(50.67+12+robotDiagonalLength/2+tolerance)) {//38.3813 in. robot diagonal length115
+        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+robotDiagonalLength/2+tolerance));
+        // }
+        // else if (currentY>Units.inchesToMeters(50.67+12+73-robotDiagonalLength/2-tolerance)&&currentY<Units.inchesToMeters(158.84)){
+        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+73-robotDiagonalLength/2-tolerance));       
+        // }
+        // else if (currentY<Units.inchesToMeters(50.67+12+73+47+robotDiagonalLength/2+tolerance)&&currentY>Units.inchesToMeters(158.84)){
+        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+73+47+robotDiagonalLength/2+tolerance));
+        // }
+        // else if (currentY>Units.inchesToMeters(50.67+12+73+47+73-robotDiagonalLength/2-tolerance)){
+        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+73+47+73-robotDiagonalLength/2-tolerance));
+        // } else {
+        //     yController.setSetpoint(currentY);
+        // }
+        // yController.setTolerance(0.2);
+        //99.17
+
+        // if (currentY<Units.inchesToMeters(50.67+12+robotDiagonalLength/2+tolerance)) {//38.3813 in. robot diagonal length115
+        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+robotDiagonalLength/2+tolerance));
+        // }
+        // else if (currentY>Units.inchesToMeters(50.67+12+73-robotDiagonalLength/2-tolerance)&&currentY<Units.inchesToMeters(158.84)){
+        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+73-robotDiagonalLength/2-tolerance));       
+        // }
+        // else if (currentY<Units.inchesToMeters(50.67+12+73+47+robotDiagonalLength/2+tolerance)&&currentY>Units.inchesToMeters(158.84)){
+        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+73+47+robotDiagonalLength/2+tolerance));
+        // }
+        // else if (currentY>Units.inchesToMeters(50.67+12+73+47+73-robotDiagonalLength/2-tolerance)){
+        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+73+47+73-robotDiagonalLength/2-tolerance));
+        // } else {
+        //     yController.setSetpoint(currentY);
+        // }
+        // yController.setTolerance(0.2); 
+
+        if (currentY>Units.inchesToMeters(158.84)){
+            yController.setSetpoint(Units.inchesToMeters(218.84));
         } else {
-            yController.setSetpoint(currentY);
+            yController.setSetpoint(Units.inchesToMeters(99.17));
         }
-        yController.setTolerance(0.2);
+        yController.setTolerance(Units.inchesToMeters(7));
+        
 
         //center of field: 325.06 
         //Center of blue bump: 181.56
