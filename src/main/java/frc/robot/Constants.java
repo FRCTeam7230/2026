@@ -26,6 +26,8 @@ public final class Constants {
   public static final double movementDivider = 4; // from 2025 code
   public static final double rotateDivider = 5;
 
+
+
   public static final class FeederConstants {
     public static final int rollerCANID = 13;
     public static final int kickerCANID = 12;
@@ -33,6 +35,7 @@ public final class Constants {
     public static final double kfeederrampratesec = 0;
     public static final double rollerSpeed = -1; //Note: Rollers should spin slower than kicker (check gearing on each)
     public static final double kickerSpeed = 1; //Note: kicker should have a slower linear speed than shooter 
+    public static final double kfeederrollerunjamspeed = 0.5; //speed to run feeder rollers at to unjam, should be opposite direction of normal roller speed
   }
 
   public static class OuttakeConstants {
@@ -109,9 +112,9 @@ public final class Constants {
     /** B button */
     public static final int ROBOT_RELATIVE = kButtonB;
     /** X button */
-    public static final int BRAKE_BUTTON = kButtonX;
+    public static final int BRAKE_BUTTON = kButtonScreenshare;//was button 3
     /** Y button */
-    public static final int CLIMB = kButtonY;
+    //public static final int CLIMB = kButtonY;
     /** Left button */
     public static final int ALIGN_HUB = kButtonLB;
     /** Right button */
@@ -119,6 +122,8 @@ public final class Constants {
     /** Menu button */
     public static final int ZERO_HEADING_BUTTON = kButtonMenu;
 
+    public static final int ALIGN_TO_BUMP = kButtonA;
+    public static final int BRING_ROBOT = kButtonX;
     /** Left trigger, axis 2 */
 
     public static final int TOGGLE_INTAKE = leftTrigger;
@@ -141,6 +146,8 @@ public final class Constants {
     public static final int MOVE_XAXIS = leftStick_XAXIS;
     public static final int MOVE_YAXIS = leftStick_YAXIS;
     public static final int MOVE_ZAXIS = rightStick_XAXIS;
+
+    public static final int UNJAM_HOPPER = pov270;
   }
 
   public static final class DriveConstants {
@@ -192,7 +199,7 @@ public final class Constants {
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.069;
+    public static final double kWheelDiameterMeters = 0.073;
 
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15
@@ -240,6 +247,7 @@ public final class Constants {
     public static final double kextendedPostion = 345.9; //need to update
     public static final double kintakeRollerSpeed = -0.6; //need to update
     public static final double kintakeJointSpeed = 0.05; //need to update
+	public static double kpositionTolerance = 3;
   }
 
   public static class AlignConstants {
