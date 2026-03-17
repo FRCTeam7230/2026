@@ -176,9 +176,9 @@ public class IntakeSubsystem extends SubsystemBase
       else
       {
         return new InstantCommand(()->{reachGoal(Constants.IntakeConstants.kextendedPostion);})
-        .andThen(new WaitUntilCommand(m_joint.getClosedLoopController()::isAtSetpoint))
+        .andThen(new WaitUntilCommand(()-> {return fullyExtended();}))
         .andThen(new InstantCommand(()->spinRoller(Constants.IntakeConstants.kintakeRollerSpeed)));
-        }
+      }
     }
     public void toggleIntakeRoller()
     {
@@ -198,6 +198,15 @@ public class IntakeSubsystem extends SubsystemBase
     public boolean getRollerSpinning()
     {
       return isRollerSpinning;
+    }
+    public boolean fullyExtended()
+    {
+      if (Math.abs(m_jointEncoder.getPosition() - Constants.IntakeConstants.kextendedPostion) < Constants.IntakeConstants.kpositionTolerance) {
+       return true;
+      }
+      else {
+        return false;
+      }
     }
 
 
