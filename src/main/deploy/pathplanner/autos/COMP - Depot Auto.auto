@@ -5,22 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Rush to Depot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake Fuel"
-                }
-              }
-            ]
+            "pathName": "Rush to Depot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Fuel"
           }
         },
         {
@@ -30,22 +23,15 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Depot to shooting"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stop Intake Roller"
-                }
-              }
-            ]
+            "pathName": "Intake for Depot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot to shooting"
           }
         },
         {

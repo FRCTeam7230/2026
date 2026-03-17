@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.4,
-        "y": 6.15
+        "x": 0.701,
+        "y": 6.9237771215372454
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4037986995704212,
-        "y": 5.753538990895731
+        "x": 1.0577108433734939,
+        "y": 7.00733734939759
       },
       "isLocked": false,
-      "linkedName": "Depot"
+      "linkedName": "AAAAAAAAAAA"
     },
     {
       "anchor": {
@@ -20,15 +20,20 @@
         "y": 5.619985734664765
       },
       "prevControl": {
-        "x": 0.8389106362001832,
-        "y": 6.041643177935274
+        "x": 1.6368795180722886,
+        "y": 6.756
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Depot Shooting"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.4305084745762706,
+      "rotationDegrees": -90.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
