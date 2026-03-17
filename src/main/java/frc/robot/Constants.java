@@ -244,6 +244,7 @@ public final class Constants {
     public static final double kextendedPostion = 345.9; //need to update
     public static final double kintakeRollerSpeed = -0.6; //need to update
     public static final double kintakeJointSpeed = 0.05; //need to update
+    public static final double kpositionTolerance = 2.0; //need to update
   }
 
   public static class AlignConstants {
