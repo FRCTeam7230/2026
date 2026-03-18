@@ -240,9 +240,9 @@ public final class Constants {
     public static final double koutputMin = -0.3; //Intake TODO: See what value makes sense (do the math to see how fast it goes at full speed), start small and go bigger
     public static final double koutputMax = 0.3;
     public static final int kMaxCurrent = 80; //amps //Intake TODO: probably higher than 20 Amps given using Neo 1.1s
-    public static final double kretractedPostion = 75; //need to update
-    public static final double kextendedPostion = 345.9; //need to update
-    public static final double kintakeRollerSpeed = -0.6; //need to update
+    public static final double kretractedPostion = 70; //need to update
+    public static final double kextendedPostion = 340; //need to update
+    public static final double kintakeRollerSpeed = -1; //need to update
     public static final double kintakeJointSpeed = 0.05; //need to update
     public static final double kpositionTolerance = 2.0; //need to update
   }

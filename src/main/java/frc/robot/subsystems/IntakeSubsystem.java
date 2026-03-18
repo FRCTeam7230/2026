@@ -16,6 +16,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -53,6 +54,7 @@ public class IntakeSubsystem extends SubsystemBase
   DoublePublisher rollerCurrentPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/RollerCurrent").publish();
   DoublePublisher jointCurrentPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/JointCurrent").publish();
   DoublePublisher jointVoltagePublisher = NetworkTableInstance.getDefault().getDoubleTopic("Intake/JointVoltage").publish();
+  BooleanPublisher isIntakeOutPublisher = NetworkTableInstance.getDefault().getBooleanTopic("Intake/IsIntakeOut").publish();
   /**
    * Feedforward class that accounts for gravity for the intake PID 
   */
@@ -161,23 +163,28 @@ public class IntakeSubsystem extends SubsystemBase
       targetPosition_publisher.set(desiredAngle);
       rollerCurrentPublisher.set(m_roller.getOutputCurrent());
       jointCurrentPublisher.set(m_joint.getOutputCurrent());
+      isIntakeOutPublisher.set(isIntakeOut);
     }
-    public Command toggleIntake()
+    public Command toggleIntake(boolean intakeOut)
     {
       
-      if(isIntakeOut)
+      if(intakeOut)
       {
         return new InstantCommand(()->{
         reachGoal(Constants.IntakeConstants.kretractedPostion);
+        isIntakeOut = false;
         spinRoller(0);
         }
+        ,this
         );
       }
       else
       {
-        return new InstantCommand(()->{reachGoal(Constants.IntakeConstants.kextendedPostion);})
+        return new InstantCommand(()->{
+        reachGoal(Constants.IntakeConstants.kextendedPostion);
+        isIntakeOut = true;},this)
         .andThen(new WaitUntilCommand(()-> {return fullyExtended();}))
-        .andThen(new InstantCommand(()->spinRoller(Constants.IntakeConstants.kintakeRollerSpeed)));
+        .andThen(new InstantCommand(()->spinRoller(Constants.IntakeConstants.kintakeRollerSpeed),this));
       }
     }
     public void toggleIntakeRoller()

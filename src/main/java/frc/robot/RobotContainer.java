@@ -85,12 +85,18 @@ public class RobotContainer {
   //aligns based on selector
   private Command alignCommand;
 
+  private Command intakeToggleCommand;
+
   private enum BehaviorSelector
   {
     SHOOT,
     PASS
   }
-   
+  private enum IntakeSelector
+  {
+    OUT,
+    IN
+  }
   public RobotContainer() {
     
     m_ShooterSubsystem = new ShooterSubsystem();
@@ -153,6 +159,13 @@ public class RobotContainer {
         Map.entry(BehaviorSelector.PASS, new AlignToPass(m_robotDrive))
       ),
       this::passOrShootSelector
+    );
+    intakeToggleCommand = new SelectCommand<>(
+      Map.ofEntries(
+        Map.entry(IntakeSelector.OUT, m_intake.toggleIntake(true)),
+        Map.entry(IntakeSelector.IN, m_intake.toggleIntake(false))
+      ),
+      this::selectIntake
     );
     // Configure the button bindings
     configureButtonBindings();
@@ -290,9 +303,10 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // TOGGLE INTAKE METHODS -> These should be the only intake methods left after testing
     
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
-      .whileTrue(
-        m_intake.toggleIntake()
+      .onTrue(
+        intakeToggleCommand
       );
+
        ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE_ROLLERS)
       .whileTrue(new InstantCommand( ()->{
         m_intake.toggleIntakeRoller();
@@ -366,5 +380,16 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
       return BehaviorSelector.SHOOT;
     }
       */
+  }
+  public IntakeSelector selectIntake()
+  {
+    if(m_intake.getIntakeOut())
+    {
+      return IntakeSelector.OUT;
+    }
+    else
+    {
+      return IntakeSelector.IN;
+    }
   }
 }
