@@ -253,7 +253,7 @@ public final class Constants {
 
   public static final class LEDConstants {
 
-    //2 HZ MAXIMUM
+    //Gamerule: 2 HZ MAXIMUM 
 
     public static final int kPort = 0; //update
     public static final int kLEDLength = 240; 
@@ -262,14 +262,6 @@ public final class Constants {
     public static final int kTopStartIndex = kBottomEndIndex + 1; 
     public static final int kTopEndIndex = kLEDLength-1; 
     public static final int kTopMiddleIndex = (kTopStartIndex + kTopEndIndex)/2;
-    
-    public static final Color kNiceYellow = new Color("#DEC95D"); 
-    public static final Color kBrightNiceYellow = new Color("#FFE666");
-    public static final Color kGreen = new Color("#32CD32");
-    public static final Color kOrange = new Color("#FF8D54");
-    public static final Color kBlue = new Color("#18399b");
-    public static final Color kRed = new Color("#B20000"); 
-    public static final Color kPurple = Color.kMediumPurple;
 
     // custom gradient
     public static final double khalfPercentageFromBottom = ((25.0)/100)/2;
@@ -290,6 +282,14 @@ public final class Constants {
     public static final double kblinkingFrequency = 2; //hz
     public static final double kpercentageOfTimeYelpurp = 0.5;
 
+    //colors
+    public static final Color kNiceYellow = new Color("#DEC95D"); 
+    public static final Color kBrightNiceYellow = new Color("#FFE666");
+    public static final Color kGreen = new Color("#32CD32");
+    public static final Color kOrange = new Color("#FF8D54");
+    public static final Color kBlue = new Color("#18399b");
+    public static final Color kRed = new Color("#B20000"); 
+    public static final Color kPurple = Color.kMediumPurple;
 
     //HSV range:
     //H: 0-180
@@ -301,26 +301,24 @@ public final class Constants {
     public static final int kPurpleS = 112;
     public static final int kPurpleV = 219;
     // yellow hsv
-    public static final int kYellowH = 28; //0-180
-    public static final int kYellowS = 153; //0-255
-    public static final int kYellowV = 255; //0-255
+    public static final int kYellowH = 28;
+    public static final int kYellowS = 153;
+    public static final int kYellowV = 255;
     // orange hsv
     public static final int kOrangeH = 11;
     public static final int kOrangeS = 169;
     public static final int kOrangeV = 255;
-    
+    //blue hsv
     public static final int kBlueH = 113;
     public static final int kBlueS = 215;
     public static final int kBlueV = 200;
-    
+    //red hsv
     public static final int kRedH = 0;
     public static final int kRedS = 255;
     public static final int kRedV = 178;
-
+    //white hsv
     public static final int kWhiteH = 0;
     public static final int kWhiteS = 0;
     public static final int kWhiteV = 255;
-
-    
   }
 }

@@ -42,7 +42,6 @@ public class LEDSubsystem extends SubsystemBase {
 
   Color defaultHubColor;
 
-
   BooleanPublisher isOverridenPublisher = NetworkTableInstance.getDefault().getBooleanTopic("LEDSubsystem/isOverriden").publish();
   IntegerPublisher currentStatePublisher = NetworkTableInstance.getDefault().getIntegerTopic("LEDSubsystem/CurrentState").publish();
   DoublePublisher robotTimerPublisher = NetworkTableInstance.getDefault().getDoubleTopic("LEDSubsystem/RobotTimer").publish();
@@ -69,6 +68,26 @@ public class LEDSubsystem extends SubsystemBase {
     m_LED.setData(m_LEDBuffer);
     m_LED.start();
     robotTimer.start();
+  }
+
+  /** method to set boolean isOverriden
+    @param over is the value to set isOverriden to, true when button is pressed
+   */
+  public void setIsOverriden(boolean over) {
+    isOverriden = over;
+  }
+
+  /** gets value of boolean isOverriden */
+  public boolean getIsOverriden() {
+    return isOverriden;
+  }
+
+  public void setCurrentState(int state) {
+    currentState = state;
+  }
+
+  public int getCurrentStates() {
+    return currentState;
   }
 
   /** used to make solid color based on input
@@ -184,18 +203,6 @@ public class LEDSubsystem extends SubsystemBase {
   }
   
 
-  /** method to set boolean isOverriden
-    @param over is the value to set isOverriden to, true when button is pressed
-   */
-  public void setIsOverriden(boolean over) {
-    isOverriden = over;
-  }
-
-  /** gets value of boolean isOverriden */
-  public boolean getIsOverriden() {
-    return isOverriden;
-  }
-
   /**current state = 6, used for shooting(yellow sinusoidal pattern) */
   public void shootingPattern() { 
     currentState = 6;
@@ -227,7 +234,6 @@ public class LEDSubsystem extends SubsystemBase {
     setCustomGradientToBuffer(h, s, v, Constants.LEDConstants.kshootingMovingFrequency, Constants.LEDConstants.kshootingRepeatTimes);
     m_LED.setData(m_LEDBuffer);
   }
-
 
   /** current state = 8, used for passing but mirrored on top and bottom(also blue sinusoidal pattern) */
   public void passingPatternMirroredPulse(int hubState) {
@@ -419,23 +425,24 @@ public class LEDSubsystem extends SubsystemBase {
     m_LED.setData(m_LEDBuffer);
   }
 
+  //GET RGB VALUES FROM 
+
   //commands
 
   /** If the robot is aligning to hub, LEDs are green */
   public Command whileAlignSolidGreen() { //call with aligntohub alongwith i think
-    return startEnd(()->{setIsOverriden(true); solidGreenTop();}, ()->{setIsOverriden(false);});
+    return startEnd(()->{setIsOverriden(true); setCurrentState(3);}, ()->{setIsOverriden(false);});
   }
 
   /** If the robot is shooting, LEDs are yellow sinusoidal pattern */
   public Command whileShootingPattern() { //call with shooting trigger is held alongwith i think
-    return startEnd(()->{setIsOverriden(true); shootingPattern();}, ()->{setIsOverriden(false);}); //THIS RUNS SHOOTINGPATTERN ONCE; NEED TO CHAGNE SO IT RUNS EVERY PERIODIC. MAKE IT CHANGE CURRENTPHASE INSTEAD OF CALLING PATTERN
+    return startEnd(()->{setIsOverriden(true); setCurrentState(6);}, ()->{setIsOverriden(false);}); 
   }  
   /** If the robot is intaking, LEDs are orange sinusoidal pattern */
   public Command whileIntakingPattern() { //call with shooting trigger is held alongwith i think
-    return startEnd(()->{setIsOverriden(true); intakePattern();}, ()->{setIsOverriden(false);}); //THIS RUNS SHOOTINGPATTERN ONCE; NEED TO CHAGNE SO IT RUNS EVERY PERIODIC. MAKE IT CHANGE CURRENTPHASE INSTEAD OF CALLING PATTERN
+    return startEnd(()->{setIsOverriden(true); setCurrentState(7);}, ()->{setIsOverriden(false);}); 
   }
 
-  boolean runOnce = true;
 
   @Override
   public void periodic() {
@@ -504,19 +511,19 @@ public class LEDSubsystem extends SubsystemBase {
     else if (currentState == 7) {
       intakePattern();
     }
+    //third priority
     else if (currentState == 8) {
       passingPattern(hubState);
     }
     */
 
-    
-    
-    
-
     isOverridenPublisher.set(isOverriden);
     currentStatePublisher.set(currentState);
     robotTimerPublisher.set(robotTimer.get());
     timerIsRunningPublisher.set(robotTimer.isRunning());
+    firstLEDR.set(m_LEDBuffer.getRed(0));
+    firstLEDG.set(m_LEDBuffer.getGreen(0));
+    firstLEDB.set(m_LEDBuffer.getBlue(0));
 
   }
 }
