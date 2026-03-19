@@ -121,9 +121,9 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("Shoot",
         Commands.sequence(
+          new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.shootSpeed),
           new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
-              new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed)),
-              new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.shootSpeed)
+              new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
               
           ).finallyDo(
             () -> {
