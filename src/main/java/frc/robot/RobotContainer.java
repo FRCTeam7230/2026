@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.Map;
+import java.util.Optional;
 
 import javax.lang.model.util.ElementScanner14;
 
@@ -118,13 +119,22 @@ public class RobotContainer {
         
     // ));
 
-        // NamedCommands.registerCommand("Shoot",
-        //         Commands.sequence(
-        //         new InstantCommand( ()->{m_intake.toggleIntake();},  m_intake),
-        //         new WaitCommand(10))//set a timer
-        //         .repeatedly()
-        // );
-        /*
+        NamedCommands.registerCommand("Shoot",
+        Commands.sequence(
+          new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
+              new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed)),
+              new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.shootSpeed)
+              
+          ).finallyDo(
+            () -> {
+              m_ShooterSubsystem.stopMotor();
+              m_FeederSubsystem.setKickerSpeed(0);
+              m_FeederSubsystem.setRollerSpeed(0);
+            }
+          ));
+                
+        
+        
         NamedCommands.registerCommand("Intake Fuel", 
                 new InstantCommand(()->{
                    m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);
@@ -132,7 +142,7 @@ public class RobotContainer {
         );
         NamedCommands.registerCommand("Stop Intake Roller", 
                 new InstantCommand(()->{ m_intake.spinRoller(0); }, m_intake)
-        );*/
+        );
         NamedCommands.registerCommand("Intake From Depot", 
                 ///Commands.runOnce(drive::intakeStop, drive)
                 Commands.run(()->{m_robotDrive.drive(-0.2,0,0,false);},m_robotDrive).withTimeout(4)//1 meter, plus some extra
@@ -183,11 +193,16 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Configure default commands
     m_robotDrive.setDefaultCommand(
         new RunCommand(
-            () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_YAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_YAXIS)), OIConstants.kDriveDeadband), //Y
-                -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_XAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_XAXIS)), OIConstants.kDriveDeadband), //X
+            () -> 
+            {
+                  double flipFactor = (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Red))&&fieldRelative)?-1:1;
+
+              m_robotDrive.drive(
+                -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_YAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_YAXIS))*flipFactor, OIConstants.kDriveDeadband), //Y
+                -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_XAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_XAXIS))*flipFactor, OIConstants.kDriveDeadband), //X
                 -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS)), OIConstants.kDriveDeadband), //Z
-                fieldRelative),
+                fieldRelative);
+            },
         m_robotDrive));
     
     //Command extendIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kextendedPostion);
@@ -225,7 +240,7 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
               new InstantCommand(() -> mode_publisher.set(fieldRelative))
           ));
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_TO_BUMP)
-    .whileTrue(new AlignToBump(m_robotDrive, isCompetition));
+    .whileTrue(new AlignToBump(m_robotDrive, false));
   //NEW SUBSYSTEM CONTROLS
     //Feeder rolllers manual on/off
     

@@ -23,9 +23,9 @@ import frc.robot.subsystems.DriveSubsystem;
 public class AlignToHub extends Command {
   /** Creates a new AlignToHub. */
   DriveSubsystem m_drive;
-  PIDController xController = new PIDController(2, 0, 0.2);
-  PIDController yController = new PIDController(2, 0, 0.2);
-  PIDController rotController = new PIDController(0.005, 0, 0);
+  PIDController xController = new PIDController(Constants.AlignConstants.kAlignP, Constants.AlignConstants.kAlignI, Constants.AlignConstants.kAlignD);
+  PIDController yController = new PIDController(Constants.AlignConstants.kAlignP, Constants.AlignConstants.kAlignI, Constants.AlignConstants.kAlignD);
+  PIDController rotController = new PIDController(Constants.AlignConstants.kRotAlignP, Constants.AlignConstants.kRotAlignI, Constants.AlignConstants.kRotAlignD);
   DoublePublisher distanceErrorPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Align Distance Error").publish(); 
   StructPublisher<Pose2d> targetPosePublisher = NetworkTableInstance.getDefault().getStructTopic("Align target Pose", Pose2d.struct).publish();  
 

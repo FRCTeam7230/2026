@@ -196,7 +196,7 @@ public final class Constants {
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.073;
+    public static final double kWheelDiameterMeters = 0.073; //maybe 0.0354 *2
 
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15
@@ -257,5 +257,11 @@ public final class Constants {
     public static final double kerrorAngleTolerance = 1;
     public static final double kPassThreshold = 4; // meters to end of alliance zone
     public static final double kFieldLength = 16.54; // meters, from end of alliance zone to end of alliance zone
+    public static final double kAlignP = 0.5;
+    public static final double kAlignI = 0;
+    public static final double kAlignD = 0.02;
+    public static final double kRotAlignP = 0.005;
+    public static final double kRotAlignI = 0;
+    public static final double kRotAlignD = 0;
   }
 }

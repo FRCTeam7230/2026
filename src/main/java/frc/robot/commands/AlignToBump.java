@@ -9,9 +9,9 @@ import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.math.util.Units;
 
 public class AlignToBump extends Command{//This is the better edition
-    PIDController rotController = new PIDController(0.05, 0, 0.002);//was 0.007
-    PIDController yController = new PIDController(3, 0, 0.03);
-    PIDController xController = new PIDController(3, 0, 0.03);
+    PIDController xController = new PIDController(Constants.AlignConstants.kAlignP, Constants.AlignConstants.kAlignI, Constants.AlignConstants.kAlignD);
+  PIDController yController = new PIDController(Constants.AlignConstants.kAlignP, Constants.AlignConstants.kAlignI, Constants.AlignConstants.kAlignD);
+  PIDController rotController = new PIDController(Constants.AlignConstants.kRotAlignP, Constants.AlignConstants.kRotAlignI, Constants.AlignConstants.kRotAlignD);
     DriveSubsystem m_drive;
     double robotDiagonalLength = 51;//was 38.3813;
     //double robotDiagonalLength = Units.inchesToMeters(42.426);
@@ -106,7 +106,7 @@ public class AlignToBump extends Command{//This is the better edition
         if (currentY>Units.inchesToMeters(158.84)){
             yController.setSetpoint(Units.inchesToMeters(218.84));
         } else {
-            yController.setSetpoint(Units.inchesToMeters(99.17));
+            yController.setSetpoint(Units.inchesToMeters(99.17+3));
         }
         yController.setTolerance(Units.inchesToMeters(7));
         
@@ -168,6 +168,9 @@ public class AlignToBump extends Command{//This is the better edition
         SmartDashboard.putNumber("AlignToBump/Target Angle", rotController.getSetpoint());
         SmartDashboard.putNumber("AlignToBump/Target Y", yController.getSetpoint());
             SmartDashboard.putNumber("AlignToBump/Target X", xController.getSetpoint());
+            SmartDashboard.putData("AlignToBump/xController", xController);
+            SmartDashboard.putData("AlignToBump/yController", yController);
+            SmartDashboard.putData("AlignToBump/rotController", rotController);
     }
    
     @Override
@@ -199,8 +202,8 @@ public class AlignToBump extends Command{//This is the better edition
 
                 m_drive.drive(xSpeed, ySpeed, rotSpeed, true);
                 if (Math.abs(rotController.getError())<2*1.5&&Math.abs(m_drive.getTurnRate())<0.018&&yController.atSetpoint()&&xController.atSetpoint()){ //change turn rate to115 1 deg.
-                    //drivingOverTheBumpDirectionMode = findDrivingDirection();//2, 0.02
-                    drivingOverTheBumpDirectionMode = 5;
+                    drivingOverTheBumpDirectionMode = findDrivingDirection();//2, 0.02
+                    //drivingOverTheBumpDirectionMode = 50;
                 }
         }
     }

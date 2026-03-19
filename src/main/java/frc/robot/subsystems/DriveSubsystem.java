@@ -393,7 +393,6 @@ public class DriveSubsystem extends SubsystemBase {
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     // Convert the commanded speeds into the correct units for the drivetraina
 
-
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     xSpeedDeliveredPublisher.set(xSpeedDelivered);
@@ -401,9 +400,9 @@ public class DriveSubsystem extends SubsystemBase {
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
     xSpeedDelivered = driveLimitX.calculate(xSpeedDelivered);
     ySpeedDelivered = driveLimitY.calculate(ySpeedDelivered);
-    rotDelivered = driveLimitRot.calculate(rotDelivered);
+    rotDelivered = driveLimitRot.calculate(rotDelivered);               
 
-    xSpeedDelivered = driveLimitX.calculate(xSpeedDelivered);
+    xSpeedDelivered = driveLimitX.calculate(xSpeedDelivered);                              
     ySpeedDelivered = driveLimitY.calculate(ySpeedDelivered);
     rotDelivered = driveLimitRot.calculate(rotDelivered);
 
