@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 5.721084165477888,
-        "y": 5.283580599144081
+        "y": 5.529
       },
       "prevControl": null,
       "nextControl": {
         "x": 4.116532816029492,
-        "y": 5.242985718992984
+        "y": 5.4884051198489034
       },
       "isLocked": false,
       "linkedName": "Bump Auto Neutral Zone"
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 3.5820120481927713,
-        "y": 5.28
+        "y": 5.529
       },
       "prevControl": {
         "x": 4.710211067225467,
-        "y": 5.271599748079408
+        "y": 5.520599748079408
       },
       "nextControl": null,
       "isLocked": false,
