@@ -131,7 +131,7 @@ public final class Constants {
     /**Manual Climber down */
     public static final int MANUAL_CLIMBER_DOWN = pov180;
     /**manual kicker reversal */
-    public static final int REVERSE_KICKER = pov90;
+    public static final int REVERSE_ALL = pov90;
 
     public static final int MANUAL_ROLLERS_TOGGLE = pov0;
     public static final int MANUAL_KICKERS_TEST = pov180;
