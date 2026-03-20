@@ -11,6 +11,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
@@ -112,6 +113,21 @@ public class AlignToHub extends Command {
         else {
             hubX = hubXRed;
         }
+
+        // I think I need a picture to understand the method you used to calculate align to HUB below
+        // I added how I would have done it below. We can compare later
+        // START How Alex would have done it
+        // Translation2d hubPos = new Translation2d(hubX,hubY);                      // Get hub Position vector
+        // Translation2d r_hub2robot = new Translation2d(robotX-hubX,  robotY-hubY); // r_Hub2robot = r_robot-r_hub
+        // Translation2d r_hub2robot_uv = r_hub2robot.div(r_hub2robot.getNorm());    // Get hub to robot unit vector
+        // Translation2d r_hub2target = r_hub2robot_uv.times(Constants.AlignConstants.kradius); // Get hub to target position with uv and desired radius
+        // Translation2d targetPosition = new Translation2d(hubX+r_hub2target.getX(),  hubY+r_hub2target.getY()); // r_target = r_hub+r_hub2target 
+        // double errorX = targetPosition.getX()-pose.getX(); //Calcualte errors
+        // double errorY = targetPosition.getY()-pose.getY(); //Calcualte errors
+        // Rotation2d targetAngle = new Rotation2d(r_hub2robot_uv.getX(),r_hub2robot_uv.getY()); //use the hub2robot uv to get the angle, flip signs if neccesary 
+        // double errorAngle = targetAngle.getDegrees() - pose.getRotation().getDegrees();
+        // Pose2d targetPose = new Pose2d(targetPosition,targetAngle);
+        // END How Alex would have done it 
 
         double distanceX = hubX - robotX;
         double distanceY = hubY - robotY;
