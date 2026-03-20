@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.Optional;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -28,7 +29,7 @@ public class AlignToHub extends Command {
   PIDController rotController = new PIDController(Constants.AlignConstants.kRotAlignP, Constants.AlignConstants.kRotAlignI, Constants.AlignConstants.kRotAlignD);
   DoublePublisher distanceErrorPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Align Distance Error").publish(); 
   StructPublisher<Pose2d> targetPosePublisher = NetworkTableInstance.getDefault().getStructTopic("Align target Pose", Pose2d.struct).publish();  
-
+  Debouncer alignDebouncer;
   public AlignToHub(DriveSubsystem drive) {
     m_drive = drive;
     m_drive.ApplyMegatagFilter();
@@ -40,18 +41,23 @@ public class AlignToHub extends Command {
     yController.setTolerance(Constants.AlignConstants.kerrorYTolerance);
     rotController.setTolerance(Constants.AlignConstants.kerrorAngleTolerance);
     rotController.enableContinuousInput(-180, 180);
+    alignDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    SmartDashboard.putData("Align to Hub PID/xController", xController);
+    SmartDashboard.putData("Align to Hub PID/yController", yController);
+    SmartDashboard.putData("Align to Hub PID/rotController", rotController);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     
-    
+
     Pose2d currentPose = m_drive.getPose();
     double[] errors = CalculateHubPID(currentPose);
     SmartDashboard.putNumberArray("AlignErrors",errors);
@@ -77,9 +83,9 @@ public class AlignToHub extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(xController.atSetpoint()&&yController.atSetpoint()&&rotController.atSetpoint())
+    if(alignDebouncer.calculate(xController.atSetpoint()&&yController.atSetpoint()&&rotController.atSetpoint()))
     {
-      return false;
+      return true;
     }
     else
     {
