@@ -28,6 +28,7 @@ import frc.robot.commands.AutoShooterCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.FieldManagementPublisher;
 
@@ -50,6 +51,7 @@ public class RobotContainer {
   // The robot's subsystems
   DriveSubsystem m_robotDrive;
   FieldManagementPublisher m_fieldManagementPublisher;
+  LEDSubsystem m_ledStrip;
   private Boolean fieldRelative = true;
   /*
   private ShooterSubsystem m_ShooterSubsystem;
@@ -76,6 +78,7 @@ public class RobotContainer {
     m_ShooterSubsystem = new ShooterSubsystem();
     m_FeederSubsystem = new FeederSubsystem();
     */
+    m_ledStrip = new LEDSubsystem();
     m_fieldManagementPublisher = new FieldManagementPublisher();
     //Set up Subsystems
     m_robotDrive = new DriveSubsystem();

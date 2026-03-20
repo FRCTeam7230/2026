@@ -185,9 +185,9 @@ public class LEDSubsystem extends SubsystemBase {
   public void autoPattern() {
     currentState = 5;
     LEDPattern base = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kMediumPurple, Constants.LEDConstants.kNiceYellow);
-    LEDPattern DCbreathe = base.breathe(Units.Seconds.of(2));
-    LEDPattern pattern = DCbreathe.scrollAtRelativeSpeed(Units.Hertz.of(0.5));
-    pattern.applyTo(m_LEDBuffer); //applies to both top and bottom
+    //LEDPattern DCbreathe = base.breathe(Units.Seconds.of(2));
+    //LEDPattern pattern = base.scrollAtRelativeSpeed(Units.Percent.per(Units.Seconds).of(100));
+    base.applyTo(m_LEDBuffer); //applies to both top and bottom
     m_LED.setData(m_LEDBuffer);
   }
 
@@ -448,6 +448,8 @@ public class LEDSubsystem extends SubsystemBase {
   public void periodic() {
   
     solidColorBottom(Constants.LEDConstants.kPurple);
+    //solidColorTop(Constants.LEDConstants.kPurple);
+    //autoPattern();
     //shootingPattern();
     //shootingPatternMirroredPulse();
     //idlePattern();
