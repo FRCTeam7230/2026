@@ -180,7 +180,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putString("Alliance Data/Alliance at Boot", allianceAtBoot==null?"Not Specified":allianceAtBoot.toString());
     SmartDashboard.putString("Alliance Data/Current Alliance", DriverStation.getAlliance().toString());
-    SmartDashboard.putBoolean("Alliance Data/Pathplanner flips at red alliance", AutoBuilder.shouldFlip());
+    SmartDashboard.putString("Alliance Data/Pathplanner flips at red alliance", AutoBuilder.shouldFlip()?"Red":"Blue");
     if (!allianceInitialized) {
       var alliance = DriverStation.getAlliance();
       if (alliance.isPresent()) {
