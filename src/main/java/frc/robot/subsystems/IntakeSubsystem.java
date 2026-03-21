@@ -21,6 +21,7 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
@@ -164,6 +165,31 @@ public class IntakeSubsystem extends SubsystemBase
       rollerCurrentPublisher.set(m_roller.getOutputCurrent());
       jointCurrentPublisher.set(m_joint.getOutputCurrent());
       isIntakeOutPublisher.set(isIntakeOut);
+    }
+    
+    public boolean reachedGoal(){
+      return m_controller.getSetpoint()==m_jointEncoder.getPosition();
+    }
+
+    /**
+     * Overridden
+     */
+    public boolean reachedGoal(double goal){
+      return m_controller.getSetpoint()==goal;
+    }
+
+    public Command jiggleIntake(double goal, double currentLimit){
+      return new RunCommand(() -> {
+        reachGoal(goal);
+      }).until(
+        () -> reachedGoal() || (m_joint.getOutputCurrent()<currentLimit)
+      ).andThen(
+        () -> {
+          reachGoal(Constants.IntakeConstants.kextendedPostion);
+        }
+      ).until(
+        () -> reachedGoal() || (m_joint.getOutputCurrent()<currentLimit)
+      );
     }
     public Command toggleIntake(boolean intakeOut)
     {
