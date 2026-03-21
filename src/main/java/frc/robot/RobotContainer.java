@@ -273,11 +273,11 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
       .whileTrue(Commands.sequence(
               spinUpCommand,
               new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
-              new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed)),
-              m_intake.jiggleIntake(Constants.IntakeConstants.kretractedPostion, Constants.IntakeConstants.kcurrentLimit)
+              new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
+              // m_intake.jiggleIntake(Constants.IntakeConstants.kretractedPostion, Constants.IntakeConstants.kcurrentLimit)
           ).finallyDo(
             () -> {
-              m_intake.setGoal(Constants.IntakeConstants.kextendedPostion);
+              // m_intake.setGoal(Constants.IntakeConstants.kextendedPostion);
               m_ShooterSubsystem.stopMotor();
               m_FeederSubsystem.setKickerSpeed(0);
               m_FeederSubsystem.setRollerSpeed(0);
