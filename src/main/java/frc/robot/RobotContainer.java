@@ -109,15 +109,14 @@ public class RobotContainer {
 
     for(int port = 5800; port<=5809; port++)
     {
-      PortForwarder.add(port, "limelight.local",port);
+      PortForwarder.add(port, "limelight.local",port
+      );
     }
     m_intake = new IntakeSubsystem();
     NamedCommands.registerCommand("Going over the bump", m_robotDrive.driveExperiment());
     NamedCommands.registerCommand("Align To Bump", new AlignToBump(m_robotDrive,true));
-    // NamedCommands.registerCommand("Align",
-    //   new AlignToHub(m_robotDrive).alongWith(
-        
-    // ));
+    NamedCommands.registerCommand("Align",
+      new AlignToHub(m_robotDrive));
 
         NamedCommands.registerCommand("Shoot",
         Commands.sequence(
@@ -140,8 +139,8 @@ public class RobotContainer {
                    m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);
                 m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed); }, m_intake)
         );
-        NamedCommands.registerCommand("Stop Intake Roller", 
-                new InstantCommand(()->{ m_intake.spinRoller(0); }, m_intake)
+        NamedCommands.registerCommand("Stop Intake", 
+                new InstantCommand(()->{ m_intake.reachGoal(Constants.IntakeConstants.kretractedPostion); }, m_intake)
         );
         NamedCommands.registerCommand("Intake From Depot", 
                 ///Commands.runOnce(drive::intakeStop, drive)
@@ -328,6 +327,7 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
       },m_intake));
     
   }
+  //ButtonMappings.button(m_driverController,Constants.)
 
 
   /**

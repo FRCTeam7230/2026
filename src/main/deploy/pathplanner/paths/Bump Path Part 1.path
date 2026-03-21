@@ -8,11 +8,27 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.508573466476458,
-        "y": 5.529415121255349
+        "x": 2.8937995222097967,
+        "y": 5.46241216129065
       },
       "isLocked": false,
       "linkedName": "Bump Auto Alliance Intake"
+    },
+    {
+      "anchor": {
+        "x": 2.814229402402848,
+        "y": 5.529
+      },
+      "prevControl": {
+        "x": 2.565314538805072,
+        "y": 5.552267803508293
+      },
+      "nextControl": {
+        "x": 3.419372732576479,
+        "y": 5.472433044144817
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,22 +36,27 @@
         "y": 5.529
       },
       "prevControl": {
-        "x": 4.656390870185448,
-        "y": 5.529
+        "x": 4.403599385909363,
+        "y": 5.495827508644418
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Bump Auto Neutral Zone Intake"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0905861456482997,
+      "rotationDegrees": -160.0
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 1.0,
+      "maxWaypointRelativePos": 2.0,
       "constraints": {
-        "maxVelocity": 1.0,
+        "maxVelocity": 2.5,
         "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -56,13 +77,13 @@
   },
   "goalEndState": {
     "velocity": 0.2,
-    "rotation": -141.588
+    "rotation": -160.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": -141.588
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
