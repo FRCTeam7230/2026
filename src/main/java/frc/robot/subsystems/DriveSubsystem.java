@@ -82,7 +82,7 @@ public class DriveSubsystem extends SubsystemBase {
   SlewRateLimiter driveLimitRot = new SlewRateLimiter(rotRateLimit);
 
   boolean allianceInitialized = false;
-
+  Optional<DriverStation.Alliance> allianceAtBoot = null;
   // The gyro sensor
   private final AHRS m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI, AHRS.NavXUpdateRate.k50Hz);
   DoubleArrayPublisher gyro_publisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Yaw, Angle, Roll, Pitch")
@@ -149,9 +149,11 @@ public class DriveSubsystem extends SubsystemBase {
             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
             var alliance = DriverStation.getAlliance();
+            allianceAtBoot = alliance;
             if (alliance.isPresent()) {
               return alliance.get() == DriverStation.Alliance.Red;
             }
+            
             return false;
           },
           this);
@@ -176,7 +178,9 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    SmartDashboard.putString("Alliance Data/Alliance at Boot", allianceAtBoot==null?"Not Specified":allianceAtBoot.toString());
+    SmartDashboard.putString("Alliance Data/Current Alliance", DriverStation.getAlliance().toString());
+    SmartDashboard.putString("Alliance Data/Pathplanner flips at red alliance", AutoBuilder.shouldFlip()?"Red":"Blue");
     if (!allianceInitialized) {
       var alliance = DriverStation.getAlliance();
       if (alliance.isPresent()) {

@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 5.656390870185448,
-        "y": 5.85
+        "y": 5.529
       },
       "prevControl": null,
       "nextControl": {
         "x": 5.9016472175398444,
-        "y": 5.801530173485149
+        "y": 5.48053017348515
       },
       "isLocked": false,
       "linkedName": "Bump Auto Neutral Zone Intake"
@@ -83,7 +83,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": -141.588
+    "rotation": -160.0
   },
   "useDefaultConstraints": true
 }

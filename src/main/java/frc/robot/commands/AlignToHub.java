@@ -7,9 +7,11 @@ package frc.robot.commands;
 import java.util.Optional;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
@@ -28,7 +30,7 @@ public class AlignToHub extends Command {
   PIDController rotController = new PIDController(Constants.AlignConstants.kRotAlignP, Constants.AlignConstants.kRotAlignI, Constants.AlignConstants.kRotAlignD);
   DoublePublisher distanceErrorPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Align Distance Error").publish(); 
   StructPublisher<Pose2d> targetPosePublisher = NetworkTableInstance.getDefault().getStructTopic("Align target Pose", Pose2d.struct).publish();  
-
+  Debouncer alignDebouncer;
   public AlignToHub(DriveSubsystem drive) {
     m_drive = drive;
     m_drive.ApplyMegatagFilter();
@@ -40,18 +42,23 @@ public class AlignToHub extends Command {
     yController.setTolerance(Constants.AlignConstants.kerrorYTolerance);
     rotController.setTolerance(Constants.AlignConstants.kerrorAngleTolerance);
     rotController.enableContinuousInput(-180, 180);
+    alignDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    SmartDashboard.putData("Align to Hub PID/xController", xController);
+    SmartDashboard.putData("Align to Hub PID/yController", yController);
+    SmartDashboard.putData("Align to Hub PID/rotController", rotController);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     
-    
+
     Pose2d currentPose = m_drive.getPose();
     double[] errors = CalculateHubPID(currentPose);
     SmartDashboard.putNumberArray("AlignErrors",errors);
@@ -77,9 +84,9 @@ public class AlignToHub extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(xController.atSetpoint()&&yController.atSetpoint()&&rotController.atSetpoint())
+    if(alignDebouncer.calculate(xController.atSetpoint()&&yController.atSetpoint()&&rotController.atSetpoint()))
     {
-      return false;
+      return true;
     }
     else
     {
@@ -106,6 +113,21 @@ public class AlignToHub extends Command {
         else {
             hubX = hubXRed;
         }
+
+        // I think I need a picture to understand the method you used to calculate align to HUB below
+        // I added how I would have done it below. We can compare later
+        // START How Alex would have done it
+        // Translation2d hubPos = new Translation2d(hubX,hubY);                      // Get hub Position vector
+        // Translation2d r_hub2robot = new Translation2d(robotX-hubX,  robotY-hubY); // r_Hub2robot = r_robot-r_hub
+        // Translation2d r_hub2robot_uv = r_hub2robot.div(r_hub2robot.getNorm());    // Get hub to robot unit vector
+        // Translation2d r_hub2target = r_hub2robot_uv.times(Constants.AlignConstants.kradius); // Get hub to target position with uv and desired radius
+        // Translation2d targetPosition = new Translation2d(hubX+r_hub2target.getX(),  hubY+r_hub2target.getY()); // r_target = r_hub+r_hub2target 
+        // double errorX = targetPosition.getX()-pose.getX(); //Calcualte errors
+        // double errorY = targetPosition.getY()-pose.getY(); //Calcualte errors
+        // Rotation2d targetAngle = new Rotation2d(r_hub2robot_uv.getX(),r_hub2robot_uv.getY()); //use the hub2robot uv to get the angle, flip signs if neccesary 
+        // double errorAngle = targetAngle.getDegrees() - pose.getRotation().getDegrees();
+        // Pose2d targetPose = new Pose2d(targetPosition,targetAngle);
+        // END How Alex would have done it 
 
         double distanceX = hubX - robotX;
         double distanceY = hubY - robotY;

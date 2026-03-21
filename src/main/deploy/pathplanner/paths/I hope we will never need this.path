@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5820120481927713,
-        "y": 5.529
+        "x": 3.4956348074179737,
+        "y": 4.067346647646221
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.695291590032763,
-        "y": 4.863137594573507
+        "x": 2.4956348074179724,
+        "y": 4.067346647646221
       },
       "isLocked": false,
-      "linkedName": "Bump Auto Alliance Shoot"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.2960627674750356,
-        "y": 4.804850213980028
+        "x": 2.5511126961483592,
+        "y": 4.067346647646221
       },
       "prevControl": {
-        "x": 1.738872979968106,
-        "y": 4.946579772007397
+        "x": 3.5511126961483592,
+        "y": 4.067346647646221
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Neutral Shooting 3"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -41,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": -11.741368442452806
+    "velocity": 0,
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Worst Case Auto",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -20.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -22,18 +23,20 @@ public class AlignToBump extends Command{//This is the better edition
     double rotSpeed;
     double ySpeed;
     double xSpeed;
-    
+    Debouncer m_debouncer;
+
     int drivingOverTheBumpDirectionMode;
-    double bumpSpeed = 1.7/4.8;//This is percentage of the power needed, so it would be (needed speed / max speed).
+    double bumpSpeed = 1;//This is percentage of the power needed, so it would be (needed speed / max speed). (was 1.7/4.8, but it's actually m/s. oh well.)
     
     double odomError = 0.3;
 
-    double goalAngle = 38.412;//Angles 38.412, 141.588, -38.412, -141.588 all work for align to bump. But 38.412 is the best for some reason, maybe because of the way the field is set up or the way the robot is built, but it is also possible that there is some error in the code that makes it so that 38.412 works better than the other angles. I will investigate this further in testing.
+    double goalAngle = 20;//Angles 38.412, 141.588, -38.412, -141.588 all work for align to bump. But 38.412 is the best for some reason, maybe because of the way the field is set up or the way the robot is built, but it is also possible that there is some error in the code that makes it so that 38.412 works better than the other angles. I will investigate this further in testing.
     boolean autoMode = false;
     public AlignToBump(DriveSubsystem drive, boolean autoMode) {
         rotController.setSetpoint(0);//This makes the robot face 0 degrees.
         rotController.enableContinuousInput(-180, 180);
         m_drive = drive;
+        m_debouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
        // bumpSpeed = 4.8;
         this.autoMode = autoMode;
         addRequirements(m_drive);//i removed this when testing it with a button.
@@ -108,7 +111,7 @@ public class AlignToBump extends Command{//This is the better edition
         } else {
             yController.setSetpoint(Units.inchesToMeters(99.17+3));
         }
-        yController.setTolerance(Units.inchesToMeters(7));
+        yController.setTolerance(Units.inchesToMeters(2));
         
 
         //center of field: 325.06 
@@ -201,7 +204,7 @@ public class AlignToBump extends Command{//This is the better edition
                 SmartDashboard.putNumber("AlignToBump/Turn Rate", Math.abs(m_drive.getTurnRate()));
 
                 m_drive.drive(xSpeed, ySpeed, rotSpeed, true);
-                if (Math.abs(rotController.getError())<2*1.5&&Math.abs(m_drive.getTurnRate())<0.018&&yController.atSetpoint()&&xController.atSetpoint()){ //change turn rate to115 1 deg.
+                if (m_debouncer.calculate(Math.abs(rotController.getError())<2*1.5&&Math.abs(m_drive.getTurnRate())<0.018&&yController.atSetpoint()&&xController.atSetpoint())){ //change turn rate to115 1 deg.
                     drivingOverTheBumpDirectionMode = findDrivingDirection();//2, 0.02
                     //drivingOverTheBumpDirectionMode = 50;
                 }
