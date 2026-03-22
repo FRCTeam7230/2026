@@ -50,12 +50,6 @@
                 "data": {
                   "pathName": "Bump Path Part 3.1"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stop Intake"
-                }
               }
             ]
           }
