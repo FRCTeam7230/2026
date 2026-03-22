@@ -131,7 +131,7 @@ public final class Constants {
     /**Manual Climber down */
     public static final int MANUAL_CLIMBER_DOWN = pov180;
     /**manual kicker reversal */
-    public static final int REVERSE_KICKER = pov90;
+    public static final int REVERSE_ALL = pov90;
 
     public static final int MANUAL_ROLLERS_TOGGLE = pov0;
     public static final int MANUAL_KICKERS_TEST = pov180;
@@ -150,7 +150,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;//was 4.8
+    public static final double kMaxSpeedMetersPerSecond = 3.6;//was 4.8
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     // Chassis configuration

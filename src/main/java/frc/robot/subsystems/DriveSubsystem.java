@@ -181,6 +181,16 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putString("Alliance Data/Alliance at Boot", allianceAtBoot==null?"Not Specified":allianceAtBoot.toString());
     SmartDashboard.putString("Alliance Data/Current Alliance", DriverStation.getAlliance().toString());
     SmartDashboard.putString("Alliance Data/Pathplanner flips at red alliance", AutoBuilder.shouldFlip()?"Red":"Blue");
+    SmartDashboard.putNumber("Swerve Data/Front right m.s", m_frontRight.getVelocity());
+    SmartDashboard.putNumber("Swerve Data/front left m.s", m_frontLeft.getVelocity());
+    SmartDashboard.putNumber("Swerve Data/rear right m.s", m_rearRight.getVelocity());
+    SmartDashboard.putNumber("Swerve Data/rear left m.s", m_rearLeft.getVelocity());
+    SmartDashboard.putNumber("Swerve Data/front right turning deg.s", m_frontRight.getAnglularVelocity().getDegrees());
+    SmartDashboard.putNumber("Swerve Data/front left turning deg.s", m_frontLeft.getAnglularVelocity().getDegrees());
+    SmartDashboard.putNumber("Swerve Data/rear right turning deg.s", m_rearRight.getAnglularVelocity().getDegrees());
+    SmartDashboard.putNumber("Swerve Data/rear left turning deg.s", m_rearLeft.getAnglularVelocity().getDegrees());
+
+
     if (!allianceInitialized) {
       var alliance = DriverStation.getAlliance();
       if (alliance.isPresent()) {

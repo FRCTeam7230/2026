@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5820120481927713,
+        "x": 3.374567022538553,
         "y": 5.529
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.9082674904218857,
-        "y": 5.624102959762975
+        "x": 3.062550415183868,
+        "y": 5.363760379596679
       },
       "isLocked": false,
       "linkedName": "Bump Auto Alliance Shoot"
     },
     {
       "anchor": {
-        "x": 1.9818116975748925,
-        "y": 5.374151212553495
+        "x": 2.7935705812574145,
+        "y": 5.363760379596679
       },
       "prevControl": {
-        "x": 2.650456956832623,
-        "y": 5.32492348369747
+        "x": 3.462215840515145,
+        "y": 5.314532650740653
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -25.880273670068846
+    "rotation": -37.41816588214823
   },
   "reversed": false,
   "folder": null,

@@ -72,6 +72,12 @@ public class MAXSwerveModule {
     return new SwerveModuleState(m_drivingEncoder.getVelocity(),
         new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset));
   }
+  public double getVelocity(){
+    return m_drivingEncoder.getVelocity();
+  }
+  public Rotation2d getAnglularVelocity(){
+    return new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset);
+  }
 
   /**
    * Returns the current position of the module.

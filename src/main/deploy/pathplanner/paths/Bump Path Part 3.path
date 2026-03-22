@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 7.7653922967189715,
-        "y": 4.416690442225392
+        "y": 4.417
       },
       "prevControl": null,
       "nextControl": {
         "x": 6.573555632473525,
-        "y": 4.261711440060403
+        "y": 4.262020997835011
       },
       "isLocked": false,
       "linkedName": "Intake Endpoint"
@@ -41,7 +41,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.2,
+    "velocity": 0.5,
     "rotation": -20.0
   },
   "reversed": false,
