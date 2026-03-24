@@ -182,15 +182,10 @@ public class AlignToHubWasher extends Command {
   private double calculateRPM(double radialdistance) {
     //george's physics approximation in an ideal world: m_shoot.LinearVelToRPM(4.2170362293*Math.sqrt(radialdistance));
     //regression: use this link to determine constants https://www.desmos.com/calculator/sqdpqsalxh
-    double a  = 0;
-    double a1 = 0;
-    double a2 = 0;
-    double a3 = 0;
-    double a4 = 0;
-    double a5 = 0;
-    double a6 = 0;
+    double a1 = 1861.25178;
+    double a2 = 0.468823;
     double x = radialdistance;
-    //quadratic + sqrt regression
-    return a + a1*(x-a2) + a3*(Math.pow(x-a4, 2)) + a5*(Math.pow(x-a6, 0.5));
+    //power regression
+    return a1*(Math.pow(x, a2));
   }
 }
