@@ -8,11 +8,43 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.573555632473525,
-        "y": 4.262020997835011
+        "x": 8.15678900685068,
+        "y": 3.6502111229476437
       },
       "isLocked": false,
       "linkedName": "Intake Endpoint"
+    },
+    {
+      "anchor": {
+        "x": 6.761037567084079,
+        "y": 3.523899821109123
+      },
+      "prevControl": {
+        "x": 7.146388420608015,
+        "y": 3.2042693958683945
+      },
+      "nextControl": {
+        "x": 5.742642485732079,
+        "y": 4.368610686386569
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.280250447227192,
+        "y": 5.324919499105545
+      },
+      "prevControl": {
+        "x": 7.39154691091995,
+        "y": 4.913275860948257
+      },
+      "nextControl": {
+        "x": 7.067846270436546,
+        "y": 6.11052243016789
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,8 +52,8 @@
         "y": 5.529
       },
       "prevControl": {
-        "x": 6.594793850411776,
-        "y": 4.999844722280915
+        "x": 6.006689325037573,
+        "y": 5.453593461746699
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,11 +62,33 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": -161.7975897404614
+      "waypointRelativePos": 0.75,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1.45187165775401,
+      "rotationDegrees": -90.0
+    },
+    {
+      "waypointRelativePos": 2.0374331550802136,
+      "rotationDegrees": -140.0
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0,
+      "constraints": {
+        "maxVelocity": 3.5,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 480.0,
+        "maxAngularAcceleration": 540.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -46,7 +100,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.5,
+    "velocity": 2.5,
     "rotation": -20.0
   },
   "reversed": false,

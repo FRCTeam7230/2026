@@ -42,7 +42,7 @@ public class AutoShooterCommand extends Command {
   @Override
   public boolean isFinished() {
     //Ends command when all shooter motors are at desired speed within tolerance
-    if (Math.abs(speed-ShooterSubsystem.getMotorVelocity()[0])<Constants.OuttakeConstants.ShooterTolerance && Math.abs(speed-ShooterSubsystem.getMotorVelocity()[1])<Constants.OuttakeConstants.ShooterTolerance && Math.abs(speed-ShooterSubsystem.getMotorVelocity()[2])<Constants.OuttakeConstants.ShooterTolerance){
+    if (Math.abs(speed+ShooterSubsystem.rpmAdded-ShooterSubsystem.getMotorVelocity()[0])<Constants.OuttakeConstants.ShooterTolerance && Math.abs(speed+ShooterSubsystem.rpmAdded-ShooterSubsystem.getMotorVelocity()[1])<Constants.OuttakeConstants.ShooterTolerance && Math.abs(speed+ShooterSubsystem.rpmAdded-ShooterSubsystem.getMotorVelocity()[2])<Constants.OuttakeConstants.ShooterTolerance){
       return true;
     }
     else {

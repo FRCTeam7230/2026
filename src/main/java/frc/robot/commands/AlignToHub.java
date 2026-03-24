@@ -15,6 +15,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,8 +31,11 @@ public class AlignToHub extends Command {
   PIDController yController = new PIDController(Constants.AlignConstants.kAlignP, Constants.AlignConstants.kAlignI, Constants.AlignConstants.kAlignD);
   PIDController rotController = new PIDController(Constants.AlignConstants.kRotAlignP, Constants.AlignConstants.kRotAlignI, Constants.AlignConstants.kRotAlignD);
   DoublePublisher distanceErrorPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Align Distance Error").publish(); 
+  DoublePublisher distancePublisher = NetworkTableInstance.getDefault().getDoubleTopic("Distance To Hub").publish();
   StructPublisher<Pose2d> targetPosePublisher = NetworkTableInstance.getDefault().getStructTopic("Align target Pose", Pose2d.struct).publish();  
   Debouncer alignDebouncer;
+  
+  //DATA: 3.53 meters, 3301 RPM
   public AlignToHub(DriveSubsystem drive) {
     m_drive = drive;
     m_drive.ApplyMegatagFilter();
@@ -45,13 +50,18 @@ public class AlignToHub extends Command {
     alignDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
     // Use addRequirements() here to declare subsystem dependencies.
   }
-
+  // @Override 
+  // public void initSendable(SendableBuilder builder){
+  //   builder.setSmartDashboardType("Motor Controller");
+  //   builder.addDoubleProperty("RPM", null, distanceErrorPublisher);
+  // }
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     SmartDashboard.putData("Align to Hub PID/xController", xController);
     SmartDashboard.putData("Align to Hub PID/yController", yController);
     SmartDashboard.putData("Align to Hub PID/rotController", rotController);
+    SmartDashboard.putNumber("RPM Setter", rpmSetter);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -63,8 +73,8 @@ public class AlignToHub extends Command {
     double[] errors = CalculateHubPID(currentPose);
     SmartDashboard.putNumberArray("AlignErrors",errors);
     
-    double xSpeed = xController.calculate(errors[0]);
-    double ySpeed = yController.calculate(errors[1]);
+    double xSpeed = 0;//xController.calculate(errors[0]);
+    double ySpeed = 0;//yController.calculate(errors[1]);
     //double rotSpeed= Math.max(Math.min(rotController.calculate(errors[2]),1.5), -1.5);
     double rotSpeed = rotController.calculate(errors[2]);
     SmartDashboard.putNumber("Rotation delivered", rotSpeed);
@@ -132,6 +142,7 @@ public class AlignToHub extends Command {
         double distanceX = hubX - robotX;
         double distanceY = hubY - robotY;
         double distance = Math.sqrt( Math.pow( distanceX, 2) + Math.pow( distanceY, 2) );
+        distancePublisher.set(distance);
         double distanceError = radius-distance;
         distanceErrorPublisher.set(distanceError);
         double errorX = distanceX * ( (distance - radius) / distance );

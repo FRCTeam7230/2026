@@ -101,6 +101,10 @@ public class RobotContainer {
   public RobotContainer() {
     
     m_ShooterSubsystem = new ShooterSubsystem();
+
+    SmartDashboard.putData("Add 10 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(10)));
+        SmartDashboard.putData("Minus 10 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(-10)));
+
     m_FeederSubsystem = new FeederSubsystem();
     
     m_fieldManagementPublisher = new FieldManagementPublisher();
@@ -134,14 +138,14 @@ public class RobotContainer {
                 
         
         
-        NamedCommands.registerCommand("Intake Fuel", 
-                new InstantCommand(()->{
-                   m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);
-                m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed); }, m_intake)
-        );
-        NamedCommands.registerCommand("Stop Intake", 
-                new InstantCommand(()->{ m_intake.reachGoal(Constants.IntakeConstants.kretractedPostion); }, m_intake)
-        );
+        // NamedCommands.registerCommand("Intake Fuel", 
+        //         new InstantCommand(()->{
+        //            m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);
+        //         m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed); }, m_intake)
+        // );
+        // NamedCommands.registerCommand("Stop Intake", 
+        //         new InstantCommand(()->{ m_intake.reachGoal(Constants.IntakeConstants.kretractedPostion); }, m_intake)
+        // );
         NamedCommands.registerCommand("Intake From Depot", 
                 ///Commands.runOnce(drive::intakeStop, drive)
                 Commands.run(()->{m_robotDrive.drive(-0.2,0,0,false);},m_robotDrive).withTimeout(4)//1 meter, plus some extra

@@ -18,7 +18,9 @@ import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.OuttakeConstants;
@@ -54,7 +56,8 @@ public class ShooterSubsystem extends SubsystemBase {
   DoubleArrayPublisher errorPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Errors").publish();
   /** work in progress*/
   DoubleArrayPublisher currentPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Currents").publish();
-
+  public int rpmAdded = 0;
+  DoublePublisher RPMPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Shooter/RPM Setpoint").publish(); 
     /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
     //Motor 1
@@ -112,9 +115,9 @@ public class ShooterSubsystem extends SubsystemBase {
   @param Velocity the velocity that shooter motors will try to reach in RPMs
    */
   public void reachSpeed(double Velocity) {
-    m_outtakecontroller1.setSetpoint(Velocity, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
-    m_outtakecontroller2.setSetpoint(Velocity, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
-    m_outtakecontroller3.setSetpoint(Velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    m_outtakecontroller1.setSetpoint(Velocity+rpmAdded, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
+    m_outtakecontroller2.setSetpoint(Velocity+rpmAdded, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
+    m_outtakecontroller3.setSetpoint(Velocity+rpmAdded, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
   }
 
   /** sets shooter motors to a test velocity in PERCENTAGE(method not using PIDs) 
@@ -157,7 +160,11 @@ public class ShooterSubsystem extends SubsystemBase {
     setpointPublisher.set(new double[]{m_outtakecontroller1.getSetpoint(), m_outtakecontroller2.getSetpoint(), m_outtakecontroller3.getSetpoint()});
     errorPublisher.set(new double[]{m_outtakecontroller1.getSetpoint()-getMotorVelocity()[0], m_outtakecontroller2.getSetpoint()-getMotorVelocity()[1], m_outtakecontroller3.getSetpoint()-getMotorVelocity()[2]});
     currentPublisher.set(getMotorCurrent());
-
+    RPMPublisher.set(3001+rpmAdded);
     
+  }
+  public void addRpm(int num)
+  {
+    rpmAdded+=num;
   }
 }
