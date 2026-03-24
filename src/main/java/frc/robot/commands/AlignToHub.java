@@ -61,7 +61,7 @@ public class AlignToHub extends Command {
     SmartDashboard.putData("Align to Hub PID/xController", xController);
     SmartDashboard.putData("Align to Hub PID/yController", yController);
     SmartDashboard.putData("Align to Hub PID/rotController", rotController);
-    SmartDashboard.putNumber("RPM Setter", rpmSetter);
+    //SmartDashboard.putNumber("RPM Setter", rpmSetter);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -101,9 +101,10 @@ public class RobotContainer {
   public RobotContainer() {
     
     m_ShooterSubsystem = new ShooterSubsystem();
-
-    SmartDashboard.putData("Add 10 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(10)));
+       SmartDashboard.putData("Add 10 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(10)));
         SmartDashboard.putData("Minus 10 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(-10)));
+    SmartDashboard.putData("Add 100 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(100)));
+        SmartDashboard.putData("Minus 100 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(-100)));
 
     m_FeederSubsystem = new FeederSubsystem();
     
