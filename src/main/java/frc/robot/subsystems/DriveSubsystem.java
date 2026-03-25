@@ -513,8 +513,12 @@ public class DriveSubsystem extends SubsystemBase {
     new Pose2d(m_odometry.getEstimatedPosition().getTranslation(), m_gyro.getRotation2d()));
   }
 
-  public void addAngleGyro(double angle) {
+  public void setGyroOffset(double angle) {
     m_gyro.setAngleAdjustment(angle);
+  }
+
+  public void addAngleGyro(double angle){
+    m_gyro.setAngleAdjustment(angle+m_gyro.getAngleAdjustment());
   }
 
   /**
