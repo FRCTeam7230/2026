@@ -121,7 +121,7 @@ public class RobotContainer {
     }
     m_intake = new IntakeSubsystem();
     NamedCommands.registerCommand("Going over the bump", m_robotDrive.driveExperiment());
-    NamedCommands.registerCommand("Align To Bump", new AlignToBump(m_robotDrive,true));
+    NamedCommands.registerCommand("Align To Bump", new AlignToBump(m_robotDrive));
     NamedCommands.registerCommand("Align",
       new AlignToHubWasher(m_robotDrive,m_ShooterSubsystem));
 
@@ -251,7 +251,7 @@ SmartDashboard.putData("Flip Gyro", new InstantCommand(
               new InstantCommand(() -> mode_publisher.set(fieldRelative))
           ));
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_TO_BUMP)
-    .whileTrue(new AlignToBump(m_robotDrive, false));
+    .whileTrue(new AlignToBump(m_robotDrive, m_driverController));
   //NEW SUBSYSTEM CONTROLS
     //Feeder rolllers manual on/off
     

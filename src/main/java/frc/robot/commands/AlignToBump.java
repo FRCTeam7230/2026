@@ -1,21 +1,27 @@
 package frc.robot.commands;
 
+import java.util.Optional;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
+import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.math.util.Units;
 
 public class AlignToBump extends Command{//This is the better edition
-    PIDController xController = new PIDController(Constants.AlignConstants.kAlignP, Constants.AlignConstants.kAlignI, Constants.AlignConstants.kAlignD);
+   // PIDController xController = new PIDController(Constants.AlignConstants.kAlignP, Constants.AlignConstants.kAlignI, Constants.AlignConstants.kAlignD);
   PIDController yController = new PIDController(Constants.AlignConstants.kAlignP, Constants.AlignConstants.kAlignI, Constants.AlignConstants.kAlignD);
   PIDController rotController = new PIDController(Constants.AlignConstants.kRotAlignP, Constants.AlignConstants.kRotAlignI, Constants.AlignConstants.kRotAlignD);
     DriveSubsystem m_drive;
+    GenericHID m_controller;
     double robotDiagonalLength = 51;//was 38.3813;
-    //double robotDiagonalLength = Units.inchesToMeters(42.426);
     
     double currentAngle;
     double currentY;
@@ -32,35 +38,30 @@ public class AlignToBump extends Command{//This is the better edition
 
     double goalAngle = 20;//Angles 38.412, 141.588, -38.412, -141.588 all work for align to bump. But 38.412 is the best for some reason, maybe because of the way the field is set up or the way the robot is built, but it is also possible that there is some error in the code that makes it so that 38.412 works better than the other angles. I will investigate this further in testing.
     boolean autoMode = false;
-    public AlignToBump(DriveSubsystem drive, boolean autoMode) {
+    public AlignToBump(DriveSubsystem drive) {
         rotController.setSetpoint(0);//This makes the robot face 0 degrees.
         rotController.enableContinuousInput(-180, 180);
         m_drive = drive;
         m_debouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
-       // bumpSpeed = 4.8;
-        this.autoMode = autoMode;
+        this.autoMode = true;
         addRequirements(m_drive);//i removed this when testing it with a button.
     }
-     double angle1 = goalAngle;//38.412115
-    double angle2 = (180-goalAngle);//141.588115
-    double angle3 = (180+goalAngle);//-38.412115
-    double angle4 = (360-goalAngle);//-141.588115
+    public AlignToBump(DriveSubsystem drive, GenericHID controller){
+        this(drive);
+        m_controller=controller;
+        this.autoMode = false;
+    }
+     double angle1 = goalAngle;//38.412
+    double angle2 = (180-goalAngle);//141.588
+    double angle3 = (180+goalAngle);//-38.412
+    double angle4 = (360-goalAngle);//-141.588
     @Override
     public void initialize() {
          drivingOverTheBumpDirectionMode = 0;
         if (autoMode){//If autos appears to be smooth and doesn't have a need to realign, then use this.
         drivingOverTheBumpDirectionMode = findDrivingDirection();
        }
-        //SmartDashboard.putData("AlignToBump/rotController", rotController);115
-        //Makes the angle in a range of -180 to 180115
-        // if (currentAngle > 180) {115
-        // currentAngle -= 360;115
-        // }115
-        // else if (currentAngle < -180) {115
-        // currentAngle += 360;115
-        // }115
 
-        
         currentAngle = m_drive.getPose().getRotation().getDegrees();
         while (currentAngle > 360 || currentAngle<0) {
             if(currentAngle>360){
@@ -69,43 +70,9 @@ public class AlignToBump extends Command{//This is the better edition
             else{
             currentAngle += 360;
             }
-            
         }
          currentY = m_drive.getPose().getY();
-         double tolerance = 5;//inches
-        // if (currentY<Units.inchesToMeters(50.67+12+robotDiagonalLength/2+tolerance)) {//38.3813 in. robot diagonal length115
-        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+robotDiagonalLength/2+tolerance));
-        // }
-        // else if (currentY>Units.inchesToMeters(50.67+12+73-robotDiagonalLength/2-tolerance)&&currentY<Units.inchesToMeters(158.84)){
-        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+73-robotDiagonalLength/2-tolerance));       
-        // }
-        // else if (currentY<Units.inchesToMeters(50.67+12+73+47+robotDiagonalLength/2+tolerance)&&currentY>Units.inchesToMeters(158.84)){
-        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+73+47+robotDiagonalLength/2+tolerance));
-        // }
-        // else if (currentY>Units.inchesToMeters(50.67+12+73+47+73-robotDiagonalLength/2-tolerance)){
-        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+73+47+73-robotDiagonalLength/2-tolerance));
-        // } else {
-        //     yController.setSetpoint(currentY);
-        // }
-        // yController.setTolerance(0.2);
-        //99.17
-
-        // if (currentY<Units.inchesToMeters(50.67+12+robotDiagonalLength/2+tolerance)) {//38.3813 in. robot diagonal length115
-        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+robotDiagonalLength/2+tolerance));
-        // }
-        // else if (currentY>Units.inchesToMeters(50.67+12+73-robotDiagonalLength/2-tolerance)&&currentY<Units.inchesToMeters(158.84)){
-        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+73-robotDiagonalLength/2-tolerance));       
-        // }
-        // else if (currentY<Units.inchesToMeters(50.67+12+73+47+robotDiagonalLength/2+tolerance)&&currentY>Units.inchesToMeters(158.84)){
-        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+73+47+robotDiagonalLength/2+tolerance));
-        // }
-        // else if (currentY>Units.inchesToMeters(50.67+12+73+47+73-robotDiagonalLength/2-tolerance)){
-        //     yController.setSetpoint(Units.inchesToMeters(50.67+12+73+47+73-robotDiagonalLength/2-tolerance));
-        // } else {
-        //     yController.setSetpoint(currentY);
-        // }
-        // yController.setTolerance(0.2); 
-
+        
         if (currentY>Units.inchesToMeters(158.84)){
             yController.setSetpoint(Units.inchesToMeters(218.84));
         } else {
@@ -117,46 +84,7 @@ public class AlignToBump extends Command{//This is the better edition
         //center of field: 325.06 
         //Center of blue bump: 181.56
         //Center of red bump: 468.6
-        currentX = m_drive.getPose().getX();
-        if (currentX<Units.inchesToMeters(181.56)) {//38.3813 in. robot diagonal length115
-            xController.setSetpoint(Units.inchesToMeters(152.16-robotDiagonalLength/2));
-        }
-        else if (currentX>Units.inchesToMeters(181.56)&&currentX<Units.inchesToMeters(325.06)){  
-            xController.setSetpoint(Units.inchesToMeters(220.96+robotDiagonalLength/2));  
-        }
-        else if (currentX<Units.inchesToMeters(468.6)&&currentX>Units.inchesToMeters(325.06)){
-            xController.setSetpoint(Units.inchesToMeters(439.2-robotDiagonalLength/2));
-        }
-        else if (currentX>Units.inchesToMeters(468.6)){
-            xController.setSetpoint(Units.inchesToMeters(508+robotDiagonalLength/2));
-        } else {
-            xController.setSetpoint(currentX);
-        }
-        xController.setTolerance(0.2);
-        
 
-
-        
-        // if (currentAngle>angle1 && currentAngle<angle3){115
-        //     rotController.setSetpoint(angle1);115
-        // } 115
-            // if (Math.abs(Math.abs(currentAngle)-angle1)<=Math.abs(Math.abs(currentAngle)-angle2)){115
-            //     rotController.setSetpoint(angle1);115
-
-            // }115
-            // else {115
-        //     rotController.setSetpoint(angle3);115
-        // }{115
-        
-        // if (currentAngle>angle2-(angle2-angle1)/2&&currentAngle<angle2+(angle3-angle2)/2){115
-        //     rotController.setSetpoint(angle2);115
-        // } else if (currentAngle>angle3-(angle3-angle2)/2&&currentAngle<angle3+(angle4-angle3)/2){115
-        //     rotController.setSetpoint(angle3);115
-        // } else if (currentAngle>angle4-(angle4-angle3)/2&&currentAngle<angle4+(angle1-angle4+360)/2){115
-        //     rotController.setSetpoint(angle4);115
-        // } else {
-        //     rotController.setSetpoint(angle1);
-        // }
         if (currentAngle>90&&currentAngle<180){
             rotController.setSetpoint(angle2);
         } else if (currentAngle>180&&currentAngle<270){
@@ -170,8 +98,8 @@ public class AlignToBump extends Command{//This is the better edition
         }
         SmartDashboard.putNumber("AlignToBump/Target Angle", rotController.getSetpoint());
         SmartDashboard.putNumber("AlignToBump/Target Y", yController.getSetpoint());
-            SmartDashboard.putNumber("AlignToBump/Target X", xController.getSetpoint());
-            SmartDashboard.putData("AlignToBump/xController", xController);
+            //SmartDashboard.putNumber("AlignToBump/Target X", xController.getSetpoint());
+            //SmartDashboard.putData("AlignToBump/xController", xController);
             SmartDashboard.putData("AlignToBump/yController", yController);
             SmartDashboard.putData("AlignToBump/rotController", rotController);
     }
@@ -193,18 +121,23 @@ public class AlignToBump extends Command{//This is the better edition
                 currentY = m_drive.getPose().getY();
                 ySpeed = yController.calculate(currentY);
                 currentX = m_drive.getPose().getX();
-                xSpeed = xController.calculate(currentX);
+                int flipFactor = (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Red))?-1:1);
+                xSpeed = -MathUtil.applyDeadband(
+                    Math.pow(
+                        m_controller.getRawAxis(
+                            Constants.ControllerConstants.MOVE_YAXIS), 2) * Math.signum(m_controller.getRawAxis(Constants.ControllerConstants.MOVE_YAXIS))*flipFactor, OIConstants.kDriveDeadband);
+                
                 SmartDashboard.putNumber("AlignToBump/Current Angle", currentAngle);
-                SmartDashboard.putNumber("AlignToBump/XError", xController.getError());
                 SmartDashboard.putNumber("AlignToBump/YError", yController.getError());
                 SmartDashboard.putNumber("AlignToBump/RotError", rotController.getError());
                 SmartDashboard.putNumber("AlignToBump/Rotation Speed", rotSpeed);
                 SmartDashboard.putNumber("AlignToBump/X Speed", xSpeed);
                 SmartDashboard.putNumber("AlignToBump/Y Speed", ySpeed);
                 SmartDashboard.putNumber("AlignToBump/Turn Rate", Math.abs(m_drive.getTurnRate()));
-
-                m_drive.drive(xSpeed, ySpeed, rotSpeed, true);
-                if (m_debouncer.calculate(Math.abs(rotController.getError())<2*1.5&&Math.abs(m_drive.getTurnRate())<0.018&&yController.atSetpoint()&&xController.atSetpoint())){ //change turn rate to115 1 deg.
+                
+                m_drive.drive(
+                    xSpeed, ySpeed, rotSpeed, true);
+                if (autoMode&&m_debouncer.calculate(Math.abs(rotController.getError())<2*1.5&&Math.abs(m_drive.getTurnRate())<0.018&&yController.atSetpoint())){ //change turn rate to115 1 deg.
                     drivingOverTheBumpDirectionMode = findDrivingDirection();//2, 0.02
                     //drivingOverTheBumpDirectionMode = 50;
                 }
@@ -233,6 +166,9 @@ public class AlignToBump extends Command{//This is the better edition
     }
     public int findDrivingDirection(){
         double xPos = m_drive.getPose().getX();//This cannnot be updated in periodic
+        if (!autoMode){
+            return 0;
+        }
         if (xPos<8.256) { //If the robot is on the blue side of the field
                 if (xPos<4.626){
                     return 1;
