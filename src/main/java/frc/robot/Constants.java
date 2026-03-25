@@ -264,4 +264,45 @@ public final class Constants {
     public static final double kRotAlignI = 0;
     public static final double kRotAlignD = 0;
   }
+
+  public static class AlignToHubConstants {
+    //This offset is the horizontal distance from the center of the bot to the point at which shooter ejects the fuel
+    public static final double kshooterOffset = .46; //meters
+    public static final double kejectionAngle = 68; //deg
+
+    //target radius from the center of the bot to the center of the hub horizontally
+    public static final double kradius = 2.75;
+    public static final double khubY = 4.03; // meters
+    public static final double khubXBlue = 4.63;
+    public static final double khubXRed = 11.92;
+
+    //Forward/backward shoot while move vars
+    public static final double kSpeedMulti = 25; //meters
+    public static final double kRadiusToleranceForward = -0.6; //meters
+    public static final double kRadiusToleranceBackward = 3; //meters
+    public static final double kHubHeight = 1.8288; //meters
+    public static final double kinitalAtTwoPointSevenFive = 6.588; //m/s
+    public static final double kShooterHeight = 0.677; //meters from bottom of wheel 
+    public static final double kShooterWheelRadius = 1.8125; // inches
+    public static final double kDistMulti = 1.2; // multi, should be min of 1.1,
+    // If the multi undershoots at here, I would recommend slowly raising by 0.1s until maybe 1.3 or so should work, for code orange peopel
+    
+
+    public static final double kerrorXTolerance = 0.1;
+    public static final double kerrorYTolerance = 0.1;
+    public static final double kerrorAngleTolerance = 0;
+
+    //angle offset calc constants
+    public static final double kspeedMult = 0.5; //max speedMult experimentally determined from sim
+    public static final double kinitialEjectionVelocityBeforeOffset = 7; //m/s
+
+    public static final double x0 = kshooterOffset;
+    public static final double vx0 = 0;
+    public static final double ax = 0;
+    //z is up and down the field
+    public static final double z0 = 0;
+    public static final double az = 0; //ignoring any horizontal accelerations for now (need to change calculations if want to)
+    public static final double kradialOffsetMult = 0.05;
+    
+  }
 }

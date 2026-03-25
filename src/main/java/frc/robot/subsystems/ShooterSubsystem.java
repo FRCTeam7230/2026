@@ -57,6 +57,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /** work in progress*/
   DoubleArrayPublisher currentPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Currents").publish();
   public int rpmAdded = 0;
+  private int lastRPMSetpoint = 0;
   DoublePublisher RPMPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Shooter/RPM Setpoint").publish(); 
     /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
@@ -110,6 +111,15 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
 
+  /**
+   * 
+   * @param linearVelocity
+   * @return RPM
+   */
+  public double LinearVelToRPM(double linearVelocity){
+    double calculated = linearVelocity/(0.0254*Constants.AlignToHubConstants.kShooterWheelRadius);
+    return calculated * (60.0/Math.PI);
+  }
 
   /** sets shooter motors to a velocity/setpoint using built in velocity PID controllers 
   @param Velocity the velocity that shooter motors will try to reach in RPMs
@@ -118,6 +128,19 @@ public class ShooterSubsystem extends SubsystemBase {
     m_outtakecontroller1.setSetpoint(Velocity+rpmAdded, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
     m_outtakecontroller2.setSetpoint(Velocity+rpmAdded, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
     m_outtakecontroller3.setSetpoint(Velocity+rpmAdded, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+
+    if(Velocity!=0)
+    {
+      lastRPMSetpoint = (int)Velocity;
+    }
+  }
+  public void spinUpToLastSpeed()
+  {
+    reachSpeed(lastRPMSetpoint);
+  }
+  public int getLastRPMSetpoint()
+  {
+    return lastRPMSetpoint;
   }
 
   /** sets shooter motors to a test velocity in PERCENTAGE(method not using PIDs) 

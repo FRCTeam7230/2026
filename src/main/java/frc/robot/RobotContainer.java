@@ -32,8 +32,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OuttakeConstants;
-import frc.robot.commands.AlignToHub;
+import frc.robot.commands.AlignToHubOld;
+import frc.robot.commands.AlignToHubWasher;
 import frc.robot.commands.AlignToPass;
+import frc.robot.commands.AutoScoring;
 import frc.robot.commands.AutoShooterCommand;
 //import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
@@ -121,11 +123,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("Going over the bump", m_robotDrive.driveExperiment());
     NamedCommands.registerCommand("Align To Bump", new AlignToBump(m_robotDrive,true));
     NamedCommands.registerCommand("Align",
-      new AlignToHub(m_robotDrive));
+      new AlignToHubWasher(m_robotDrive,m_ShooterSubsystem));
 
         NamedCommands.registerCommand("Shoot",
         Commands.sequence(
-          new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.shootSpeed),
+          new AutoShooterCommand(m_ShooterSubsystem),
           new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
               new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
               
@@ -161,15 +163,15 @@ public class RobotContainer {
     
     spinUpCommand = new SelectCommand<>(
       Map.ofEntries(
-        Map.entry(BehaviorSelector.SHOOT, new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.shootSpeed)),
-        Map.entry(BehaviorSelector.PASS, new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.passSpeed))
+        Map.entry(BehaviorSelector.SHOOT, new AutoShooterCommand(m_ShooterSubsystem)),
+        Map.entry(BehaviorSelector.PASS, new AutoShooterCommand(m_ShooterSubsystem))
       ),
       this::passOrShootSelector
     );
     
     alignCommand = new SelectCommand<>(
       Map.ofEntries(
-        Map.entry(BehaviorSelector.SHOOT, new AlignToHub(m_robotDrive)),
+        Map.entry(BehaviorSelector.SHOOT, new AlignToHubOld(m_robotDrive)),
         Map.entry(BehaviorSelector.PASS, new AlignToPass(m_robotDrive))
       ),
       this::passOrShootSelector
@@ -181,6 +183,7 @@ public class RobotContainer {
       ),
       this::selectIntake
     );
+    
     // Configure the button bindings
     configureButtonBindings();
 
@@ -281,8 +284,9 @@ SmartDashboard.putData("Flip Gyro", new InstantCommand(
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.SHOOT_HUB)
       .whileTrue(Commands.sequence(
               spinUpCommand,
-              new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
-              new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
+              //new AutoScoring(m_FeederSubsystem)
+               new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
+               new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
           )
           // .alongWith(
           //   new RunCommand(()->m_robotDrive.setX(), m_robotDrive)
@@ -308,7 +312,7 @@ SmartDashboard.putData("Flip Gyro", new InstantCommand(
       ));
     */
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_HUB)
-    .whileTrue(new AlignToHub(m_robotDrive));
+    .whileTrue(new AlignToHubWasher(m_robotDrive, m_ShooterSubsystem));
     // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_UP)
     //   .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(Constants.IntakeConstants.kintakeJointSpeed)
     //     , ()-> m_intake.spinJoint(0), m_intake));
