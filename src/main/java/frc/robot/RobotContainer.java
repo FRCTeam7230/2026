@@ -150,7 +150,7 @@ public class RobotContainer {
     SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Zero/Reset sensors
     m_robotDrive.zeroHeading();
-    m_robotDrive.addAngleGyro(180);
+    m_robotDrive.setGyroOffset(180);
     //Start with this spinUpCommand, the switch to the select version once megatag is confirmed
     //spinUpCommand = new AutoShooterCommand(m_ShooterSubsystem, Constants.OuttakeConstants.shootSpeed);
     
