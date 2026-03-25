@@ -23,9 +23,9 @@ public class AlignToHubAndMoveWhileShoot extends Command {
   DriveSubsystem m_drive;
   XboxController controller;
   ShooterSubsystem m_shoot;
-  PIDController xController = new PIDController(1, 0, 0);
-  PIDController yController = new PIDController(1, 0, 0);
-  PIDController rotController = new PIDController(0.03, 0, 0);
+  PIDController xController = new PIDController(Constants.AlignToHubConstants.kPXController, 0, 0);
+  PIDController yController = new PIDController(Constants.AlignToHubConstants.kPYController, 0, 0);
+  PIDController rotController = new PIDController(Constants.AlignToHubConstants.kPRotController, Constants.AlignToHubConstants.kIRotController, Constants.AlignToHubConstants.kDRotController);
 
   //offset calculation variables
   double globalTargetAngle;
@@ -50,6 +50,9 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     rotController.setSetpoint(0);
     rotController.enableContinuousInput(-180, 180);
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(drive);
+    addRequirements(shoot);
+    rotController.setIZone(Constants.AlignToHubConstants.kIRotControllerIZone);
   }
 
   // Called when the command is initially scheduled.
@@ -59,6 +62,7 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     timer.start();
     radialOffset = 0;
     lastTime = timer.get();
+    SmartDashboard.putData("Align to Hub Washer/Rotation PID",rotController);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -66,7 +70,7 @@ public class AlignToHubAndMoveWhileShoot extends Command {
   public void execute() {
     double deltaTime = timer.get() - lastTime;
     lastTime = timer.get();
-    radialOffset = controller.getRawAxis(1)*deltaTime*Constants.AlignToHubConstants.kSpeedMulti;
+    radialOffset = controller.getRawAxis(1)*deltaTime*Constants.AlignToHubConstants.kSpeedMultGeorge;
     Pose2d currentPose = m_drive.getPose();
     double[] errors = CalculateHubPID(currentPose, radialOffset);
     double xSpeed = xController.calculate(errors[0]);
@@ -75,10 +79,11 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     SmartDashboard.putNumber("Rotation delivered", rotSpeed);
     //uses controller stick axis to control robot movement while shooting
     m_drive.drive(
-        -(xSpeed + (controller.getRawAxis(Constants.ControllerConstants.leftStick_XAXIS) * Constants.AlignToHubConstants.kspeedMult * Math.sin(Math.toRadians(-globalTargetAngle)))),
-        -(ySpeed + (controller.getRawAxis(Constants.ControllerConstants.leftStick_XAXIS) * Constants.AlignToHubConstants.kspeedMult * Math.cos(Math.toRadians(-globalTargetAngle)))),
+        -(xSpeed + (controller.getRawAxis(Constants.ControllerConstants.leftStick_XAXIS) * Constants.AlignToHubConstants.kspeedMultMusa * Math.sin(Math.toRadians(-globalTargetAngle)))),
+        -(ySpeed + (controller.getRawAxis(Constants.ControllerConstants.leftStick_XAXIS) * Constants.AlignToHubConstants.kspeedMultMusa * Math.cos(Math.toRadians(-globalTargetAngle)))),
         -rotSpeed,
         true);
+
 
   }
 
@@ -87,7 +92,7 @@ public class AlignToHubAndMoveWhileShoot extends Command {
   public void end(boolean interrupted) 
   {
     m_drive.setX();
-    drivecommand.end(interrupted);
+    m_shoot.reachSpeed(0);
   }
 
   // Returns true when the command should end.
@@ -130,18 +135,19 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     double distance = Math.sqrt( Math.pow( distanceX, 2) + Math.pow( distanceY, 2) );
     
     double radius = distance + radalOffset;
-    double targetVelocityX = Math.sqrt(
-      (9.81*Math.pow(distance*Constants.AlignToHubConstants.kDistMulti, 2))
-      /(2*Math.tan(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle))*distance*Constants.AlignToHubConstants.kDistMulti - (Constants.AlignToHubConstants.kHubHeight-Constants.AlignToHubConstants.kShooterHeight))
-      );
+    // double targetVelocityX = Math.sqrt(
+    //   (9.81*Math.pow(distance*Constants.AlignToHubConstants.kDistMulti, 2))
+    //   /(2*Math.tan(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle))*distance*Constants.AlignToHubConstants.kDistMulti - (Constants.AlignToHubConstants.kHubHeight-Constants.AlignToHubConstants.kShooterHeight))
+    //   );
 
-    double targetVelocity =  targetVelocityX / Math.cos(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle)) - m_drive.getSpeeds().vxMetersPerSecond;
+    // double targetVelocity =  targetVelocityX / Math.cos(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle)) - m_drive.getSpeeds().vxMetersPerSecond;
     
     if((radius-Radius)>Constants.AlignToHubConstants.kRadiusToleranceBackward){
         radius = Radius + Constants.AlignToHubConstants.kRadiusToleranceBackward;
     } else if((radius-Radius)<Constants.AlignToHubConstants.kRadiusToleranceForward){
       radius = Radius + Constants.AlignToHubConstants.kRadiusToleranceForward;
     }
+    SmartDashboard.putNumber("AlignTHubWasher/distanceToHub", radius);
     //robot position error calculations
     double errorX = distanceX * ( (distance - radius) / distance );
     double errorY = distanceY * ( (distance - radius) / distance );
@@ -156,9 +162,10 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     //angle offset calculations
 
     //this changes the reachSpeed of shooter for a more optimal trajectory
-    initialEjectionVelocityAfterOffset = Constants.AlignToHubConstants.kinitialEjectionVelocityBeforeOffset + Math.abs(0.3*zInitialVelocityRobotRelative);
-    initialEjectionVelocityAfterOffset += targetVelocity-Constants.AlignToHubConstants.kinitalAtTwoPointSevenFive;
-    m_shoot.reachSpeed(m_shoot.LinearVelToRPM(initialEjectionVelocityAfterOffset));
+    // initialEjectionVelocityAfterOffset = Constants.AlignToHubConstants.kinitialEjectionVelocityBeforeOffset + Math.abs(0.3*zInitialVelocityRobotRelative);
+    // initialEjectionVelocityAfterOffset += targetVelocity-Constants.AlignToHubConstants.kinitalAtTwoPointSevenFive;
+    double targetRPM = calculateRPM(radius) + m_shoot.LinearVelToRPM(Math.abs(0.3*zInitialVelocityRobotRelative) - m_drive.getSpeeds().vxMetersPerSecond);
+    m_shoot.reachSpeed(targetRPM);
     
 
     //initial x fuel velocity
@@ -203,6 +210,7 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     SmartDashboard.putNumber("AlignToHub/angleOffset", Math.toDegrees(angleOffsetRad));
     SmartDashboard.putNumber("AlignToHub/zInitialVelocity", zInitialVelocityRobotRelative);
     SmartDashboard.putNumber("AlignToHub/initalEjectionVelocity", initialEjectionVelocityAfterOffset);
+    SmartDashboard.putNumber("AlignToHubWasher/TargetRPM", calculateRPM(radius));
 
     SmartDashboard.putNumber("AlignToHub/TargetAngle",targetAngle);
     SmartDashboard.putNumber("AlignToHub/ErrorX", errors[0]);
@@ -214,6 +222,16 @@ public class AlignToHubAndMoveWhileShoot extends Command {
     SmartDashboard.putNumber("AlignToHub/RobotAngle", pose.getRotation().getDegrees());
       
     return errors;
+  }
+
+  private double calculateRPM(double radialdistance) {
+    //george's physics approximation in an ideal world: m_shoot.LinearVelToRPM(4.2170362293*Math.sqrt(radialdistance));
+    //regression: use this link to determine constants https://www.desmos.com/calculator/sqdpqsalxh
+    double a1 = 1861.25178;
+    double a2 = 0.468823;
+    double x = radialdistance;
+    //power regression
+    return a1*(Math.pow(x, a2));
   }
 
   //sx calculates the position of the fuel at any time t

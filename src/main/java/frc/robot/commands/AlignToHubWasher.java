@@ -21,12 +21,8 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class AlignToHubWasher extends Command {
   /** Creates a new AlignToHub. */
   DriveSubsystem m_drive;
-  XboxController controller;
   ShooterSubsystem m_shoot;
-  PIDController xController = new PIDController(1, 0, 0);
-  PIDController yController = new PIDController(1, 0, 0);
-  PIDController rotController = new PIDController(0.03, 0, 0);
-
+  PIDController rotController = new PIDController(0.025, 0.06, 0.005);
   //offset calculation variables
   double globalTargetAngle;
   double initialEjectionVelocityAfterOffset; //m/s
@@ -35,46 +31,38 @@ public class AlignToHubWasher extends Command {
   double vx0 = Constants.AlignToHubConstants.vx0;
   double x0 = Constants.AlignToHubConstants.x0;
 
-  private final Timer timer = new Timer();
-  private double lastTime = 0;
   double radialOffset = 0;
 
   
-  Command drivecommand = null;
-  public AlignToHubWasher(DriveSubsystem drive, XboxController cont, ShooterSubsystem shoot) {
+  public AlignToHubWasher(DriveSubsystem drive, ShooterSubsystem shoot) {
     m_drive = drive;
-    controller = cont;
     m_shoot = shoot;
-    xController.setSetpoint(0);
-    yController.setSetpoint(0);
     rotController.setSetpoint(0);
     rotController.enableContinuousInput(-180, 180);
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(drive);
+    addRequirements(shoot);
+    rotController.setIZone(4);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() 
   {
-    timer.start();
     radialOffset = 0;
-    lastTime = timer.get();
+    SmartDashboard.putData("Align to Hub Washer/Rotation PID",rotController);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double deltaTime = timer.get() - lastTime;
-    lastTime = timer.get();
-    radialOffset = controller.getRawAxis(1)*deltaTime*Constants.AlignToHubConstants.kSpeedMulti;
+    //radialOffset = controller.getRawAxis(1)*deltaTime*Constants.AlignToHubConstants.kSpeedMulti;
     Pose2d currentPose = m_drive.getPose();
     double[] errors = CalculateHubPID(currentPose, radialOffset);
-    double xSpeed = xController.calculate(errors[0]);
-    double ySpeed = yController.calculate(errors[1]);
     double rotSpeed = Math.max(Math.min(rotController.calculate(errors[2]),1.5), -1.5);
     SmartDashboard.putNumber("Rotation delivered", rotSpeed);
     //cant move while shoot
-    m_drive.drive(-xSpeed, -ySpeed, -rotSpeed,true);
+    m_drive.drive(0, 0, -rotSpeed,true);
 
   }
 
@@ -83,7 +71,7 @@ public class AlignToHubWasher extends Command {
   public void end(boolean interrupted) 
   {
     m_drive.setX();
-    drivecommand.end(interrupted);
+    m_shoot.reachSpeed(0);
   }
 
   // Returns true when the command should end.
@@ -124,20 +112,16 @@ public class AlignToHubWasher extends Command {
     double distanceY = hubY - robotY;
     //pythagorean theorm to get overall distance
     double distance = Math.sqrt( Math.pow( distanceX, 2) + Math.pow( distanceY, 2) );
-    
+    SmartDashboard.putNumber("AlignTHubWasher/distanceToHub",distance);
     double radius = distance;
+    /*
     double targetVelocityX = Math.sqrt(
       (9.81*Math.pow(distance*Constants.AlignToHubConstants.kDistMulti, 2))
       /(2*Math.tan(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle))*distance*Constants.AlignToHubConstants.kDistMulti - (Constants.AlignToHubConstants.kHubHeight-Constants.AlignToHubConstants.kShooterHeight))
       );
 
-    double targetVelocity =  targetVelocityX / Math.cos(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle)) - m_drive.getSpeeds().vxMetersPerSecond;
-    
-    if((radius-initialRadius)>Constants.AlignToHubConstants.kRadiusToleranceBackward){
-        radius = initialRadius + Constants.AlignToHubConstants.kRadiusToleranceBackward;
-    } else if((radius-initialRadius)<Constants.AlignToHubConstants.kRadiusToleranceForward){
-      radius = initialRadius + Constants.AlignToHubConstants.kRadiusToleranceForward;
-    }
+     double targetVelocity =  targetVelocityX / Math.cos(Math.toRadians(Constants.AlignToHubConstants.kejectionAngle)) - m_drive.getSpeeds().vxMetersPerSecond;
+    */
     //robot position error calculations
     double errorX = distanceX * ( (distance - radius) / distance );
     double errorY = distanceY * ( (distance - radius) / distance );
@@ -166,6 +150,8 @@ public class AlignToHubWasher extends Command {
   
     SmartDashboard.putNumber("AlignToHubWasher/zInitialVelocity", zInitialVelocityRobotRelative);
     SmartDashboard.putNumber("AlignToHubWasher/initalEjectionVelocity", initialEjectionVelocityAfterOffset);
+    SmartDashboard.putNumber("AlignToHubWasher/TargetRPM", calculateRPM(radius));
+
 
     SmartDashboard.putNumber("AlignToHubWasher/TargetAngle",targetAngle);
     SmartDashboard.putNumber("AlignToHubWasher/ErrorX", errors[0]);
@@ -182,10 +168,20 @@ public class AlignToHubWasher extends Command {
   private double calculateRPM(double radialdistance) {
     //george's physics approximation in an ideal world: m_shoot.LinearVelToRPM(4.2170362293*Math.sqrt(radialdistance));
     //regression: use this link to determine constants https://www.desmos.com/calculator/sqdpqsalxh
+    // double a  = 0;
+    // double a1 = 0;
+    // double a2 = 0;
+    // double a3 = 0;
+    // double a4 = 0;
+    // double a5 = 0;
+    // double a6 = 0;
+    // double x = radialdistance;
+    //quadratic + sqrt regression
+    //return m_shoot.LinearVelToRPM(4.217*Math.sqrt(radialdistance));
+    // return a + a1*(x-a2) + a3*(Math.pow(x-a4, 2)) + a5*(Math.pow(x-a6, 0.5));
     double a1 = 1861.25178;
     double a2 = 0.468823;
     double x = radialdistance;
-    //power regression
-    return a1*(Math.pow(x, a2));
+    return a1*Math.pow(x,a2);
   }
 }
