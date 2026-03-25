@@ -21,6 +21,7 @@ public class AlignToHub extends Command {
   PIDController xController = new PIDController(0.5, 0, 0);
   PIDController yController = new PIDController(0.5, 0, 0);
   PIDController rotController = new PIDController(0.015, 0, 0);
+  static double globalRotError;
 
   public AlignToHub(DriveSubsystem drive) {
     m_drive = drive;
@@ -33,6 +34,7 @@ public class AlignToHub extends Command {
     yController.setTolerance(Constants.AlignToHubConstants.kerrorYTolerance);
     rotController.setTolerance(Constants.AlignToHubConstants.kerrorAngleTolerance);
     rotController.enableContinuousInput(-180, 180);
+    globalRotError = 0;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -107,6 +109,7 @@ public class AlignToHub extends Command {
         double errorY = distanceY * ( (distance - radius) / distance );
         double targetAngle = Math.signum(distanceY) * Math.acos(distanceX / distance)*180/Math.PI;
         double errorAngle = targetAngle - pose.getRotation().getDegrees();
+        globalRotError = errorAngle;
 
     if (errorX < Constants.AlignToHubConstants.kerrorXTolerance) {
       errors[0] = 0;
@@ -131,4 +134,7 @@ public class AlignToHub extends Command {
         SmartDashboard.putNumber("AlignToHub/RobotAngle", pose.getRotation().getDegrees());
         return errors;
     }
+  public static double getRotError() {
+    return globalRotError;
+  }
 }

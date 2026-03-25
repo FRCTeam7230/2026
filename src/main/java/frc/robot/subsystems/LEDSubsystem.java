@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.commands.AlignToHub;
 
 public class LEDSubsystem extends SubsystemBase {
   /** Directly controls LEDs, used to start and set data of LEDs */
@@ -134,6 +135,12 @@ public class LEDSubsystem extends SubsystemBase {
     solidColorTop(Constants.LEDConstants.kGreen);
   }
 
+  public void solidRedTop() {
+    currentState = 3;
+    solidColorTop(Constants.LEDConstants.kRed);
+  }
+  
+
   /** current state = 4, used for transition between shifts
    @param hubState is the state of the hub, used to determine which colors to transition between and when to transition
      2 = active to inactive, transition from yellow to purple
@@ -192,7 +199,7 @@ public class LEDSubsystem extends SubsystemBase {
   }
 
   /** cool pattern but not used currently for match */
-  public void crazyPattern() {
+  /*public void crazyPattern() {
     currentState = 5;
     LEDPattern base = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kMediumPurple, Constants.LEDConstants.kNiceYellow);
     LEDPattern DCbreathe = base.breathe(Units.Seconds.of(2));
@@ -201,7 +208,7 @@ public class LEDSubsystem extends SubsystemBase {
     maskedthing.applyTo(m_top);
     m_LED.setData(m_LEDBuffer);
   }
-  
+  */
 
   /**current state = 6, used for shooting(yellow sinusoidal pattern) */
   public void shootingPattern() { 
@@ -447,7 +454,7 @@ public class LEDSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
   
-    solidColorBottom(Constants.LEDConstants.kPurple);
+    //solidColorBottom(Constants.LEDConstants.kPurple);
     //solidColorTop(Constants.LEDConstants.kPurple);
     //autoPattern();
     //shootingPattern();
@@ -474,7 +481,7 @@ public class LEDSubsystem extends SubsystemBase {
    * 2 = transition (active to inactive)
    * 3 = transition (inactive to active)
    */
-    /* 
+   /* 
    int hubState = FieldManagementPublisher.getHubState();
     if (DriverStation.isAutonomousEnabled()){// && currentState != 5) { 
       autoPattern();
@@ -508,6 +515,15 @@ public class LEDSubsystem extends SubsystemBase {
     // first priority
     if (currentState == 6) {
       shootingPattern();
+    }
+    else if (currentState == 3) {
+      double error = AlignToHub.getRotError();
+      if (Math.abs(error) > 3) {
+        solidRedTop();
+      }
+      else {
+        solidGreenTop();
+      }
     }
     // second priority
     else if (currentState == 7) {
