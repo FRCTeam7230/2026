@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -56,6 +57,9 @@ public class LEDSubsystem extends SubsystemBase {
   
   /** Creates a new LEDSubsystem. */
   public LEDSubsystem() {
+        SmartDashboard.putNumber("Hue", 0);
+    SmartDashboard.putNumber("Saturation", 0);
+    SmartDashboard.putNumber("Value", 0);
     m_LED = new AddressableLED(Constants.LEDConstants.kPort);
     m_LEDBuffer = new AddressableLEDBuffer(Constants.LEDConstants.kLEDLength);
     m_bottom = m_LEDBuffer.createView(Constants.LEDConstants.kBottomStartIndex, Constants.LEDConstants.kBottomEndIndex);
@@ -69,6 +73,10 @@ public class LEDSubsystem extends SubsystemBase {
     m_LED.setData(m_LEDBuffer);
     m_LED.start();
     robotTimer.start();
+  }
+
+  public void updateLEDs() {
+    m_LED.setData(m_LEDBuffer);
   }
 
   /** method to set boolean isOverriden
@@ -97,13 +105,16 @@ public class LEDSubsystem extends SubsystemBase {
   public void solidColorTop(Color c) {
     LEDPattern colorPattern = LEDPattern.solid(c);
     colorPattern.applyTo(m_top);
-    m_LED.setData(m_LEDBuffer);
+  }
+    public void colorTester() {
+
+    LEDPattern colorPattern = LEDPattern.solid(Color.fromHSV((int)SmartDashboard.getNumber("Hue",0), (int)SmartDashboard.getNumber("Saturation",0), (int)SmartDashboard.getNumber("Value",0)));
+    colorPattern.applyTo(m_top);
   }
 
   public void solidColorBottom(Color c) {
     LEDPattern colorPattern = LEDPattern.solid(c);
     colorPattern.applyTo(m_bottom);
-    m_LED.setData(m_LEDBuffer);
   }
 
   /**current state = 1, makes LEDs purple */
@@ -140,7 +151,10 @@ public class LEDSubsystem extends SubsystemBase {
     solidColorTop(Constants.LEDConstants.kRed);
   }
   
-
+  /*public void solidOrangeTop() {
+    solidColorBottom(Constants.LEDConstants.kOrange);
+  }
+*/
   /** current state = 4, used for transition between shifts
    @param hubState is the state of the hub, used to determine which colors to transition between and when to transition
      2 = active to inactive, transition from yellow to purple
@@ -192,14 +206,13 @@ public class LEDSubsystem extends SubsystemBase {
   public void autoPattern() {
     currentState = 5;
     LEDPattern base = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kMediumPurple, Constants.LEDConstants.kNiceYellow);
-    //LEDPattern DCbreathe = base.breathe(Units.Seconds.of(2));
-    //LEDPattern pattern = base.scrollAtRelativeSpeed(Units.Percent.per(Units.Seconds).of(100));
-    base.applyTo(m_LEDBuffer); //applies to both top and bottom
-    m_LED.setData(m_LEDBuffer);
+    LEDPattern pattern = base.scrollAtRelativeSpeed(Units.Percent.per(Units.Seconds).of(100));
+    //LEDPattern DCbreathe = pattern.breathe(Units.Seconds.of(2));
+    pattern.applyTo(m_LEDBuffer); //applies to both top and bottom
   }
 
   /** cool pattern but not used currently for match */
-  /*public void crazyPattern() {
+  public void crazyPattern() {
     currentState = 5;
     LEDPattern base = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kMediumPurple, Constants.LEDConstants.kNiceYellow);
     LEDPattern DCbreathe = base.breathe(Units.Seconds.of(2));
@@ -208,20 +221,18 @@ public class LEDSubsystem extends SubsystemBase {
     maskedthing.applyTo(m_top);
     m_LED.setData(m_LEDBuffer);
   }
-  */
+  
 
   /**current state = 6, used for shooting(yellow sinusoidal pattern) */
   public void shootingPattern() { 
     currentState = 6;
     setCustomGradientToBuffer(Constants.LEDConstants.kYellowH, Constants.LEDConstants.kYellowS, Constants.LEDConstants.kYellowV, Constants.LEDConstants.kshootingMovingFrequency, Constants.LEDConstants.kshootingRepeatTimes);
-    m_LED.setData(m_LEDBuffer);
   }
 
   /**current state = 6, used for shooting but mirrored on top and bottom(also yellow sinusoidal pattern) */
   public void shootingPatternMirroredPulse() { 
     currentState = 6;
     setCustomGradientToBuffer2(Constants.LEDConstants.kYellowH, Constants.LEDConstants.kYellowS, Constants.LEDConstants.kYellowV, Constants.LEDConstants.kshootingMovingFrequency, Constants.LEDConstants.kshootingRepeatTimes);
-    m_LED.setData(m_LEDBuffer);
   }
 
   /**current state = 8, used for passing(purple sinusoidal pattern) */
@@ -239,7 +250,6 @@ public class LEDSubsystem extends SubsystemBase {
       v = Constants.LEDConstants.kPurpleV;
     }
     setCustomGradientToBuffer(h, s, v, Constants.LEDConstants.kshootingMovingFrequency, Constants.LEDConstants.kshootingRepeatTimes);
-    m_LED.setData(m_LEDBuffer);
   }
 
   /** current state = 8, used for passing but mirrored on top and bottom(also blue sinusoidal pattern) */
@@ -257,7 +267,6 @@ public class LEDSubsystem extends SubsystemBase {
       v = Constants.LEDConstants.kPurpleV;
     }
     setCustomGradientToBuffer2(h, s, v, Constants.LEDConstants.kshootingMovingFrequency, Constants.LEDConstants.kshootingRepeatTimes);
-    m_LED.setData(m_LEDBuffer);
   }
 
   /** manually sets gradient to entire buffer
@@ -348,7 +357,6 @@ public class LEDSubsystem extends SubsystemBase {
     LEDPattern blinkbase = LEDPattern.solid(Color.kWhite);
     LEDPattern blinkpattern = blinkbase.blink(Units.Seconds.of(tenSecondsLeft));
     blinkpattern.applyTo(m_top);
-    m_LED.setData(m_LEDBuffer);
   }
 
   public void tenSecondsLeft2() {
@@ -361,6 +369,23 @@ public class LEDSubsystem extends SubsystemBase {
   public void tenSecondsLeft3() {
     currentState = 9;
     double matchTime = DriverStation.getMatchTime();
+    double percentage = calculateBrightnessPercentage2(matchTime);
+    // int newS = manuallyLinearlyInterpolate(Constants.LEDConstants.kYellowS, Constants.LEDConstants.kPurpleS, percentage, false);
+    // int newV = manuallyLinearlyInterpolate(Constants.LEDConstants.kYellowV, Constants.LEDConstants.kPurpleV, percentage, false);
+    // int newH = manuallyLinearlyInterpolate(Constants.LEDConstants.kYellowH, Constants.LEDConstants.kPurpleH, percentage, true);
+    solidColorTop(Color.lerpRGB(Constants.LEDConstants.kPurple, Constants.LEDConstants.kNiceYellow, percentage));
+  }
+
+  public void tenSecondsLeft4() {
+    currentState = 9;
+    double matchTime = 15 - robotTimer.get();
+    int newV = (int)((Constants.LEDConstants.kYellowV) * (calculateBrightnessPercentage2(matchTime)));
+    solidColorTop(Color.fromHSV(Constants.LEDConstants.kYellowH, Constants.LEDConstants.kYellowS, newV));
+  } 
+
+  public void tenSecondsLeft5() {
+    currentState = 9;
+    double matchTime = 15 - robotTimer.get();
     double percentage = calculateBrightnessPercentage2(matchTime);
     // int newS = manuallyLinearlyInterpolate(Constants.LEDConstants.kYellowS, Constants.LEDConstants.kPurpleS, percentage, false);
     // int newV = manuallyLinearlyInterpolate(Constants.LEDConstants.kYellowV, Constants.LEDConstants.kPurpleV, percentage, false);
@@ -383,11 +408,10 @@ public class LEDSubsystem extends SubsystemBase {
   /** current state = 0, used when robot is idle(purple sinusoidal) */
   public void idlePattern() { // could change later if want to use mask and make breath (brightness really fast but as a funtion of percentage)
     // If the Driver Station is not attached, show the red/blue scrolling gradient
-    if (!DriverStation.isDSAttached() || DriverStation.isAutonomous() || DriverStation.isTest() || DriverStation.isDisabled()) {
+    if (!(DriverStation.isDSAttached() || DriverStation.isAutonomous() || DriverStation.isTest() )) {
       LEDPattern basegradient = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Constants.LEDConstants.kRed, Constants.LEDConstants.kBlue);
       LEDPattern scrollpattern = basegradient.scrollAtRelativeSpeed(Units.Hertz.of(Constants.LEDConstants.kidleScrollingMovingFrequency));
       scrollpattern.applyTo(m_LEDBuffer); //applies to both top and bottom
-      m_LED.setData(m_LEDBuffer);
       return;
     }
 
@@ -397,11 +421,9 @@ public class LEDSubsystem extends SubsystemBase {
       var alliance = allianceOpt.get();
       if (alliance == DriverStation.Alliance.Red) {
         setCustomGradientToBuffer(Constants.LEDConstants.kRedH, Constants.LEDConstants.kRedS, Constants.LEDConstants.kRedV, Constants.LEDConstants.kidleSinusoidalMovingFrequency, Constants.LEDConstants.kidleRepeatTimes);
-        m_LED.setData(m_LEDBuffer);
         return;
       } else if (alliance == DriverStation.Alliance.Blue) {
         setCustomGradientToBuffer(Constants.LEDConstants.kBlueH, Constants.LEDConstants.kBlueS, Constants.LEDConstants.kBlueV, Constants.LEDConstants.kidleSinusoidalMovingFrequency, Constants.LEDConstants.kidleRepeatTimes);
-        m_LED.setData(m_LEDBuffer);
         return;
       }
     } 
@@ -410,26 +432,22 @@ public class LEDSubsystem extends SubsystemBase {
     LEDPattern basegradient = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Constants.LEDConstants.kRed, Constants.LEDConstants.kBlue);
     LEDPattern scrollpattern = basegradient.scrollAtRelativeSpeed(Units.Hertz.of(Constants.LEDConstants.kidleScrollingMovingFrequency));
     scrollpattern.applyTo(m_top);
-    m_LED.setData(m_LEDBuffer);
   }
 
   public void idlePatternMirroredPulse() {
     currentState = 0;
     setCustomGradientToBuffer2(Constants.LEDConstants.kBlueH, Constants.LEDConstants.kBlueS, Constants.LEDConstants.kBlueV, Constants.LEDConstants.kidleSinusoidalMovingFrequency, Constants.LEDConstants.kidleRepeatTimes);
-    m_LED.setData(m_LEDBuffer);
   }
 
   /** current state = 7, used for intaking(orange sinusoidal) */
   public void intakePattern() {
     currentState = 7;
     setCustomGradientToBuffer(Constants.LEDConstants.kOrangeH, Constants.LEDConstants.kOrangeS, Constants.LEDConstants.kOrangeV, Constants.LEDConstants.kintakeMovingFrequency, Constants.LEDConstants.kintakingtRepeatTimes);
-    m_LED.setData(m_LEDBuffer);
   }
 
   public void intakePatternMirroredPulse() {
     currentState = 7;
     setCustomGradientToBuffer2(Constants.LEDConstants.kOrangeH, Constants.LEDConstants.kOrangeS, Constants.LEDConstants.kOrangeV, Constants.LEDConstants.kintakeMovingFrequency, Constants.LEDConstants.kintakingtRepeatTimes);
-    m_LED.setData(m_LEDBuffer);
   }
 
   //GET RGB VALUES FROM 
@@ -459,15 +477,19 @@ public class LEDSubsystem extends SubsystemBase {
     //autoPattern();
     //shootingPattern();
     //shootingPatternMirroredPulse();
+    //crazyPattern();
     //idlePattern();
     //idlePatternMirroredPulse();
     //intakePattern();
     //intakePatternMirroredPulse();
-    //crazyPattern();
     //passingPattern(FieldManagementPublisher.getHubState());
     //passingPatternMirroredPulse();
     //autoPattern();
-    //tenSecondsLeft2();
+    tenSecondsLeft5();
+    //solidColorBottom(Color.kWhite);
+    //solidColorTop(Color.kWhite);
+    //colorTester();
+    
 
     
     
@@ -485,6 +507,7 @@ public class LEDSubsystem extends SubsystemBase {
    int hubState = FieldManagementPublisher.getHubState();
     if (DriverStation.isAutonomousEnabled()){// && currentState != 5) { 
       autoPattern();
+      updateLEDs();
     }
 
     ///*
@@ -534,6 +557,8 @@ public class LEDSubsystem extends SubsystemBase {
       passingPattern(hubState);
     }
     */
+    updateLEDs();
+    
 
     isOverridenPublisher.set(isOverriden);
     currentStatePublisher.set(currentState);
@@ -545,3 +570,4 @@ public class LEDSubsystem extends SubsystemBase {
 
   }
 }
+
