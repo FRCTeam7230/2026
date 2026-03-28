@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.Optional;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -33,6 +34,8 @@ public class AlignToHubWasher extends Command {
 
   double radialOffset = 0;
 
+  Debouncer alignDebouncer = new Debouncer(0.1);
+
   
   public AlignToHubWasher(DriveSubsystem drive, ShooterSubsystem shoot) {
     m_drive = drive;
@@ -43,6 +46,7 @@ public class AlignToHubWasher extends Command {
     addRequirements(drive);
     addRequirements(shoot);
     rotController.setIZone(4);
+    rotController.setTolerance(Constants.AlignConstants.kerrorAngleTolerance);
   }
 
   // Called when the command is initially scheduled.

@@ -57,7 +57,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /** work in progress*/
   DoubleArrayPublisher currentPublisher = NetworkTableInstance.getDefault().getDoubleArrayTopic("Shooter/Currents").publish();
   public int rpmAdded = 0;
-  private int lastRPMSetpoint = 0;
+  private int lastRPMSetpoint = 3001;
   DoublePublisher RPMPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Shooter/RPM Setpoint").publish(); 
     /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {

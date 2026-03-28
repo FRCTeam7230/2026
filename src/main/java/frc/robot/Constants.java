@@ -234,13 +234,13 @@ public final class Constants {
     public static final int kJointCANID = 14;
     public static final int kRollerCANID = 15;
     public static final double kjointkG = 0.18; //need to update
-    public static final double kjointKp = 0.020; //need to update
+    public static final double kjointKp = 0.04; //need to update
     public static final double kjointKi = 0;
     public static final double kjointKd = 0.0013;
     public static final double koutputMin = -0.3; //Intake TODO: See what value makes sense (do the math to see how fast it goes at full speed), start small and go bigger
     public static final double koutputMax = 0.3;
     public static final int kMaxCurrent = 80; //amps //Intake TODO: probably higher than 20 Amps given using Neo 1.1s
-    public static final double kretractedPostion = 70; //need to update
+    public static final double kretractedPostion = 46;//85; //need to update
     public static final double kextendedPostion = 340; //need to update
     public static final double kintakeRollerSpeed = -1; //need to update
     public static final double kintakeJointSpeed = 0.05; //need to update
