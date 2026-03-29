@@ -11,8 +11,8 @@ public class AutoScoring extends Command {
     Timer drive_timer = new Timer();
     FeederSubsystem m_feeder;
     DriveSubsystem m_drive;
-    public AutoScoring(DriveSubsystem drive){
-            //m_feeder = feeder;
+    public AutoScoring(FeederSubsystem feeder, DriveSubsystem drive){
+            m_feeder = feeder;
             m_drive = drive;
     }
     @Override
@@ -24,15 +24,13 @@ public class AutoScoring extends Command {
     }
     @Override
     public void execute(){
-        // if (t.hasElapsed(1.5)){
-        //     t.restart();
-        // } else if (t.hasElapsed(1)){
-        //     //m_feeder.setKickerSpeed(-Constants.FeederConstants.kickerSpeed);
-        //     m_feeder.setRollerSpeed(0);
-        // } else {
-        //     // m_feeder.setKickerSpeed(Constants.FeederConstants.kickerSpeed);
-        //     m_feeder.setRollerSpeed(Constants.FeederConstants.rollerSpeed);
-        // }
+        if (t.hasElapsed(1.5)){
+            t.restart();
+        } else if (t.hasElapsed(1)){
+            m_feeder.setRollerSpeed(0);
+        } else {
+            m_feeder.setRollerSpeed(Constants.FeederConstants.rollerSpeed);
+        }
         if (drive_timer.hasElapsed(1)){
             drive_timer.restart();
         } else if (drive_timer.hasElapsed(0.25)&&!drive_timer.hasElapsed(0.75)){

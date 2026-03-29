@@ -147,7 +147,10 @@ public class RobotContainer {
                 m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed); }, m_intake)
         );
         NamedCommands.registerCommand("Stop Intake", 
-                new InstantCommand(()->{ m_intake.reachGoal(Constants.IntakeConstants.kretractedPostion); }, m_intake)
+                new InstantCommand(()->{ m_intake.reachGoal(Constants.IntakeConstants.kHalfRaisedPosition); }, m_intake)
+        );
+        NamedCommands.registerCommand("Stop Intake Roller", 
+                new InstantCommand(()->{ m_intake.spinRoller(0); }, m_intake)
         );
         NamedCommands.registerCommand("Intake From Depot", 
                 ///Commands.runOnce(drive::intakeStop, drive)
@@ -284,9 +287,9 @@ SmartDashboard.putData("Flip Gyro", new InstantCommand(
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.SHOOT_HUB)
       .whileTrue(Commands.sequence(
               spinUpCommand,
-              //new AutoScoring(m_FeederSubsystem)
-               new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
-               new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
+              new AutoScoring(m_FeederSubsystem, m_robotDrive)
+               //new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),//autoscoring can cover this line and the line below
+               //new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
           )
           // .alongWith(
           //   new RunCommand(()->m_robotDrive.setX(), m_robotDrive)

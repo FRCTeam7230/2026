@@ -241,6 +241,7 @@ public final class Constants {
     public static final double koutputMax = 0.3;
     public static final int kMaxCurrent = 80; //amps //Intake TODO: probably higher than 20 Amps given using Neo 1.1s
     public static final double kretractedPostion = 50.6;//85; //need to update
+    public static final double kHalfRaisedPosition = 35;
     public static final double kextendedPostion = 339; //need to update
     public static final double kintakeRollerSpeed = -1; //need to update
     public static final double kintakeJointSpeed = 0.05; //need to update
