@@ -516,7 +516,7 @@ public class LEDSubsystem extends SubsystemBase {
       autoPattern();
     }
 
-    ///*
+    /*
     // this section is the default pattern based on the match when no button is pressed
     
     else if (FieldManagementPublisher.isLastTenSeconds() && hubState != -1) {
@@ -552,7 +552,7 @@ public class LEDSubsystem extends SubsystemBase {
     else if (currentState == 8) {
       passingPattern(hubState);
     }
-    //*/
+    */
     
     
 
