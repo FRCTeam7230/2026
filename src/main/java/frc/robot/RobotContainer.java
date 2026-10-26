@@ -7,10 +7,11 @@ package frc.robot;
 import java.awt.BorderLayout;
 import java.awt.Font;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+// import javax.swing.JFrame;
+// import javax.swing.JLabel;
+// import javax.swing.JPanel;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.MathUtil;
@@ -35,7 +36,7 @@ import frc.robot.commands.AutoShooterCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.LEDSimGUI;
+// import frc.robot.subsystems.LEDSimGUI;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.FieldManagementPublisher;
@@ -60,7 +61,7 @@ public class RobotContainer {
   DriveSubsystem m_robotDrive;
   FieldManagementPublisher m_fieldManagementPublisher;
   LEDSubsystem m_LedSubsystem;
-  JPanel m_LEDSim;
+  // JPanel m_LEDSim;
   private Boolean fieldRelative = true;
   /*
   private ShooterSubsystem m_ShooterSubsystem;
@@ -81,9 +82,9 @@ public class RobotContainer {
    */
   private boolean isCompetition = false;//What replaces this?
   private double experimentSpeed = 0;
-   JFrame frame = new JFrame();
+  //  JFrame frame = new JFrame();
   public RobotContainer() {
-    m_LedSubsystem = new LEDSubsystem();
+    /*m_LedSubsystem = new LEDSubsystem();
       if (!isCompetition){
         frame.setTitle("My JFrame Example");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -101,7 +102,7 @@ public class RobotContainer {
         frame.pack();
         frame.setVisible(true);
       }
-      
+      */
     
     
     
@@ -111,6 +112,7 @@ public class RobotContainer {
     */
     m_fieldManagementPublisher = new FieldManagementPublisher();
     //Set up Subsystems
+    TalonFX m_motor = new TalonFX(0);
     m_robotDrive = new DriveSubsystem();
 
     for(int port = 5800; port<=5809; port++)
@@ -137,6 +139,11 @@ public class RobotContainer {
     //autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
 SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
+double george = Math.random();
+george *=2;
+--george;
+m_motor.set(0.3);
+System.out.println(george);
     // Configure default commands
     m_robotDrive.setDefaultCommand(
         new RunCommand(

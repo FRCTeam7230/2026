@@ -34,7 +34,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.AlignToHub;
 
-import javax.swing.*;
+// import javax.swing.*;
 
 
 public class LEDSubsystem extends SubsystemBase {
@@ -48,7 +48,7 @@ public class LEDSubsystem extends SubsystemBase {
   /** Able to control one part of LED strip*/
   AddressableLEDBufferView m_top;
   
-  JFrame frame = new JFrame();
+  // JFrame frame = new JFrame();
   
 
   double timer = 0;
