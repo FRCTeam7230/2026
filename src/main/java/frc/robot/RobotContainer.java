@@ -37,6 +37,7 @@ import frc.robot.commands.AlignToHubWasher;
 import frc.robot.commands.AlignToPass;
 import frc.robot.commands.AutoScoring;
 import frc.robot.commands.AutoShooterCommand;
+import frc.robot.subsystems.BasicMotor;
 //import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
@@ -65,6 +66,7 @@ public class RobotContainer {
 
   DriveSubsystem m_robotDrive;
   IntakeSubsystem m_intake;
+  BasicMotor m_basicMotor;
   FieldManagementPublisher m_fieldManagementPublisher;
   private Boolean fieldRelative = true;
   
@@ -101,120 +103,127 @@ public class RobotContainer {
     IN
   }
   public RobotContainer() {
-    
-    m_ShooterSubsystem = new ShooterSubsystem();
-       SmartDashboard.putData("Add 10 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(10)));
-        SmartDashboard.putData("Minus 10 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(-10)));
-    SmartDashboard.putData("Add 100 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(100)));
-        SmartDashboard.putData("Minus 100 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(-100)));
+     m_basicMotor = new BasicMotor();
+    // m_ShooterSubsystem = new ShooterSubsystem();
+    //    SmartDashboard.putData("Add 10 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(10)));
+    //     SmartDashboard.putData("Minus 10 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(-10)));
+    // SmartDashboard.putData("Add 100 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(100)));
+    //     SmartDashboard.putData("Minus 100 RPM",new InstantCommand(()->m_ShooterSubsystem.addRpm(-100)));
 
-    m_FeederSubsystem = new FeederSubsystem();
+    // m_FeederSubsystem = new FeederSubsystem();
     
     m_fieldManagementPublisher = new FieldManagementPublisher();
     //Set up Subsystems
-    m_robotDrive = new DriveSubsystem();
+   m_robotDrive = new DriveSubsystem();
 
     for(int port = 5800; port<=5809; port++)
     {
       PortForwarder.add(port, "limelight.local",port
       );
     }
-    m_intake = new IntakeSubsystem();
-    NamedCommands.registerCommand("Going over the bump", m_robotDrive.driveExperiment());
-    NamedCommands.registerCommand("Align To Bump", new AlignToBump(m_robotDrive,true));
-    NamedCommands.registerCommand("Align",
-      new AlignToHubWasher(m_robotDrive,m_ShooterSubsystem));
+    // m_intake = new IntakeSubsystem();
+    // NamedCommands.registerCommand("Going over the bump", m_robotDrive.driveExperiment());
+    // NamedCommands.registerCommand("Align To Bump", new AlignToBump(m_robotDrive,true));
+    // NamedCommands.registerCommand("Align",
+    //   new AlignToHubWasher(m_robotDrive,m_ShooterSubsystem));
 
-        NamedCommands.registerCommand("Shoot",
-        Commands.sequence(
-          new AutoShooterCommand(m_ShooterSubsystem),
-          new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
-              new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
+    //     NamedCommands.registerCommand("Shoot",
+    //     Commands.sequence(
+    //       new AutoShooterCommand(m_ShooterSubsystem),
+    //       new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
+    //           new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
               
-          ).finallyDo(
-            () -> {
-              m_ShooterSubsystem.stopMotor();
-              m_FeederSubsystem.setKickerSpeed(0);
-              m_FeederSubsystem.setRollerSpeed(0);
-            }
-          ));
+    //       ).finallyDo(
+    //         () -> {
+    //           m_ShooterSubsystem.stopMotor();
+    //           m_FeederSubsystem.setKickerSpeed(0);
+    //           m_FeederSubsystem.setRollerSpeed(0);
+    //         }
+    //       ));
                 
         
         
-        NamedCommands.registerCommand("Intake Fuel", 
-                new InstantCommand(()->{
-                   m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);
-                m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed); }, m_intake)
-        );
-        NamedCommands.registerCommand("Stop Intake", 
-                new InstantCommand(()->{ m_intake.reachGoal(Constants.IntakeConstants.kretractedPostion); }, m_intake)
-        );
-        NamedCommands.registerCommand("Intake From Depot", 
-                ///Commands.runOnce(drive::intakeStop, drive)
-                Commands.run(()->{m_robotDrive.drive(-0.2,0,0,false);},m_robotDrive).withTimeout(4)//1 meter, plus some extra
-        );
+    //     NamedCommands.registerCommand("Intake Fuel", 
+    //             new InstantCommand(()->{
+    //                m_intake.reachGoal(Constants.IntakeConstants.kextendedPostion);
+    //             m_intake.spinRoller(Constants.IntakeConstants.kintakeRollerSpeed); }, m_intake)
+    //     );
+    //     NamedCommands.registerCommand("Stop Intake", 
+    //             new InstantCommand(()->{ m_intake.reachGoal(Constants.IntakeConstants.kretractedPostion); }, m_intake)
+    //     );
+    //     NamedCommands.registerCommand("Intake From Depot", 
+    //             ///Commands.runOnce(drive::intakeStop, drive)
+    //             Commands.run(()->{m_robotDrive.drive(-0.2,0,0,false);},m_robotDrive).withTimeout(4)//1 meter, plus some extra
+    //     );
         
-    SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
+   // SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Zero/Reset sensors
-    m_robotDrive.zeroHeading();
-    m_robotDrive.setGyroOffset(180);
+    // m_robotDrive.zeroHeading();
+    // m_robotDrive.setGyroOffset(180);
     //Start with this spinUpCommand, the switch to the select version once megatag is confirmed
     //spinUpCommand = new AutoShooterCommand(m_ShooterSubsystem, Constants.OuttakeConstants.shootSpeed);
     
-    spinUpCommand = new SelectCommand<>(
-      Map.ofEntries(
-        Map.entry(BehaviorSelector.SHOOT, new AutoShooterCommand(m_ShooterSubsystem)),
-        Map.entry(BehaviorSelector.PASS, new AutoShooterCommand(m_ShooterSubsystem))
-      ),
-      this::passOrShootSelector
-    );
+    // spinUpCommand = new SelectCommand<>(
+    //   Map.ofEntries(
+    //     Map.entry(BehaviorSelector.SHOOT, new AutoShooterCommand(m_ShooterSubsystem)),
+    //     Map.entry(BehaviorSelector.PASS, new AutoShooterCommand(m_ShooterSubsystem))
+    //   ),
+    //   this::passOrShootSelector
+    // );
     
-    alignCommand = new SelectCommand<>(
-      Map.ofEntries(
-        Map.entry(BehaviorSelector.SHOOT, new AlignToHubOld(m_robotDrive)),
-        Map.entry(BehaviorSelector.PASS, new AlignToPass(m_robotDrive))
-      ),
-      this::passOrShootSelector
-    );
-    intakeToggleCommand = new SelectCommand<>(
-      Map.ofEntries(
-        Map.entry(IntakeSelector.OUT, m_intake.toggleIntake(true)),
-        Map.entry(IntakeSelector.IN, m_intake.toggleIntake(false))
-      ),
-      this::selectIntake
-    );
+    // alignCommand = new SelectCommand<>(
+    //   Map.ofEntries(
+    //     Map.entry(BehaviorSelector.SHOOT, new AlignToHubOld(m_robotDrive)),
+    //     Map.entry(BehaviorSelector.PASS, new AlignToPass(m_robotDrive))
+    //   ),
+    //   this::passOrShootSelector
+    // );
+    // intakeToggleCommand = new SelectCommand<>(
+    //   Map.ofEntries(
+    //     Map.entry(IntakeSelector.OUT, m_intake.toggleIntake(true)),
+    //     Map.entry(IntakeSelector.IN, m_intake.toggleIntake(false))
+    //   ),
+    //   this::selectIntake
+    // );
     
     // Configure the button bindings
-    configureButtonBindings();
+    //configureButtonBindings();
 
     // TODO: This needs to wait until alliance specified! (Trigger?)
-    autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
-        (stream) -> isCompetition
-            ? stream.filter(auto -> auto.getName().startsWith("COMP"))
-            : stream
-        );
+    // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
+    //     (stream) -> isCompetition
+    //         ? stream.filter(auto -> auto.getName().startsWith("COMP"))
+    //         : stream
+    //     );
 
-    //autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-    SmartDashboard.putData("Auto Mode", autoChooser);
-SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
-SmartDashboard.putData("Flip Gyro", new InstantCommand(
-    ()->{
-    m_robotDrive.addAngleGyro(180);}
+    autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+//     SmartDashboard.putData("Auto Mode", autoChooser);
+// SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
+// SmartDashboard.putData("Flip Gyro", new InstantCommand(
+//     ()->{
+//     m_robotDrive.addAngleGyro(180);}
+// ));
+
+SmartDashboard.putData("Run Motor", new InstantCommand(
+  ()->{
+    m_basicMotor.setMotorSpeed(1);
+  }
 ));
+      
     // Configure default commands
-    m_robotDrive.setDefaultCommand(
-        new RunCommand(
-            () -> 
-            {
-                  double flipFactor = (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Red))&&fieldRelative)?-1:1;
+    // m_robotDrive.setDefaultCommand(
+    //     new RunCommand(
+    //         () -> 
+    //         {
+    //               double flipFactor = (DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Red))&&fieldRelative)?-1:1;
 
-              m_robotDrive.drive(
-                -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_YAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_YAXIS))*flipFactor, OIConstants.kDriveDeadband), //Y
-                -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_XAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_XAXIS))*flipFactor, OIConstants.kDriveDeadband), //X
-                -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS)), OIConstants.kDriveDeadband), //Z
-                fieldRelative);
-            },
-        m_robotDrive));
+    //           m_robotDrive.drive(
+    //             -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_YAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_YAXIS))*flipFactor, OIConstants.kDriveDeadband), //Y
+    //             -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_XAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_XAXIS))*flipFactor, OIConstants.kDriveDeadband), //X
+    //             -MathUtil.applyDeadband(Math.pow(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS), 2) * Math.signum(m_driverController.getRawAxis(Constants.ControllerConstants.MOVE_ZAXIS)), OIConstants.kDriveDeadband), //Z
+    //             fieldRelative);
+    //         },
+    //     m_robotDrive));
     
     //Command extendIntakeJoint = m_intake.setGoal(Constants.IntakeConstants.kextendedPostion);
 
