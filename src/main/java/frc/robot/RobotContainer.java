@@ -32,13 +32,13 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OuttakeConstants;
 import frc.robot.commands.AlignToHub;
 import frc.robot.commands.AlignToPass;
-import frc.robot.commands.AutoShooterCommand;
+// import frc.robot.commands.AutoShooterCommand;
 //import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.FeederSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.FieldManagementPublisher;
+// import frc.robot.subsystems.FeederSubsystem;
+// import frc.robot.subsystems.IntakeSubsystem;
+// import frc.robot.subsystems.ShooterSubsystem;
+// import frc.robot.subsystems.FieldManagementPublisher;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -59,12 +59,12 @@ public class RobotContainer {
   // The robot's subsystems
 
   DriveSubsystem m_robotDrive;
-  FieldManagementPublisher m_fieldManagementPublisher;
+  // FieldManagementPublisher m_fieldManagementPublisher;
   private Boolean fieldRelative = true;
   
-  private ShooterSubsystem m_ShooterSubsystem;
-  private FeederSubsystem m_FeederSubsystem;
-  private IntakeSubsystem m_intake;
+  // private ShooterSubsystem m_ShooterSubsystem;
+  // private FeederSubsystem m_FeederSubsystem;
+  // private IntakeSubsystem m_intake;
   
 
   // XBox controller.
@@ -91,10 +91,10 @@ public class RobotContainer {
    
   public RobotContainer() {
     
-    m_ShooterSubsystem = new ShooterSubsystem();
-    m_FeederSubsystem = new FeederSubsystem();
+    // m_ShooterSubsystem = new ShooterSubsystem();
+    // m_FeederSubsystem = new FeederSubsystem();
     
-    m_fieldManagementPublisher = new FieldManagementPublisher();
+    // m_fieldManagementPublisher = new FieldManagementPublisher();
     //Set up Subsystems
     m_robotDrive = new DriveSubsystem();
 
@@ -102,7 +102,7 @@ public class RobotContainer {
     {
       PortForwarder.add(port, "limelight.local",port);
     }
-    m_intake = new IntakeSubsystem();
+    // m_intake = new IntakeSubsystem();
     NamedCommands.registerCommand("Going over the bump", m_robotDrive.driveExperiment());
     SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     // Zero/Reset sensors
@@ -111,13 +111,13 @@ public class RobotContainer {
     //Start with this spinUpCommand, the switch to the select version once megatag is confirmed
     //spinUpCommand = new AutoShooterCommand(m_ShooterSubsystem, Constants.OuttakeConstants.shootSpeed);
     
-    spinUpCommand = new SelectCommand<>(
-      Map.ofEntries(
-        Map.entry(BehaviorSelector.SHOOT, new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.shootSpeed)),
-        Map.entry(BehaviorSelector.PASS, new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.passSpeed))
-      ),
-      this::passOrShootSelector
-    );
+    // spinUpCommand = new SelectCommand<>(
+    //   Map.ofEntries(
+    //     Map.entry(BehaviorSelector.SHOOT, new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.shootSpeed)),
+    //     Map.entry(BehaviorSelector.PASS, new AutoShooterCommand(m_ShooterSubsystem, OuttakeConstants.passSpeed))
+    //   ),
+    //   this::passOrShootSelector
+    // );
     
     alignCommand = new SelectCommand<>(
       Map.ofEntries(
@@ -182,26 +182,26 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
               new InstantCommand(() -> fieldRelative = !fieldRelative, m_robotDrive),
               new InstantCommand(() -> mode_publisher.set(fieldRelative))
           ));
-    ButtonMappings.button(m_driverController, 1)
-      .whileTrue(m_robotDrive.wheelRadiusCharacterization());
+    // ButtonMappings.button(m_driverController, 1)
+    //   .whileTrue(m_robotDrive.wheelRadiusCharacterization());
 
   //NEW SUBSYSTEM CONTROLS
     //Feeder rolllers manual on/off
     
-    ButtonMappings.button(m_driverController, Constants.ControllerConstants.MANUAL_ROLLERS_TOGGLE)
-      .onTrue(new InstantCommand(
-      ()-> m_FeederSubsystem.ToggleFeederRoller(), 
-      m_FeederSubsystem
-      ));
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.MANUAL_ROLLERS_TOGGLE)
+    //   .onTrue(new InstantCommand(
+    //   ()-> m_FeederSubsystem.ToggleFeederRoller(), 
+    //   m_FeederSubsystem
+    //   ));
     
-    //Manual Kicker on/off button for testing purposes
+    // //Manual Kicker on/off button for testing purposes
     
-        ButtonMappings.button(m_driverController, Constants.ControllerConstants.MANUAL_KICKERS_TEST)
-      .whileTrue(new StartEndCommand(
-      ()-> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed), 
-      ()-> m_FeederSubsystem.setKickerSpeed(0),
-      m_FeederSubsystem
-      ));
+    //     ButtonMappings.button(m_driverController, Constants.ControllerConstants.MANUAL_KICKERS_TEST)
+    //   .whileTrue(new StartEndCommand(
+    //   ()-> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed), 
+    //   ()-> m_FeederSubsystem.setKickerSpeed(0),
+    //   m_FeederSubsystem
+    //   ));
     
     //Shooter PID testing binding, replace later with full shoot process
     /* 
@@ -214,18 +214,18 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     */
     //Composite Shooter Command -> runs all three systems at once to shoot balls
     
-    ButtonMappings.button(m_driverController, Constants.ControllerConstants.SHOOT_HUB)
-      .whileTrue(Commands.sequence(
-              spinUpCommand,
-              new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
-              new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
-          ).finallyDo(
-            () -> {
-              m_ShooterSubsystem.stopMotor();
-              m_FeederSubsystem.setKickerSpeed(0);
-              m_FeederSubsystem.setRollerSpeed(0);
-            }
-          ));
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.SHOOT_HUB)
+    //   .whileTrue(Commands.sequence(
+    //           spinUpCommand,
+    //           new InstantCommand(() -> m_FeederSubsystem.setKickerSpeed(Constants.FeederConstants.kickerSpeed)),
+    //           new RunCommand(() -> m_FeederSubsystem.setRollerSpeed(Constants.FeederConstants.rollerSpeed))
+    //       ).finallyDo(
+    //         () -> {
+    //           m_ShooterSubsystem.stopMotor();
+    //           m_FeederSubsystem.setKickerSpeed(0);
+    //           m_FeederSubsystem.setRollerSpeed(0);
+    //         }
+    //       ));
                 //What is this for? bound to 0?
     /* 
     ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_HUB)
@@ -238,9 +238,9 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
           m_FeederSubsystem.setKickerSpeed(0);
         }
       ));
-    */
-    ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_HUB)
-    .whileTrue(new AlignToHub(m_robotDrive));
+    // */
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.ALIGN_HUB)
+    // .whileTrue(new AlignToHub(m_robotDrive));
     // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TEST_INTAKE_JOINT_UP)
     //   .whileTrue(new StartEndCommand( ()-> m_intake.spinJoint(Constants.IntakeConstants.kintakeJointSpeed)
     //     , ()-> m_intake.spinJoint(0), m_intake));
@@ -261,14 +261,14 @@ SmartDashboard.putData("Going over the bump", m_robotDrive.driveExperiment());
     
     // TOGGLE INTAKE METHODS -> These should be the only intake methods left after testing
     
-    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
-      .whileTrue(
-        m_intake.toggleIntake()
-      );
-       ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE_ROLLERS)
-      .whileTrue(new InstantCommand( ()->{
-        m_intake.toggleIntakeRoller();
-      },m_intake));
+    // ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE)
+    //   .whileTrue(
+    //     m_intake.toggleIntake()
+    //   );
+    //    ButtonMappings.button(m_driverController, Constants.ControllerConstants.TOGGLE_INTAKE_ROLLERS)
+    //   .whileTrue(new InstantCommand( ()->{
+    //     m_intake.toggleIntakeRoller();
+    //   },m_intake));
     
   }
 
